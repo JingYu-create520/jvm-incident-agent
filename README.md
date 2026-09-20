@@ -6,6 +6,8 @@ Deterministic parsers produce the facts. A language model — optional, off by d
 those facts into prose. It runs offline: your dumps never leave the machine, and the same inputs
 always produce the same findings.
 
+![Reproduce an incident in a container, analyze it with one command, gate on the exit code](docs/assets/demo.gif)
+
 ```
 $ jia analyze ./incident-2026-09-20/
 

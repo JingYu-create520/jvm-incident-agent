@@ -13,6 +13,11 @@ set -euo pipefail
 
 INCIDENT="${1:-${INCIDENT:-deadlock}}"
 
+# BETWEEN runs *between* the two thread dumps, via capture.sh --between-cmd. Only the thread
+# leak needs it: a growth rule cannot be demonstrated by two dumps of an already-complete leak,
+# so the second burst has to land after the first capture rather than before both.
+BETWEEN=()
+
 case "$INCIDENT" in
   deadlock)    DIR=incident-deadlock;   TRIGGER=(curl -fsS "$VICTIM_URL/victim/deadlock") ;;
   heap-leak)   DIR=incident-heap-leak;  TRIGGER=(sh -c 'for i in $(seq 1 8); do
@@ -21,7 +26,8 @@ case "$INCIDENT" in
                   [ "$((used * 100))" -ge "$((max * 78))" ] && break
                   curl -fsS "'"$VICTIM_URL"'/victim/leak?mb=24&rows=50000" >/dev/null; sleep 2; done') ;;
   gc-storm)    DIR=incident-gc-storm;   TRIGGER=(curl -fsS "$VICTIM_URL/victim/gcstorm?rounds=2000&workingSetMb=175") ;;
-  thread-leak) DIR=incident-thread-leak; TRIGGER=(sh -c "curl -fsS '$VICTIM_URL/victim/leak-threads?count=80' >/dev/null; sleep 3; curl -fsS '$VICTIM_URL/victim/leak-threads?count=60' >/dev/null") ;;
+  thread-leak) DIR=incident-thread-leak; TRIGGER=(curl -fsS "$VICTIM_URL/victim/leak-threads?count=80")
+               BETWEEN=("curl -fsS '$VICTIM_URL/victim/leak-threads?count=60' >/dev/null") ;;
   exceptions)  DIR=incident-exceptions;  TRIGGER=(sh -c "curl -fsS '$VICTIM_URL/victim/errors?count=30' >/dev/null; curl -fsS '$VICTIM_URL/victim/errors?count=24' >/dev/null") ;;
   healthy)     DIR=healthy;              TRIGGER=(sh -c "for i in 1 2 3 4; do curl -fsS '$VICTIM_URL/victim/healthy?iterations=2500&payload=16384' >/dev/null; sleep 2; done") ;;
   *) echo "run-incident.sh: unknown incident '$INCIDENT' (deadlock|heap-leak|gc-storm|thread-leak|exceptions|healthy)" >&2; exit 2 ;;
@@ -40,9 +46,14 @@ sleep 5
 echo "==> capturing"
 # --skip-histo: jmap inside a sidecar needs the same /tmp + PID namespace; if it is unavailable
 # the histogram is the only artifact you lose, so the run still produces something reviewable.
+EXTRA=()
+if [ ${#BETWEEN[@]} -gt 0 ]; then
+  EXTRA=(--between-cmd "${BETWEEN[0]}")
+fi
 exec bash /opt/demo-victim/scripts/capture.sh \
   -o "$ARTIFACTS_DIR/$DIR" \
   -m 'demo-victim' \
   -d 6 \
   --gc-log "$GC_LOG_FILE" \
-  --app-log "$APP_LOG_FILE"
+  --app-log "$APP_LOG_FILE" \
+  "${EXTRA[@]}"

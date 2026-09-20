@@ -1,19 +1,633 @@
-2026-09-20 21:38:33.525  INFO 26184 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.5 with PID 26184 (D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\demo-victim.jar started by Ella in D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\corpus-work\incident-thread-leak)
-2026-09-20 21:38:33.535  INFO 26184 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
-2026-09-20 21:38:34.926  INFO 26184 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8184 (http)
-2026-09-20 21:38:34.938  INFO 26184 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-09-20 21:38:34.948  INFO 26184 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
-2026-09-20 21:38:34.996  INFO 26184 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-09-20 21:38:34.997  INFO 26184 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1366 ms
-2026-09-20 21:38:35.086  INFO 26184 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
-2026-09-20 21:38:35.452  INFO 26184 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8184 (http) with context path '/'
-2026-09-20 21:38:35.478  INFO 26184 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 2.757 seconds (process running for 3.286)
-2026-09-20 21:38:35.974  INFO 26184 --- [nio-8184-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-09-20 21:38:35.975  INFO 26184 --- [nio-8184-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-09-20 21:38:35.975  INFO 26184 --- [nio-8184-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
-2026-09-20 21:38:39.331  WARN 26184 --- [nio-8184-exec-5] d.jingyu.jia.victim.ThreadLeakService    : spawned 80 more victim-worker threads, 80 leaked so far
-2026-09-20 21:38:45.096  INFO 26184 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=88 uptimeMs=12904
-2026-09-20 21:38:45.096  INFO 26184 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=88 uptimeMs=12904
-2026-09-20 21:38:51.414  WARN 26184 --- [nio-8184-exec-3] d.jingyu.jia.victim.ThreadLeakService    : spawned 60 more victim-worker threads, 140 leaked so far
-2026-09-20 21:38:55.098  INFO 26184 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=109 uptimeMs=22906
-2026-09-20 21:38:55.098  INFO 26184 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=109 uptimeMs=22906
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+2026-09-20 17:22:18.538  INFO 17327 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.20 with PID 17327 (/opt/demo-victim/demo-victim.jar started by root in /opt/demo-victim)
+2026-09-20 17:22:18.541  INFO 17327 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 17:22:19.666  INFO 17327 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-09-20 17:22:19.679  INFO 17327 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 17:22:19.680  INFO 17327 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 17:22:19.710  INFO 17327 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 17:22:19.711  INFO 17327 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1073 ms
+2026-09-20 17:22:19.791  INFO 17327 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 17:22:20.144  INFO 17327 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-09-20 17:22:20.161  INFO 17327 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 2.312 seconds (process running for 2.874)
+2026-09-20 17:22:22.365  INFO 17327 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 17:22:22.365  INFO 17327 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 17:22:22.367  INFO 17327 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-20 17:22:29.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=79 uptimeMs=12502
+2026-09-20 17:22:29.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=79 uptimeMs=12502
+2026-09-20 17:22:39.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=80 uptimeMs=22503
+2026-09-20 17:22:39.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=80 uptimeMs=22503
+2026-09-20 17:22:49.788  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=32503
+2026-09-20 17:22:49.788  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=32503
+2026-09-20 17:22:59.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=42504
+2026-09-20 17:22:59.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=42504
+2026-09-20 17:23:09.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=52504
+2026-09-20 17:23:09.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=52504
+2026-09-20 17:23:19.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=62505
+2026-09-20 17:23:19.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=62505
+2026-09-20 17:23:29.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=72506
+2026-09-20 17:23:29.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=72506
+2026-09-20 17:23:39.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=82506
+2026-09-20 17:23:39.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=82506
+2026-09-20 17:23:49.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=82 uptimeMs=92507
+2026-09-20 17:23:49.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=82 uptimeMs=92507
+2026-09-20 17:23:59.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=82 uptimeMs=102507
+2026-09-20 17:23:59.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=82 uptimeMs=102507
+2026-09-20 17:23:59.969  WARN 17327 --- [nio-8080-exec-7] dev.jingyu.jia.victim.DeadlockPlant      : deadlock planted round=1 threads=victim-ledger-poster/victim-statement-writer hotLockWaiters=8
+2026-09-20 17:24:09.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=112508
+2026-09-20 17:24:09.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=112508
+2026-09-20 17:24:19.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=122509
+2026-09-20 17:24:19.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=122509
+2026-09-20 17:24:29.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=132509
+2026-09-20 17:24:29.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=132509
+2026-09-20 17:24:39.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=142510
+2026-09-20 17:24:39.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=142510
+2026-09-20 17:24:49.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=152510
+2026-09-20 17:24:49.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=152510
+2026-09-20 17:24:59.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=162511
+2026-09-20 17:24:59.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=162511
+2026-09-20 17:25:09.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=172512
+2026-09-20 17:25:09.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=172513
+2026-09-20 17:25:19.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=182513
+2026-09-20 17:25:19.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=182513
+2026-09-20 17:25:29.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=192514
+2026-09-20 17:25:29.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=192514
+2026-09-20 17:25:39.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=202514
+2026-09-20 17:25:39.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=202514
+2026-09-20 17:25:49.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=212515
+2026-09-20 17:25:49.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=212515
+2026-09-20 17:25:59.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=222515
+2026-09-20 17:25:59.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=222515
+2026-09-20 17:26:09.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=232516
+2026-09-20 17:26:09.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=232516
+2026-09-20 17:26:19.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=242516
+2026-09-20 17:26:19.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=242516
+2026-09-20 17:26:29.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=252517
+2026-09-20 17:26:29.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=252517
+2026-09-20 17:26:39.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=262518
+2026-09-20 17:26:39.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=262518
+2026-09-20 17:26:49.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=272518
+2026-09-20 17:26:49.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=272518
+2026-09-20 17:26:59.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=282519
+2026-09-20 17:26:59.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=282519
+2026-09-20 17:27:09.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=292520
+2026-09-20 17:27:09.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=292520
+2026-09-20 17:27:19.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=302520
+2026-09-20 17:27:19.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=302520
+2026-09-20 17:27:29.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=312521
+2026-09-20 17:27:29.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=312521
+2026-09-20 17:27:39.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=322521
+2026-09-20 17:27:39.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=322521
+2026-09-20 17:27:49.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=332522
+2026-09-20 17:27:49.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=332522
+2026-09-20 17:27:59.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=342523
+2026-09-20 17:27:59.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=342523
+2026-09-20 17:28:04.643  WARN 17327 --- [nio-8080-exec-9] dev.jingyu.jia.victim.DeadlockPlant      : deadlock planted round=2 threads=victim-ledger-poster/victim-statement-writer hotLockWaiters=8
+2026-09-20 17:28:09.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=352523
+2026-09-20 17:28:09.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=352523
+2026-09-20 17:28:19.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=362524
+2026-09-20 17:28:19.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=362524
+2026-09-20 17:28:29.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=372524
+2026-09-20 17:28:29.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=372524
+2026-09-20 17:28:39.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=382525
+2026-09-20 17:28:39.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=382525
+2026-09-20 17:28:42.068  INFO 17327 --- [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-20 17:28:42.075  INFO 17327 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+2026-09-20 17:28:44.123  INFO 25257 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.20 with PID 25257 (/opt/demo-victim/demo-victim.jar started by root in /opt/demo-victim)
+2026-09-20 17:28:44.134  INFO 25257 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 17:28:45.842  INFO 25257 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-09-20 17:28:45.859  INFO 25257 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 17:28:45.860  INFO 25257 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 17:28:45.894  INFO 25257 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 17:28:45.895  INFO 25257 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1615 ms
+2026-09-20 17:28:45.988  INFO 25257 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 17:28:46.446  INFO 25257 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-09-20 17:28:46.467  INFO 25257 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 3.219 seconds (process running for 3.823)
+2026-09-20 17:28:47.721  INFO 25257 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 17:28:47.721  INFO 25257 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 17:28:47.722  INFO 25257 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-20 17:28:48.322  WARN 25257 --- [nio-8080-exec-3] dev.jingyu.jia.victim.DeadlockPlant      : deadlock planted round=1 threads=victim-ledger-poster/victim-statement-writer hotLockWaiters=8
+2026-09-20 17:28:55.984  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=84 uptimeMs=13342
+2026-09-20 17:28:55.985  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=84 uptimeMs=13343
+2026-09-20 17:29:05.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=15 uptimeMs=23344
+2026-09-20 17:29:05.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=15 uptimeMs=23344
+2026-09-20 17:29:15.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=16 uptimeMs=33344
+2026-09-20 17:29:15.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=16 uptimeMs=33344
+2026-09-20 17:29:25.985  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=17 uptimeMs=43345
+2026-09-20 17:29:25.985  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=17 uptimeMs=43345
+2026-09-20 17:29:35.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=17 uptimeMs=53346
+2026-09-20 17:29:35.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=17 uptimeMs=53346
+2026-09-20 17:29:45.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=17 uptimeMs=63346
+2026-09-20 17:29:45.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=17 uptimeMs=63346
+2026-09-20 17:29:55.985  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=17 uptimeMs=73347
+2026-09-20 17:29:55.985  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=17 uptimeMs=73347
+2026-09-20 17:30:05.985  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=17 uptimeMs=83347
+2026-09-20 17:30:05.985  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=17 uptimeMs=83347
+2026-09-20 17:30:15.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=17 uptimeMs=93348
+2026-09-20 17:30:15.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=17 uptimeMs=93348
+2026-09-20 17:30:25.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=103349
+2026-09-20 17:30:25.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=103349
+2026-09-20 17:30:35.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=113349
+2026-09-20 17:30:35.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=113349
+2026-09-20 17:30:45.987  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=123350
+2026-09-20 17:30:45.987  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=123350
+2026-09-20 17:30:55.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=133350
+2026-09-20 17:30:55.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=133350
+2026-09-20 17:31:05.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=143351
+2026-09-20 17:31:05.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=143351
+2026-09-20 17:31:15.987  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=153352
+2026-09-20 17:31:15.987  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=153352
+2026-09-20 17:31:25.986  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=163353
+2026-09-20 17:31:25.986  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=163353
+2026-09-20 17:31:35.987  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=173354
+2026-09-20 17:31:35.987  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=173354
+2026-09-20 17:31:45.988  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=183354
+2026-09-20 17:31:45.988  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=183354
+2026-09-20 17:31:55.987  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=193355
+2026-09-20 17:31:55.987  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=193355
+2026-09-20 17:32:05.987  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=18 uptimeMs=203355
+2026-09-20 17:32:05.987  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=18 uptimeMs=203355
+2026-09-20 17:32:15.988  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=19 uptimeMs=213356
+2026-09-20 17:32:15.988  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=19 uptimeMs=213356
+2026-09-20 17:32:25.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=19 uptimeMs=223357
+2026-09-20 17:32:25.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=19 uptimeMs=223357
+2026-09-20 17:32:35.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=19 uptimeMs=233358
+2026-09-20 17:32:35.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=19 uptimeMs=233358
+2026-09-20 17:32:45.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=19 uptimeMs=243358
+2026-09-20 17:32:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=19 uptimeMs=243358
+2026-09-20 17:32:55.978  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=253359
+2026-09-20 17:32:55.978  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=253359
+2026-09-20 17:33:05.979  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=263360
+2026-09-20 17:33:05.979  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=263360
+2026-09-20 17:33:15.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=273360
+2026-09-20 17:33:15.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=273360
+2026-09-20 17:33:25.978  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=283361
+2026-09-20 17:33:25.978  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=283361
+2026-09-20 17:33:35.979  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=293362
+2026-09-20 17:33:35.979  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=293362
+2026-09-20 17:33:45.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=303363
+2026-09-20 17:33:45.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=303363
+2026-09-20 17:33:55.979  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=313364
+2026-09-20 17:33:55.979  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=313364
+2026-09-20 17:34:05.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=323365
+2026-09-20 17:34:05.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=323365
+2026-09-20 17:34:15.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=333366
+2026-09-20 17:34:15.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=333366
+2026-09-20 17:34:25.979  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=343366
+2026-09-20 17:34:25.979  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=343366
+2026-09-20 17:34:35.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=353367
+2026-09-20 17:34:35.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=353367
+2026-09-20 17:34:45.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=363368
+2026-09-20 17:34:45.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=363368
+2026-09-20 17:34:55.979  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=373368
+2026-09-20 17:34:55.979  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=373368
+2026-09-20 17:35:05.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=20 uptimeMs=383369
+2026-09-20 17:35:05.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=20 uptimeMs=383369
+2026-09-20 17:35:15.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=393370
+2026-09-20 17:35:15.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=393370
+2026-09-20 17:35:25.979  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=403371
+2026-09-20 17:35:25.979  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=403370
+2026-09-20 17:35:35.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=413371
+2026-09-20 17:35:35.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=413371
+2026-09-20 17:35:45.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=423372
+2026-09-20 17:35:45.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=423372
+2026-09-20 17:35:55.979  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=433373
+2026-09-20 17:35:55.979  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=433373
+2026-09-20 17:36:05.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=443374
+2026-09-20 17:36:05.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=443374
+2026-09-20 17:36:15.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=453374
+2026-09-20 17:36:15.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=453374
+2026-09-20 17:36:25.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=463375
+2026-09-20 17:36:25.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=463375
+2026-09-20 17:36:35.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=21 uptimeMs=473376
+2026-09-20 17:36:35.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=21 uptimeMs=473376
+2026-09-20 17:36:45.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=22 uptimeMs=483377
+2026-09-20 17:36:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=22 uptimeMs=483377
+2026-09-20 17:36:55.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=22 uptimeMs=493378
+2026-09-20 17:36:55.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=22 uptimeMs=493378
+2026-09-20 17:37:05.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=22 uptimeMs=503378
+2026-09-20 17:37:05.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=22 uptimeMs=503378
+2026-09-20 17:37:15.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=513379
+2026-09-20 17:37:15.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=513379
+2026-09-20 17:37:25.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=523380
+2026-09-20 17:37:25.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=523380
+2026-09-20 17:37:35.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=533380
+2026-09-20 17:37:35.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=533380
+2026-09-20 17:37:45.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=543381
+2026-09-20 17:37:45.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=543381
+2026-09-20 17:37:55.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=553382
+2026-09-20 17:37:55.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=553382
+2026-09-20 17:38:05.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=563383
+2026-09-20 17:38:05.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=563382
+2026-09-20 17:38:15.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=573383
+2026-09-20 17:38:15.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=573383
+2026-09-20 17:38:25.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=583384
+2026-09-20 17:38:25.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=583384
+2026-09-20 17:38:35.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=593385
+2026-09-20 17:38:35.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=593385
+2026-09-20 17:38:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=603385
+2026-09-20 17:38:45.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=603385
+2026-09-20 17:38:55.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=613386
+2026-09-20 17:38:55.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=613387
+2026-09-20 17:39:05.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=623387
+2026-09-20 17:39:05.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=623387
+2026-09-20 17:39:15.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=23 uptimeMs=633388
+2026-09-20 17:39:15.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=23 uptimeMs=633388
+2026-09-20 17:39:25.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=24 uptimeMs=643389
+2026-09-20 17:39:25.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=24 uptimeMs=643389
+2026-09-20 17:39:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=24 uptimeMs=653389
+2026-09-20 17:39:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=24 uptimeMs=653389
+2026-09-20 17:39:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=24 uptimeMs=663390
+2026-09-20 17:39:45.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=24 uptimeMs=663390
+2026-09-20 17:39:55.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=25 uptimeMs=673391
+2026-09-20 17:39:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=25 uptimeMs=673391
+2026-09-20 17:40:05.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=25 uptimeMs=683392
+2026-09-20 17:40:05.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=25 uptimeMs=683392
+2026-09-20 17:40:15.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=25 uptimeMs=693392
+2026-09-20 17:40:15.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=25 uptimeMs=693392
+2026-09-20 17:40:25.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=25 uptimeMs=703393
+2026-09-20 17:40:25.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=25 uptimeMs=703393
+2026-09-20 17:40:35.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=25 uptimeMs=713394
+2026-09-20 17:40:35.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=25 uptimeMs=713394
+2026-09-20 17:40:45.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=25 uptimeMs=723394
+2026-09-20 17:40:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=25 uptimeMs=723394
+2026-09-20 17:40:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=25 uptimeMs=733395
+2026-09-20 17:40:55.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=25 uptimeMs=733395
+2026-09-20 17:41:05.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=743395
+2026-09-20 17:41:05.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=743395
+2026-09-20 17:41:15.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=753396
+2026-09-20 17:41:15.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=753396
+2026-09-20 17:41:25.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=763397
+2026-09-20 17:41:25.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=763397
+2026-09-20 17:41:35.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=773397
+2026-09-20 17:41:35.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=773397
+2026-09-20 17:41:45.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=783398
+2026-09-20 17:41:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=783398
+2026-09-20 17:41:55.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=793399
+2026-09-20 17:41:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=793399
+2026-09-20 17:42:05.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=803399
+2026-09-20 17:42:05.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=803399
+2026-09-20 17:42:15.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=813400
+2026-09-20 17:42:15.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=813401
+2026-09-20 17:42:25.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=823401
+2026-09-20 17:42:25.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=823401
+2026-09-20 17:42:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=26 uptimeMs=833401
+2026-09-20 17:42:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=26 uptimeMs=833402
+2026-09-20 17:42:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=27 uptimeMs=843402
+2026-09-20 17:42:45.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=27 uptimeMs=843402
+2026-09-20 17:42:55.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=27 uptimeMs=853403
+2026-09-20 17:42:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=27 uptimeMs=853403
+2026-09-20 17:43:05.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=27 uptimeMs=863404
+2026-09-20 17:43:05.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=27 uptimeMs=863404
+2026-09-20 17:43:15.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=27 uptimeMs=873404
+2026-09-20 17:43:15.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=27 uptimeMs=873404
+2026-09-20 17:43:25.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=28 uptimeMs=883405
+2026-09-20 17:43:25.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=28 uptimeMs=883405
+2026-09-20 17:43:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=28 uptimeMs=893406
+2026-09-20 17:43:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=28 uptimeMs=893406
+2026-09-20 17:43:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=28 uptimeMs=903407
+2026-09-20 17:43:45.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=28 uptimeMs=903407
+2026-09-20 17:43:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=28 uptimeMs=913407
+2026-09-20 17:43:55.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=28 uptimeMs=913407
+2026-09-20 17:44:05.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=28 uptimeMs=923408
+2026-09-20 17:44:05.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=28 uptimeMs=923408
+2026-09-20 17:44:15.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=933409
+2026-09-20 17:44:15.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=933409
+2026-09-20 17:44:25.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=943410
+2026-09-20 17:44:25.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=943410
+2026-09-20 17:44:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=953411
+2026-09-20 17:44:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=953411
+2026-09-20 17:44:45.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=963411
+2026-09-20 17:44:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=963411
+2026-09-20 17:44:55.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=973412
+2026-09-20 17:44:55.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=973412
+2026-09-20 17:45:05.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=983413
+2026-09-20 17:45:05.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=983413
+2026-09-20 17:45:15.984  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=993414
+2026-09-20 17:45:15.984  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=993414
+2026-09-20 17:45:25.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=1003414
+2026-09-20 17:45:25.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=1003414
+2026-09-20 17:45:35.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=29 uptimeMs=1013415
+2026-09-20 17:45:35.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=29 uptimeMs=1013415
+2026-09-20 17:45:45.984  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=30 uptimeMs=1023415
+2026-09-20 17:45:45.984  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=30 uptimeMs=1023415
+2026-09-20 17:45:55.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=30 uptimeMs=1033416
+2026-09-20 17:45:55.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=30 uptimeMs=1033416
+2026-09-20 17:46:05.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1043416
+2026-09-20 17:46:05.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1043416
+2026-09-20 17:46:15.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1053417
+2026-09-20 17:46:15.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1053417
+2026-09-20 17:46:25.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1063418
+2026-09-20 17:46:25.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1063418
+2026-09-20 17:46:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1073418
+2026-09-20 17:46:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1073418
+2026-09-20 17:46:45.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1083419
+2026-09-20 17:46:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1083419
+2026-09-20 17:46:55.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1093419
+2026-09-20 17:46:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1093419
+2026-09-20 17:47:05.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1103420
+2026-09-20 17:47:05.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1103420
+2026-09-20 17:47:15.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1113421
+2026-09-20 17:47:15.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1113421
+2026-09-20 17:47:25.980  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1123421
+2026-09-20 17:47:25.980  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1123422
+2026-09-20 17:47:35.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1133423
+2026-09-20 17:47:35.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1133423
+2026-09-20 17:47:45.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1143424
+2026-09-20 17:47:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1143424
+2026-09-20 17:47:55.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=31 uptimeMs=1153424
+2026-09-20 17:47:55.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=31 uptimeMs=1153424
+2026-09-20 17:48:05.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1163425
+2026-09-20 17:48:05.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1163425
+2026-09-20 17:48:15.984  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1173426
+2026-09-20 17:48:15.984  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1173426
+2026-09-20 17:48:25.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1183427
+2026-09-20 17:48:25.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1183427
+2026-09-20 17:48:35.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1193427
+2026-09-20 17:48:35.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1193427
+2026-09-20 17:48:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1203428
+2026-09-20 17:48:45.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1203428
+2026-09-20 17:48:55.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1213428
+2026-09-20 17:48:55.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1213429
+2026-09-20 17:49:05.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1223429
+2026-09-20 17:49:05.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1223429
+2026-09-20 17:49:15.984  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1233430
+2026-09-20 17:49:15.984  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1233430
+2026-09-20 17:49:25.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1243430
+2026-09-20 17:49:25.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1243430
+2026-09-20 17:49:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1253430
+2026-09-20 17:49:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1253430
+2026-09-20 17:49:45.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=32 uptimeMs=1263431
+2026-09-20 17:49:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=32 uptimeMs=1263431
+2026-09-20 17:49:55.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=33 uptimeMs=1273432
+2026-09-20 17:49:55.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=33 uptimeMs=1273432
+2026-09-20 17:50:05.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=33 uptimeMs=1283432
+2026-09-20 17:50:05.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=33 uptimeMs=1283432
+2026-09-20 17:50:15.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=33 uptimeMs=1293433
+2026-09-20 17:50:15.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=33 uptimeMs=1293433
+2026-09-20 17:50:25.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=33 uptimeMs=1303433
+2026-09-20 17:50:25.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=33 uptimeMs=1303433
+2026-09-20 17:50:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=33 uptimeMs=1313434
+2026-09-20 17:50:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=33 uptimeMs=1313434
+2026-09-20 17:50:45.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=34 uptimeMs=1323435
+2026-09-20 17:50:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=34 uptimeMs=1323435
+2026-09-20 17:50:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=34 uptimeMs=1333435
+2026-09-20 17:50:55.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=34 uptimeMs=1333435
+2026-09-20 17:51:05.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=34 uptimeMs=1343436
+2026-09-20 17:51:05.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=34 uptimeMs=1343436
+2026-09-20 17:51:15.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1353436
+2026-09-20 17:51:15.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1353437
+2026-09-20 17:51:25.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1363437
+2026-09-20 17:51:25.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1363437
+2026-09-20 17:51:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1373437
+2026-09-20 17:51:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1373437
+2026-09-20 17:51:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1383438
+2026-09-20 17:51:45.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1383438
+2026-09-20 17:51:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1393439
+2026-09-20 17:51:55.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1393439
+2026-09-20 17:52:05.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1403439
+2026-09-20 17:52:05.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1403439
+2026-09-20 17:52:15.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1413440
+2026-09-20 17:52:15.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1413440
+2026-09-20 17:52:25.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1423441
+2026-09-20 17:52:25.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1423441
+2026-09-20 17:52:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1433441
+2026-09-20 17:52:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1433441
+2026-09-20 17:52:45.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1443442
+2026-09-20 17:52:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1443442
+2026-09-20 17:52:55.981  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=35 uptimeMs=1453443
+2026-09-20 17:52:55.981  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=35 uptimeMs=1453443
+2026-09-20 17:53:05.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=36 uptimeMs=1463444
+2026-09-20 17:53:05.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=36 uptimeMs=1463444
+2026-09-20 17:53:15.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=36 uptimeMs=1473445
+2026-09-20 17:53:15.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=36 uptimeMs=1473445
+2026-09-20 17:53:25.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=36 uptimeMs=1483445
+2026-09-20 17:53:25.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=36 uptimeMs=1483445
+2026-09-20 17:53:35.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=36 uptimeMs=1493446
+2026-09-20 17:53:35.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=36 uptimeMs=1493446
+2026-09-20 17:53:45.983  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=36 uptimeMs=1503446
+2026-09-20 17:53:45.983  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=36 uptimeMs=1503446
+2026-09-20 17:53:55.982  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=36 uptimeMs=1513447
+2026-09-20 17:53:55.982  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=36 uptimeMs=1513447
+2026-09-20 17:53:56.679  INFO 25257 --- [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-20 17:53:56.687  INFO 25257 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+2026-09-20 18:03:44.661  INFO 1036 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.20 with PID 1036 (/opt/demo-victim/demo-victim.jar started by root in /opt/demo-victim)
+2026-09-20 18:03:44.673  INFO 1036 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 18:03:47.074  INFO 1036 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-09-20 18:03:47.099  INFO 1036 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 18:03:47.099  INFO 1036 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 18:03:47.140  INFO 1036 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 18:03:47.142  INFO 1036 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2309 ms
+2026-09-20 18:03:47.248  INFO 1036 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 18:03:47.853  INFO 1036 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-09-20 18:03:47.899  INFO 1036 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 4.737 seconds (process running for 5.929)
+2026-09-20 18:03:52.210  INFO 1036 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 18:03:52.211  INFO 1036 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 18:03:52.213  INFO 1036 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-20 18:03:53.230  WARN 1036 --- [nio-8080-exec-3] d.jingyu.jia.victim.ThreadLeakService    : spawned 80 more victim-worker threads, 80 leaked so far
+2026-09-20 18:03:56.274  WARN 1036 --- [nio-8080-exec-4] d.jingyu.jia.victim.ThreadLeakService    : spawned 60 more victim-worker threads, 140 leaked so far
+2026-09-20 18:03:57.245  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=126 uptimeMs=15275
+2026-09-20 18:03:57.245  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=126 uptimeMs=15275
+2026-09-20 18:04:07.244  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=128 uptimeMs=25275
+2026-09-20 18:04:07.244  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=128 uptimeMs=25275
+2026-09-20 18:04:17.245  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=15 uptimeMs=35276
+2026-09-20 18:04:17.245  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=15 uptimeMs=35276
+2026-09-20 18:04:27.245  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=16 uptimeMs=45276
+2026-09-20 18:04:27.245  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=16 uptimeMs=45277
+2026-09-20 18:04:37.245  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=17 uptimeMs=55277
+2026-09-20 18:04:37.245  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=17 uptimeMs=55277
+2026-09-20 18:04:47.246  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=17 uptimeMs=65278
+2026-09-20 18:04:47.246  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=17 uptimeMs=65278
+2026-09-20 18:04:57.246  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=52 uptimeMs=75278
+2026-09-20 18:04:57.246  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=52 uptimeMs=75278
+2026-09-20 18:05:07.246  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=52 uptimeMs=85279
+2026-09-20 18:05:07.246  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=52 uptimeMs=85279
+2026-09-20 18:05:17.247  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=52 uptimeMs=95279
+2026-09-20 18:05:17.247  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=52 uptimeMs=95279
+2026-09-20 18:05:27.247  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=52 uptimeMs=105280
+2026-09-20 18:05:27.247  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=52 uptimeMs=105280
+2026-09-20 18:05:37.246  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=52 uptimeMs=115280
+2026-09-20 18:05:37.246  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=52 uptimeMs=115280
+2026-09-20 18:05:47.246  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=52 uptimeMs=125281
+2026-09-20 18:05:47.246  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=52 uptimeMs=125281
+2026-09-20 18:05:57.247  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=61 uptimeMs=135281
+2026-09-20 18:05:57.247  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=61 uptimeMs=135282
+2026-09-20 18:06:07.247  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=61 uptimeMs=145282
+2026-09-20 18:06:07.247  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=61 uptimeMs=145282
+2026-09-20 18:06:17.248  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=61 uptimeMs=155282
+2026-09-20 18:06:17.248  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=61 uptimeMs=155282
+2026-09-20 18:06:27.248  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=61 uptimeMs=165283
+2026-09-20 18:06:27.248  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=61 uptimeMs=165283
+2026-09-20 18:06:37.247  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=61 uptimeMs=175283
+2026-09-20 18:06:37.247  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=61 uptimeMs=175283
+2026-09-20 18:06:47.247  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=62 uptimeMs=185283
+2026-09-20 18:06:47.247  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=62 uptimeMs=185283
+2026-09-20 18:06:57.248  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=64 uptimeMs=195284
+2026-09-20 18:06:57.248  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=64 uptimeMs=195284
+2026-09-20 18:07:07.247  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=64 uptimeMs=205284
+2026-09-20 18:07:07.247  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=64 uptimeMs=205284
+2026-09-20 18:07:17.248  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=64 uptimeMs=215285
+2026-09-20 18:07:17.248  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=64 uptimeMs=215285
+2026-09-20 18:07:27.248  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=64 uptimeMs=225285
+2026-09-20 18:07:27.248  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=64 uptimeMs=225285
+2026-09-20 18:07:37.248  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=64 uptimeMs=235286
+2026-09-20 18:07:37.248  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=64 uptimeMs=235286
+2026-09-20 18:07:47.248  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=64 uptimeMs=245286
+2026-09-20 18:07:47.248  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=64 uptimeMs=245286
+2026-09-20 18:07:57.249  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=65 uptimeMs=255287
+2026-09-20 18:07:57.249  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=65 uptimeMs=255287
+2026-09-20 18:08:07.249  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=65 uptimeMs=265288
+2026-09-20 18:08:07.249  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=65 uptimeMs=265288
+2026-09-20 18:08:17.249  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=65 uptimeMs=275288
+2026-09-20 18:08:17.249  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=65 uptimeMs=275288
+2026-09-20 18:08:27.250  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=65 uptimeMs=285289
+2026-09-20 18:08:27.250  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=65 uptimeMs=285289
+2026-09-20 18:08:37.249  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=65 uptimeMs=295289
+2026-09-20 18:08:37.249  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=65 uptimeMs=295289
+2026-09-20 18:08:47.249  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=66 uptimeMs=305290
+2026-09-20 18:08:47.249  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=66 uptimeMs=305290
+2026-09-20 18:08:57.250  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=66 uptimeMs=315290
+2026-09-20 18:08:57.250  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=66 uptimeMs=315290
+2026-09-20 18:09:07.250  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=67 uptimeMs=325291
+2026-09-20 18:09:07.250  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=67 uptimeMs=325291
+2026-09-20 18:09:17.250  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=67 uptimeMs=335291
+2026-09-20 18:09:17.250  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=67 uptimeMs=335291
+2026-09-20 18:09:27.251  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=67 uptimeMs=345292
+2026-09-20 18:09:27.251  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=67 uptimeMs=345292
+2026-09-20 18:09:37.250  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=67 uptimeMs=355292
+2026-09-20 18:09:37.250  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=67 uptimeMs=355292
+2026-09-20 18:09:47.251  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=67 uptimeMs=365293
+2026-09-20 18:09:47.251  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=67 uptimeMs=365293
+2026-09-20 18:09:57.251  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=67 uptimeMs=375293
+2026-09-20 18:09:57.251  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=67 uptimeMs=375293
+2026-09-20 18:10:07.250  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=67 uptimeMs=385294
+2026-09-20 18:10:07.250  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=67 uptimeMs=385294
+2026-09-20 18:10:17.251  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=68 uptimeMs=395295
+2026-09-20 18:10:17.251  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=68 uptimeMs=395295
+2026-09-20 18:10:27.251  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=68 uptimeMs=405295
+2026-09-20 18:10:27.251  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=68 uptimeMs=405295
+2026-09-20 18:10:37.252  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=68 uptimeMs=415296
+2026-09-20 18:10:37.252  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=68 uptimeMs=415296
+2026-09-20 18:10:47.252  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=68 uptimeMs=425296
+2026-09-20 18:10:47.252  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=68 uptimeMs=425296
+2026-09-20 18:10:57.253  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=69 uptimeMs=435297
+2026-09-20 18:10:57.253  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=69 uptimeMs=435297
+2026-09-20 18:11:07.252  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=69 uptimeMs=445297
+2026-09-20 18:11:07.252  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=69 uptimeMs=445297
+2026-09-20 18:11:17.252  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=69 uptimeMs=455298
+2026-09-20 18:11:17.252  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=69 uptimeMs=455298
+2026-09-20 18:11:27.253  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=69 uptimeMs=465299
+2026-09-20 18:11:27.253  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=69 uptimeMs=465299
+2026-09-20 18:11:37.252  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=69 uptimeMs=475299
+2026-09-20 18:11:37.252  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=69 uptimeMs=475299
+2026-09-20 18:11:47.253  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=70 uptimeMs=485300
+2026-09-20 18:11:47.253  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=70 uptimeMs=485300
+2026-09-20 18:11:57.254  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=70 uptimeMs=495301
+2026-09-20 18:11:57.254  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=70 uptimeMs=495301
+2026-09-20 18:12:07.254  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=70 uptimeMs=505301
+2026-09-20 18:12:07.254  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=70 uptimeMs=505301
+2026-09-20 18:12:17.255  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=70 uptimeMs=515302
+2026-09-20 18:12:17.255  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=70 uptimeMs=515302
+2026-09-20 18:12:27.255  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=70 uptimeMs=525303
+2026-09-20 18:12:27.255  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=70 uptimeMs=525303
+2026-09-20 18:12:37.254  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=70 uptimeMs=535303
+2026-09-20 18:12:37.254  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=70 uptimeMs=535303
+2026-09-20 18:12:47.255  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=70 uptimeMs=545304
+2026-09-20 18:12:47.255  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=70 uptimeMs=545304
+2026-09-20 18:12:57.255  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=70 uptimeMs=555304
+2026-09-20 18:12:57.255  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=70 uptimeMs=555304
+2026-09-20 18:13:07.254  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=71 uptimeMs=565305
+2026-09-20 18:13:07.255  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=71 uptimeMs=565305
+2026-09-20 18:13:17.255  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=71 uptimeMs=575305
+2026-09-20 18:13:17.255  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=71 uptimeMs=575305
+2026-09-20 18:13:27.256  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=71 uptimeMs=585306
+2026-09-20 18:13:27.256  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=71 uptimeMs=585306
+2026-09-20 18:13:37.255  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=71 uptimeMs=595307
+2026-09-20 18:13:37.255  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=71 uptimeMs=595307
+2026-09-20 18:13:47.256  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=71 uptimeMs=605307
+2026-09-20 18:13:47.256  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=71 uptimeMs=605307
+2026-09-20 18:13:57.257  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=72 uptimeMs=615308
+2026-09-20 18:13:57.257  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=72 uptimeMs=615308
+2026-09-20 18:14:07.256  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=72 uptimeMs=625309
+2026-09-20 18:14:07.256  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=72 uptimeMs=625309
+2026-09-20 18:14:17.257  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=72 uptimeMs=635309
+2026-09-20 18:14:17.257  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=72 uptimeMs=635309
+2026-09-20 18:14:27.258  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=72 uptimeMs=645310
+2026-09-20 18:14:27.257  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=72 uptimeMs=645310
+2026-09-20 18:14:37.257  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=73 uptimeMs=655311
+2026-09-20 18:14:37.257  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=73 uptimeMs=655311
+2026-09-20 18:14:47.258  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=73 uptimeMs=665311
+2026-09-20 18:14:47.258  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=73 uptimeMs=665312
+2026-09-20 18:14:57.259  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=73 uptimeMs=675312
+2026-09-20 18:14:57.259  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=73 uptimeMs=675312
+2026-09-20 18:15:07.258  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=73 uptimeMs=685313
+2026-09-20 18:15:07.258  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=73 uptimeMs=685313
+2026-09-20 18:15:17.258  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=73 uptimeMs=695313
+2026-09-20 18:15:17.258  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=695313
+2026-09-20 18:15:27.259  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=705314
+2026-09-20 18:15:27.259  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=705314
+2026-09-20 18:15:37.259  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=715315
+2026-09-20 18:15:37.259  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=715315
+2026-09-20 18:15:47.259  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=725315
+2026-09-20 18:15:47.259  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=725315
+2026-09-20 18:15:57.260  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=735316
+2026-09-20 18:15:57.260  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=735316
+2026-09-20 18:16:07.258  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=745316
+2026-09-20 18:16:07.258  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=745316
+2026-09-20 18:16:17.259  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=755317
+2026-09-20 18:16:17.259  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=755317
+2026-09-20 18:16:27.260  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=765317
+2026-09-20 18:16:27.260  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=765317
+2026-09-20 18:16:37.260  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=775318
+2026-09-20 18:16:37.260  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=775318
+2026-09-20 18:16:47.260  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=74 uptimeMs=785318
+2026-09-20 18:16:47.260  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=74 uptimeMs=785318
+2026-09-20 18:16:57.261  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=75 uptimeMs=795319
+2026-09-20 18:16:57.261  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=75 uptimeMs=795319
+2026-09-20 18:17:07.259  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=75 uptimeMs=805319
+2026-09-20 18:17:07.259  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=75 uptimeMs=805319
+2026-09-20 18:17:17.260  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=75 uptimeMs=815320
+2026-09-20 18:17:17.260  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=75 uptimeMs=815320
+2026-09-20 18:17:27.261  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=76 uptimeMs=825320
+2026-09-20 18:17:27.261  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=76 uptimeMs=825320
+2026-09-20 18:17:37.260  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=76 uptimeMs=835321
+2026-09-20 18:17:37.260  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=76 uptimeMs=835321
+2026-09-20 18:17:47.261  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=76 uptimeMs=845322
+2026-09-20 18:17:47.261  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=76 uptimeMs=845322
+2026-09-20 18:17:57.261  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=76 uptimeMs=855322
+2026-09-20 18:17:57.261  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=76 uptimeMs=855322
+2026-09-20 18:18:07.261  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=76 uptimeMs=865322
+2026-09-20 18:18:07.261  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=76 uptimeMs=865322
+2026-09-20 18:18:17.261  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=76 uptimeMs=875323
+2026-09-20 18:18:17.261  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=76 uptimeMs=875323
+2026-09-20 18:18:27.262  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=77 uptimeMs=885323
+2026-09-20 18:18:27.262  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=77 uptimeMs=885323
+2026-09-20 18:18:37.260  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=77 uptimeMs=895324
+2026-09-20 18:18:37.260  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=77 uptimeMs=895324
+2026-09-20 18:18:47.261  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=77 uptimeMs=905324
+2026-09-20 18:18:47.261  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=77 uptimeMs=905324
+2026-09-20 18:18:57.262  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=77 uptimeMs=915325
+2026-09-20 18:18:57.262  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=77 uptimeMs=915325
+2026-09-20 18:19:07.260  INFO 1036 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=78 uptimeMs=925326
+2026-09-20 18:19:07.260  INFO 1036 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=78 uptimeMs=925326
+2026-09-20 18:19:10.734  INFO 1036 --- [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-20 18:19:10.744  INFO 1036 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+2026-09-20 18:19:13.229  INFO 19554 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.20 with PID 19554 (/opt/demo-victim/demo-victim.jar started by root in /opt/demo-victim)
+2026-09-20 18:19:13.236  INFO 19554 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 18:19:14.958  INFO 19554 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-09-20 18:19:14.977  INFO 19554 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 18:19:14.978  INFO 19554 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 18:19:15.018  INFO 19554 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 18:19:15.020  INFO 19554 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1641 ms
+2026-09-20 18:19:15.113  INFO 19554 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 18:19:15.609  INFO 19554 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-09-20 18:19:15.632  INFO 19554 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 3.384 seconds (process running for 4.171)
+2026-09-20 18:19:16.566  INFO 19554 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 18:19:16.566  INFO 19554 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 18:19:16.568  INFO 19554 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-09-20 18:19:17.228  WARN 19554 --- [nio-8080-exec-3] d.jingyu.jia.victim.ThreadLeakService    : spawned 80 more victim-worker threads, 80 leaked so far
+2026-09-20 18:19:25.110  INFO 19554 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=106 uptimeMs=13648
+2026-09-20 18:19:25.110  INFO 19554 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=107 uptimeMs=13649
+2026-09-20 18:19:29.625  WARN 19554 --- [nio-8080-exec-9] d.jingyu.jia.victim.ThreadLeakService    : spawned 60 more victim-worker threads, 140 leaked so far
