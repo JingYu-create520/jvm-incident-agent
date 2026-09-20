@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-18 rules ship in jvm-incident-agent 0.1.0.
+18 rules ship in jvm-incident-agent 0.1.1.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -449,4 +449,4 @@ still shows a high lifetime average. That is why the metric carries `basis`; tru
 
 ---
 
-_18 rules, rendered from `jvm-incident-agent 0.1.0 rules --format json` by scripts/render-rules.sh._
+_18 rules, rendered from `jvm-incident-agent 0.1.1 rules --format json` by scripts/render-rules.sh._

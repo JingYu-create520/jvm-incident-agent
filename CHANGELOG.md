@@ -4,6 +4,40 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.1.1 — 2026-09-21
+
+Found by actually running the Docker path end to end, which 0.1.0 shipped unverified because no
+daemon was available during the build. Everything below is a defect in the reproduction
+tooling or a rough edge in the container story, not in the analysis rules.
+
+### Fixed
+
+- `scripts/capture.sh` died under `sh` with `set: Illegal option -o pipefail`. It is a bash
+  script, but `server/run-incident.sh` and the compose `capture` entrypoint both launched it as
+  `sh …`, which is what a container entrypoint naturally does. The script now re-execs under
+  bash when started by a POSIX shell, and both call sites ask for bash directly.
+- `server/docker-compose.yml` published the victim on host port 8080 unconditionally, so the
+  one-click command failed with `port is already allocated` on any machine running something
+  else there. It is now `VICTIM_PORT` (default 8081) — and the one-click flow never needed the
+  mapping anyway, since `run-incident.sh` reaches the container over the compose network.
+
+### Added
+
+- `jia analyze` accepts no path and analyzes the working directory. Combined with the image's
+  `WORKDIR /input` and `CMD ["analyze"]`, the whole container story collapses to
+  `docker run --rm -v "$PWD/incident:/input" jia`.
+- Verified end to end on this machine: `docker compose --profile repro run --build --rm incident
+  deadlock` builds the victim image, plants a real deadlock, captures four artifacts, and
+  `jia analyze` on the fresh folder ranks `H-DEADLOCK` first at 99% confidence. The analyzer
+  image itself now builds and reports `H-DEADLOCK` on the incident mount and "no high-confidence
+  problem found" on the healthy one.
+
+### Documented
+
+- README (both languages) now shows the commands that were actually run, including the Windows
+  Git Bash trap where `-v "$PWD/incident:/input:ro"` silently mounts nothing because `$PWD` is an
+  MSYS path (`/d/…`); use a `D:/…` host path there, or PowerShell.
+
 ## 0.1.0 — 2026-09-20
 
 First release. The scope is one sentence: put JVM incident artifacts in, get an

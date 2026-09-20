@@ -63,8 +63,9 @@ public final class Cli {
 @Command(name = "analyze", description = "Analyze a snapshot directory, or one or more artifact files.")
 final class Analyze implements Callable<Integer> {
 
-    @Parameters(arity = "1..*", paramLabel = "PATH",
-            description = "Snapshot directory and/or artifact files.")
+    @Parameters(arity = "0..*", paramLabel = "PATH",
+            description = "Snapshot directory and/or artifact files. With no PATH, the current "
+                    + "directory is analyzed — which is what the container form relies on.")
     private List<Path> paths = new ArrayList<>();
 
     @Option(names = {"-f", "--format"}, description = "md, json or both (default md to stdout).")
@@ -112,6 +113,10 @@ final class Analyze implements Callable<Integer> {
 
     @Override
     public Integer call() throws IOException {
+        if (paths.isEmpty()) {
+            // `docker run -v ./incident:/input jia` should need no argument: WORKDIR is /input.
+            paths = List.of(Path.of("."));
+        }
         Config cfg = configOverrides();
         Snapshot.Builder merged = Snapshot.builder();
         List<String> notes = new ArrayList<>();

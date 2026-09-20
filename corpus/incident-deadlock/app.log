@@ -1,18 +1,111 @@
-2026-09-20 21:36:50.491  INFO 26476 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.5 with PID 26476 (D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\demo-victim.jar started by Ella in D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\corpus-work\incident-deadlock)
-2026-09-20 21:36:50.501  INFO 26476 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
-2026-09-20 21:36:51.892  INFO 26476 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8182 (http)
-2026-09-20 21:36:51.907  INFO 26476 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-09-20 21:36:51.907  INFO 26476 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
-2026-09-20 21:36:51.954  INFO 26476 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-09-20 21:36:51.956  INFO 26476 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1364 ms
-2026-09-20 21:36:52.054  INFO 26476 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
-2026-09-20 21:36:52.413  INFO 26476 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8182 (http) with context path '/'
-2026-09-20 21:36:52.438  INFO 26476 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 2.728 seconds (process running for 3.265)
-2026-09-20 21:36:52.997  INFO 26476 --- [nio-8182-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-09-20 21:36:52.997  INFO 26476 --- [nio-8182-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-09-20 21:36:52.998  INFO 26476 --- [nio-8182-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
-2026-09-20 21:36:56.512  WARN 26476 --- [io-8182-exec-10] dev.jingyu.jia.victim.DeadlockPlant      : deadlock planted round=1 threads=victim-ledger-poster/victim-statement-writer hotLockWaiters=8
-2026-09-20 21:37:02.053  INFO 26476 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=75 uptimeMs=12880
-2026-09-20 21:37:02.053  INFO 26476 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=75 uptimeMs=12880
-2026-09-20 21:37:12.065  INFO 26476 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=75 uptimeMs=22892
-2026-09-20 21:37:12.065  INFO 26476 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=75 uptimeMs=22892
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+2026-09-20 17:22:18.538  INFO 17327 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.20 with PID 17327 (/opt/demo-victim/demo-victim.jar started by root in /opt/demo-victim)
+2026-09-20 17:22:18.541  INFO 17327 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 17:22:19.666  INFO 17327 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-09-20 17:22:19.679  INFO 17327 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 17:22:19.680  INFO 17327 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 17:22:19.710  INFO 17327 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 17:22:19.711  INFO 17327 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1073 ms
+2026-09-20 17:22:19.791  INFO 17327 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 17:22:20.144  INFO 17327 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-09-20 17:22:20.161  INFO 17327 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 2.312 seconds (process running for 2.874)
+2026-09-20 17:22:22.365  INFO 17327 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 17:22:22.365  INFO 17327 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 17:22:22.367  INFO 17327 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-20 17:22:29.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=79 uptimeMs=12502
+2026-09-20 17:22:29.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=79 uptimeMs=12502
+2026-09-20 17:22:39.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=80 uptimeMs=22503
+2026-09-20 17:22:39.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=80 uptimeMs=22503
+2026-09-20 17:22:49.788  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=32503
+2026-09-20 17:22:49.788  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=32503
+2026-09-20 17:22:59.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=42504
+2026-09-20 17:22:59.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=42504
+2026-09-20 17:23:09.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=52504
+2026-09-20 17:23:09.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=52504
+2026-09-20 17:23:19.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=62505
+2026-09-20 17:23:19.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=62505
+2026-09-20 17:23:29.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=72506
+2026-09-20 17:23:29.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=72506
+2026-09-20 17:23:39.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=81 uptimeMs=82506
+2026-09-20 17:23:39.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=81 uptimeMs=82506
+2026-09-20 17:23:49.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=82 uptimeMs=92507
+2026-09-20 17:23:49.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=82 uptimeMs=92507
+2026-09-20 17:23:59.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=82 uptimeMs=102507
+2026-09-20 17:23:59.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=82 uptimeMs=102507
+2026-09-20 17:23:59.969  WARN 17327 --- [nio-8080-exec-7] dev.jingyu.jia.victim.DeadlockPlant      : deadlock planted round=1 threads=victim-ledger-poster/victim-statement-writer hotLockWaiters=8
+2026-09-20 17:24:09.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=112508
+2026-09-20 17:24:09.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=112508
+2026-09-20 17:24:19.789  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=122509
+2026-09-20 17:24:19.789  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=122509
+2026-09-20 17:24:29.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=132509
+2026-09-20 17:24:29.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=132509
+2026-09-20 17:24:39.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=142510
+2026-09-20 17:24:39.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=142510
+2026-09-20 17:24:49.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=152510
+2026-09-20 17:24:49.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=152510
+2026-09-20 17:24:59.790  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=162511
+2026-09-20 17:24:59.790  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=162511
+2026-09-20 17:25:09.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=172512
+2026-09-20 17:25:09.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=172513
+2026-09-20 17:25:19.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=182513
+2026-09-20 17:25:19.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=182513
+2026-09-20 17:25:29.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=192514
+2026-09-20 17:25:29.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=192514
+2026-09-20 17:25:39.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=85 uptimeMs=202514
+2026-09-20 17:25:39.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=85 uptimeMs=202514
+2026-09-20 17:25:49.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=212515
+2026-09-20 17:25:49.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=212515
+2026-09-20 17:25:59.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=222515
+2026-09-20 17:25:59.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=222515
+2026-09-20 17:26:09.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=232516
+2026-09-20 17:26:09.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=232516
+2026-09-20 17:26:19.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=242516
+2026-09-20 17:26:19.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=242516
+2026-09-20 17:26:29.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=252517
+2026-09-20 17:26:29.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=252517
+2026-09-20 17:26:39.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=262518
+2026-09-20 17:26:39.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=262518
+2026-09-20 17:26:49.791  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=272518
+2026-09-20 17:26:49.791  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=272518
+2026-09-20 17:26:59.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=282519
+2026-09-20 17:26:59.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=282519
+2026-09-20 17:27:09.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=292520
+2026-09-20 17:27:09.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=292520
+2026-09-20 17:27:19.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=302520
+2026-09-20 17:27:19.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=302520
+2026-09-20 17:27:29.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=312521
+2026-09-20 17:27:29.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=312521
+2026-09-20 17:27:39.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=322521
+2026-09-20 17:27:39.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=322521
+2026-09-20 17:27:49.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=332522
+2026-09-20 17:27:49.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=332522
+2026-09-20 17:27:59.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=342523
+2026-09-20 17:27:59.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=342523
+2026-09-20 17:28:04.643  WARN 17327 --- [nio-8080-exec-9] dev.jingyu.jia.victim.DeadlockPlant      : deadlock planted round=2 threads=victim-ledger-poster/victim-statement-writer hotLockWaiters=8
+2026-09-20 17:28:09.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=352523
+2026-09-20 17:28:09.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=352523
+2026-09-20 17:28:19.792  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=362524
+2026-09-20 17:28:19.792  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=362524
+2026-09-20 17:28:29.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=372524
+2026-09-20 17:28:29.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=372524
+2026-09-20 17:28:39.793  INFO 17327 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=382525
+2026-09-20 17:28:39.793  INFO 17327 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=382525
+2026-09-20 17:28:42.068  INFO 17327 --- [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-09-20 17:28:42.075  INFO 17327 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+2026-09-20 17:28:44.123  INFO 25257 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.20 with PID 25257 (/opt/demo-victim/demo-victim.jar started by root in /opt/demo-victim)
+2026-09-20 17:28:44.134  INFO 25257 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 17:28:45.842  INFO 25257 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-09-20 17:28:45.859  INFO 25257 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 17:28:45.860  INFO 25257 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 17:28:45.894  INFO 25257 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 17:28:45.895  INFO 25257 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1615 ms
+2026-09-20 17:28:45.988  INFO 25257 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 17:28:46.446  INFO 25257 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-09-20 17:28:46.467  INFO 25257 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 3.219 seconds (process running for 3.823)
+2026-09-20 17:28:47.721  INFO 25257 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 17:28:47.721  INFO 25257 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 17:28:47.722  INFO 25257 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-20 17:28:48.322  WARN 25257 --- [nio-8080-exec-3] dev.jingyu.jia.victim.DeadlockPlant      : deadlock planted round=1 threads=victim-ledger-poster/victim-statement-writer hotLockWaiters=8
+2026-09-20 17:28:55.984  INFO 25257 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=84 uptimeMs=13342
+2026-09-20 17:28:55.985  INFO 25257 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=84 uptimeMs=13343

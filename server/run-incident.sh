@@ -40,7 +40,7 @@ sleep 5
 echo "==> capturing"
 # --skip-histo: jmap inside a sidecar needs the same /tmp + PID namespace; if it is unavailable
 # the histogram is the only artifact you lose, so the run still produces something reviewable.
-exec sh /opt/demo-victim/scripts/capture.sh \
+exec bash /opt/demo-victim/scripts/capture.sh \
   -o "$ARTIFACTS_DIR/$DIR" \
   -m 'demo-victim' \
   -d 6 \

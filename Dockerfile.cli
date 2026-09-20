@@ -62,6 +62,9 @@ RUN jia --version && java -jar "$JIA_HOME/jia.jar" rules | head -n 3
 USER jia
 WORKDIR /input
 
-ENTRYPOINT ["java","-jar","/opt/jia/jia.jar"]
-# no arguments means no work: show the command surface instead of a picocli error
-CMD ["--help"]
+ENTRYPOINT ["java","-Dfile.encoding=UTF-8","-jar","/opt/jia/jia.jar"]
+# The image's whole job: mount an incident folder at /input and run it. `analyze` with no PATH
+# analyzes the working directory, so the shortest useful command is
+#   docker run --rm -v "$PWD/incident:/input" jia
+# Help is still one flag away: `docker run --rm jia --help`.
+CMD ["analyze"]

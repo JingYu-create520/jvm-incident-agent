@@ -43,8 +43,12 @@ services:
   victim:
     <<: *jvm
     container_name: jvm-incident-victim
+    # Published only so a human can poke at /victim/* in a browser. The one-click flow
+    # does not need it: run-incident.sh reaches this container over the compose network at
+    # http://victim:8080. It is configurable because binding 8080 is exactly the kind of
+    # thing that collides with whatever else is already on a developer laptop.
     ports:
-      - "8080:8080"
+      - "${VICTIM_PORT:-8081}:8080"
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/victim/health"]
       interval: 5s
@@ -66,7 +70,7 @@ services:
   capture:
     <<: *jvm
     profiles: ["capture"]
-    entrypoint: ["sh", "/opt/demo-victim/scripts/capture.sh"]
+    entrypoint: ["bash", "/opt/demo-victim/scripts/capture.sh"]
     command: ["-o", "/artifacts/${OUT:-incident-manual}", "-d", "6",
               "--gc-log", "/artifacts/live/gc.log", "--app-log", "/artifacts/live/app.log"]
     depends_on:

@@ -67,8 +67,13 @@ java -jar jia.jar --version
 
 ```bash
 docker build -f Dockerfile.cli -t jia .
-docker run --rm -v "$PWD/incident:/in:ro" jia analyze /in
+docker run --rm -v "$PWD/incident:/input:ro" jia          # 不用给路径:WORKDIR 就是 /input
 ```
+
+镜像会把挂载进 `/input` 的内容分析一遍,报告打到 stdout。
+**Windows + Git Bash 注意**:挂载要写 Windows 风格的主机路径,比如
+`-v "D:/projects/incident:/input:ro"`——Git Bash 会把 `$PWD` 改写成 MSYS 路径(`/d/…`),
+Docker 不报错,但挂进去是空目录。PowerShell 里没这个问题。
 
 ## 快速上手
 
@@ -212,9 +217,21 @@ jia mcp        # stdio,换行分帧的 JSON-RPC 2.0
 | `GET /victim/healthy` | 干净路径——零误报门禁就拿它来量 |
 
 ```bash
-cd demo-victim && ../mvnw -q -DskipTests package
-cd .. && docker compose -f server/docker-compose.yml up    # 或者直接在宿主机上跑
-scripts/capture.sh -o corpus/incident-deadlock -d 6        # jstack -l、jmap -histo、日志
+# 一条命令:构建靶子镜像、起容器、埋一个死锁、把四种产物抓进 corpus/incident-deadlock/
+docker compose -f server/docker-compose.yml --profile repro run --build --rm incident deadlock
+
+# 然后在宿主机上分析(或者挂进容器里分析,见上面「安装」)
+jia analyze corpus/incident-deadlock
+```
+
+靶子应用不要求你预留端口:宿主机端口是 `VICTIM_PORT`(默认 8081),而且一键流程根本不用它
+——触发脚本走 compose 网络直连容器。事故种类:`deadlock`、`heap-leak`、`gc-storm`、
+`thread-leak`、`exceptions`、`healthy`。不想用 Docker,在宿主机上直接跑:
+
+```bash
+cd demo-victim && ../mvnw -q -DskipTests package && cd ..
+java -Xmx256m -Xms256m -jar demo-victim/target/demo-victim.jar &
+scripts/capture.sh -o /tmp/incident -d 6        # jstack -l、jmap -histo、gc.log、app.log
 ```
 
 [`corpus/`](corpus) 里的每个字节都是活 JVM 的真产物,没有一份是手写的。六个场景,每个配一份

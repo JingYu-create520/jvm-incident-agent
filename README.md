@@ -75,7 +75,7 @@ Needs a Java 17+ runtime. No installation step beyond getting one jar.
 ./mvnw -q -DskipTests package
 
 # or with a released jar
-curl -LO https://github.com/JingYu-create520/jvm-incident-agent/releases/download/v0.1.0/jia.jar
+curl -LO https://github.com/JingYu-create520/jvm-incident-agent/releases/latest/download/jia.jar
 java -jar jia.jar --version
 ```
 
@@ -85,8 +85,13 @@ Docker, if you prefer:
 
 ```bash
 docker build -f Dockerfile.cli -t jia .
-docker run --rm -v "$PWD/incident:/in:ro" jia analyze /in
+docker run --rm -v "$PWD/incident:/input:ro" jia          # no path needed: WORKDIR is /input
 ```
+
+The image analyses whatever is mounted at `/input` and prints the report to stdout.
+**Windows + Git Bash note:** mount with a Windows-style host path —
+`-v "D:/projects/incident:/input:ro"` — because Git Bash rewrites `$PWD` into an MSYS path
+(`/d/…`) that Docker silently mounts as empty. PowerShell does not have this problem.
 
 ## Quickstart
 
@@ -274,9 +279,23 @@ reasonable. So the repo ships a **target application** and the real output of br
 | `GET /victim/healthy` | the clean path the zero-false-positive gate is measured against |
 
 ```bash
-cd demo-victim && ../mvnw -q -DskipTests package
-cd .. && docker compose -f server/docker-compose.yml up    # or run it on the host
-scripts/capture.sh -o corpus/incident-deadlock -d 6        # jstack -l, jmap -histo, logs
+# one command: builds the victim image, starts it, plants the deadlock,
+# captures the four artifacts into corpus/incident-deadlock/
+docker compose -f server/docker-compose.yml --profile repro run --build --rm incident deadlock
+
+# then analyze from the host (or point a container at it, see Install)
+jia analyze corpus/incident-deadlock
+```
+
+The victim publishes nothing you must reserve: its host port is `VICTIM_PORT` (default 8081),
+and the one-click flow does not use it at all — the trigger reaches the container over the
+compose network. Incidents: `deadlock`, `heap-leak`, `gc-storm`, `thread-leak`, `exceptions`,
+`healthy`. On the host without Docker:
+
+```bash
+cd demo-victim && ../mvnw -q -DskipTests package && cd ..
+java -Xmx256m -Xms256m -jar demo-victim/target/demo-victim.jar &
+scripts/capture.sh -o /tmp/incident -d 6        # jstack -l, jmap -histo, gc.log, app.log
 ```
 
 Everything in [`corpus/`](corpus) is byte-for-byte real tool output from a live JVM — no

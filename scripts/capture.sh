@@ -14,6 +14,20 @@
 #   scripts/capture.sh -o corpus/incident-deadlock [-p PID] [-m MATCH] [-d 5]
 #                      [--gc-log FILE] [--app-log FILE] [--between-cmd 'curl ...'] [--skip-histo]
 
+# Re-exec under bash when started by a POSIX shell.
+#
+# This script uses `set -o pipefail` and bash expansions, so `sh capture.sh` — which is how a
+# container entrypoint or a copy-pasted command line may invoke it — dies on dash with
+# "Illegal option -o pipefail". Rather than downgrading the whole script to the lowest common
+# denominator, honour the interpreter the shebang promises.
+if [ -z "${BASH_VERSION:-}" ]; then
+  if command -v bash >/dev/null 2>&1; then
+    exec bash "$0" "$@"
+  fi
+  echo "capture.sh needs bash; re-run it as: bash $0 $*" >&2
+  exit 3
+fi
+
 set -uo pipefail
 
 usage() {
