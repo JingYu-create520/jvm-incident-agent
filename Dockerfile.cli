@@ -1,0 +1,67 @@
+# syntax=docker/dockerfile:1
+# ---------------------------------------------------------------------------
+# Dockerfile.cli - the analyzer itself as a container.
+#
+#   docker build -f Dockerfile.cli -t jvm-incident-agent-cli .
+#   docker run --rm -v "$PWD/corpus:/input:ro" jvm-incident-agent-cli analyze /input/incident-gc-storm
+#   docker run --rm -v "$PWD:/work" -w /work jvm-incident-agent-cli rules
+#
+# Build context is the repository root, so .dockerignore matters: it must stay
+# a subset of what the *victim* image (server/Dockerfile, same context) copies,
+# which is why demo-victim/ and scripts/ are not excluded here.
+#
+# This is the CLI half only. For "reproduce the incident and analyse it in one
+# command" use server/docker-compose.yml, which starts demo-victim and the
+# capture sidecar.
+#
+# Written and reviewed without a Docker daemon on the authoring machine; the
+# multi-stage logic mirrors the local build, which produces target/jia.jar via
+# maven-shade-plugin with Main-Class dev.jingyu.jia.Main.
+# ---------------------------------------------------------------------------
+
+# ---- 1. build the shaded jar ----------------------------------------------
+FROM maven:3.9.9-eclipse-temurin-17 AS build
+WORKDIR /src
+
+# the pom alone first: dependencies stay in the layer cache across source edits
+COPY pom.xml ./
+RUN mvn -B -ntp -q dependency:go-offline
+
+COPY src ./src
+# tests run in CI (both OSes) against the real corpus; the image build skips them
+RUN mvn -B -ntp -q -DskipTests package \
+ && ls -l target/jia.jar
+
+# ---- 2. runtime: a JRE, the jar, and a `jia` shim -------------------------
+FROM eclipse-temurin:17-jre-jammy AS runtime
+
+LABEL org.opencontainers.image.title="jvm-incident-agent" \
+      org.opencontainers.image.description="Offline JVM incident analysis: thread dumps, GC logs, heap histograms, exception stacks. Every finding quotes file:line evidence." \
+      org.opencontainers.image.source="https://github.com/JingYu-create520/jvm-incident-agent" \
+      org.opencontainers.image.licenses="MIT"
+
+ENV JIA_HOME=/opt/jia \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
+RUN useradd --system --uid 10001 --user-group --shell /usr/sbin/nologin jia \
+ && mkdir -p "$JIA_HOME" /input \
+ && chown -R jia:jia "$JIA_HOME" /input
+
+COPY --from=build --chown=jia:jia /src/target/jia.jar "$JIA_HOME/jia.jar"
+
+# `jia ...` next to `docker run <image> ...`: the same JVM flags as bin/jia, so
+# an interactive shell inside the container behaves like the launcher scripts.
+RUN printf '#!/bin/sh\nexec java -Dfile.encoding=UTF-8 -jar "%s/jia.jar" "$@"\n' "$JIA_HOME" \
+      > /usr/local/bin/jia \
+ && chmod 0755 /usr/local/bin/jia
+
+# fails the build if the jar or its manifest main class is wrong
+RUN jia --version && java -jar "$JIA_HOME/jia.jar" rules | head -n 3
+
+USER jia
+WORKDIR /input
+
+ENTRYPOINT ["java","-jar","/opt/jia/jia.jar"]
+# no arguments means no work: show the command surface instead of a picocli error
+CMD ["--help"]

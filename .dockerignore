@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------
+# Build-context hygiene. This file applies to BOTH images, because
+# Dockerfile.cli and server/Dockerfile (via server/docker-compose.yml) share the
+# repository root as their context.
+#
+# Consequence: everything server/Dockerfile COPYs must stay in the context -
+# pom.xml, src/, demo-victim/ (sources only), scripts/, server/. What is
+# excluded below is either build output that the images regenerate themselves
+# or material no image ever reads.
+# ---------------------------------------------------------------------------
+
+# git metadata: the largest directory here and never read by a build
+.git
+.gitignore
+
+# build output - both stages run Maven from scratch inside the container
+target/
+**/target/
+demo-victim/target/
+
+# captured incident corpus (~MBs of real dumps, logs and histograms); the
+# container mounts what it needs with -v, and docker-compose.yml bind-mounts
+# ../corpus rather than copying it
+corpus/
+
+# CI and human documentation, host-side launchers (the images call the `mvn`
+# that ships with maven:3.9.9-eclipse-temurin-17, not ./mvnw)
+.github/
+docs/
+bin/
+mvnw
+mvnw.cmd
+.mvn/
+
+# JVM crash debris and heap dumps that can turn up in a working tree
+*.hprof
+hs_err_pid*.log
+replay_pid*.log
+nohup.out

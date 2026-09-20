@@ -25,3 +25,6 @@ replay_pid*.log
 .vscode/
 .DS_Store
 Thumbs.db
+
+# the Maven wrapper downloads its distribution into the project on first run
+.mvn/wrapper/dists/

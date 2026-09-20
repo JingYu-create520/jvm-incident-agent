@@ -47,7 +47,7 @@ sh "$JIA" rules --format json > "$JSON" \
   || { echo "render-rules.sh: '$JIA rules --format json' failed" >&2; exit 3; }
 [ -s "$JSON" ] || { echo "render-rules.sh: the CLI returned an empty catalogue" >&2; exit 3; }
 
-# ---- Jackson's pretty-printed array -> Markdown -----------------------------
+# ---- the Jackson pretty-printed array -> Markdown ---------------------
 # One record per object, four keys, and `doc` is a single-line JSON string whose
 # newlines are \n escapes. The unescaping below is character-by-character so a
 # literal backslash survives and an unknown escape is passed through verbatim.
@@ -73,10 +73,12 @@ function unesc(s,   out, i, c, e, len) {
 }
 
 # the string on a `"key" : "value"` line: cut before the first colon (keys hold
-# no colon) and after the last quote, then unescape
+# no colon), drop the trailing comma the pretty printer adds, then the closing
+# quote, then unescape
 function value(line,   s) {
   s = line
   sub(/^[^:]*: "/, "", s)
+  sub(/,$/, "", s)
   sub(/"$/, "", s)
   return unesc(s)
 }
@@ -102,7 +104,7 @@ END {
   print ""
   print "# Rule catalogue"
   print ""
-  printf '%d rules ship in %s.\n\n', n, version
+  printf "%d rules ship in %s.\n\n", n, version
   print "Every finding they raise quotes `file:line` evidence from the artifact that was read,"
   print "and the text of each section is the same `doc()` the CLI serves from Java:"
   print ""

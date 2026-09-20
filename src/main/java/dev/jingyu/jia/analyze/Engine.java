@@ -16,6 +16,9 @@ public final class Engine {
 
     public static final String VERSION = "0.1.0";
 
+    /** Ceiling on the evidence lines of a merged finding; two dumps prove the same fact once. */
+    private static final int MAX_MERGED_EVIDENCE = 8;
+
     private final List<Rule> rules;
 
     public Engine() {
@@ -110,9 +113,27 @@ public final class Engine {
             if (files.size() > 1) {
                 b.metric("seenIn", files.stream().distinct().toList());
             }
-            out.add(b.build());
+            Finding mergedOne = b.build();
+            out.add(mergedOne.evidence().size() > MAX_MERGED_EVIDENCE
+                    ? trimEvidence(mergedOne)
+                    : mergedOne);
         }
         return out;
+    }
+
+    /** Merging two dumps would otherwise double the evidence block for no added proof. */
+    private static Finding trimEvidence(Finding f) {
+        var b = Finding.builder(f.ruleId())
+                .title(f.title())
+                .artifact(f.artifact())
+                .severity(f.severity())
+                .summary(f.summary())
+                .confidence(f.confidence())
+                .metrics(f.metrics());
+        b.evidence(f.evidence().subList(0, MAX_MERGED_EVIDENCE));
+        f.recommendations().forEach(b::recommend);
+        b.metric("evidenceTruncated", f.evidence().size() - MAX_MERGED_EVIDENCE);
+        return b.build();
     }
 
     private static List<String> concat(List<String> a, List<String> b) {

@@ -40,6 +40,9 @@ class ParserTest {
             assertTrue(d.vmReportedDeadlock());
             assertEquals(1, d.vmDeadlockCount());
             assertFalse(d.deadlockLines().isEmpty(), "the trailer must be collected, not parsed as threads");
+            assertEquals("2026-09-20 21:04:11", d.capturedAtRaw(),
+                    "the capture date sits on the line before 'Full thread dump' and must survive it");
+            assertNotNull(Epochs.toMillis(d.capturedAtRaw()));
 
             JThread a = thread(d, "transfer-worker-1");
             assertEquals(JThread.ThreadState.BLOCKED, a.state());

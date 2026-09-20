@@ -1,0 +1,84 @@
+name: build
+
+# Every push and every pull request: the analyzer must stay green on the two
+# platforms people actually run it on (the GC-log parsing and the -Xlog capture
+# differ between them, which is why there is no single-runner version of this).
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    defaults:
+      run:
+        # bash on both OSes, so ./mvnw and the acceptance gate below are one
+        # script rather than a sh copy and a ps1 copy
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # Two checkout artifacts that differ per runner and would otherwise break the
+      # next line: windows-latest applies core.autocrlf=true (so ./mvnw would carry
+      # CRLF into bash), and the exec bit is not preserved by every commit path.
+      # A committed .gitattributes is the tidier fix and is deliberately not added
+      # here, because this workflow must not depend on files outside it.
+      - name: Prepare the wrapper for this runner
+        run: |
+          sed -i 's/\r$//' mvnw
+          chmod +x mvnw
+
+      - name: Build and verify
+        run: ./mvnw -B -ntp verify
+
+      # The product contract is the exit code: 0 nothing high-severity, 1 at
+      # least one HIGH/CRITICAL finding, 2 unreadable input. corpus/ holds real
+      # captures, so a green build that no longer detects a real GC storm fails
+      # here rather than in someone's incident review.
+      - name: Acceptance gate - a real incident must exit 1
+        run: |
+          status=0
+          java -Dfile.encoding=UTF-8 -jar target/jia.jar analyze corpus/incident-gc-storm \
+               --format json --no-narrative \
+               > target/jia-gc-storm.json 2> target/jia-gc-storm.txt || status=$?
+
+          if [ "$status" -ne 1 ]; then
+            echo "::error::expected exit 1 for corpus/incident-gc-storm, got $status"
+            cat target/jia-gc-storm.txt
+            exit 1
+          fi
+
+          {
+            printf '## Acceptance gate - corpus/incident-gc-storm\n\n'
+            printf 'Exit code %s, as expected (1 = the snapshot holds a HIGH or CRITICAL finding).\n\n' "$status"
+            printf '```\n'
+            cat target/jia-gc-storm.txt
+            printf '```\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the CLI jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: jia-jar-${{ matrix.os }}
+          path: target/jia.jar
+          if-no-files-found: error
+          retention-days: 14

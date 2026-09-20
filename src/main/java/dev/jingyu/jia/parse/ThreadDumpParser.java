@@ -68,8 +68,11 @@ public final class ThreadDumpParser {
             if (full.matches()) {
                 if (cur.hasContent()) {
                     dumps.add(cur.finish());
+                    cur = new Build(src);
                 }
-                cur = new Build(src);
+                // Adopted into the open build rather than always replacing it: jstack prints the
+                // capture date on the line *before* this one, and discarding the build there
+                // discarded the timestamp the timeline needs.
                 inTrailer = false;
                 inOwnableSection = false;
                 cur.vmDescription = full.group(1);
