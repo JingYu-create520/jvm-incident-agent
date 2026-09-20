@@ -1,0 +1,51 @@
+2026-09-20 21:37:43.538  INFO 16092 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.5 with PID 16092 (D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\demo-victim.jar started by Ella in D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\corpus-work\incident-heap-leak)
+2026-09-20 21:37:43.543  INFO 16092 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 21:37:44.757  INFO 16092 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8182 (http)
+2026-09-20 21:37:44.770  INFO 16092 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 21:37:44.770  INFO 16092 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 21:37:44.818  INFO 16092 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 21:37:44.819  INFO 16092 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1200 ms
+2026-09-20 21:37:44.911  INFO 16092 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 21:37:45.209  INFO 16092 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8182 (http) with context path '/'
+2026-09-20 21:37:45.227  INFO 16092 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 2.437 seconds (process running for 2.92)
+2026-09-20 21:37:46.019  INFO 16092 --- [nio-8182-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 21:37:46.019  INFO 16092 --- [nio-8182-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 21:37:46.020  INFO 16092 --- [nio-8182-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-09-20 21:37:47.040 ERROR 16092 --- [nio-8182-exec-4] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Handler dispatch failed: java.lang.OutOfMemoryError: Java heap space] with root cause
+
+java.lang.OutOfMemoryError: Java heap space
+	at java.base/jdk.internal.misc.Unsafe.allocateUninitializedArray(Unsafe.java:1375) ~[na:na]
+	at java.base/java.lang.StringConcatHelper.newArray(StringConcatHelper.java:494) ~[na:na]
+	at java.base/java.lang.invoke.DirectMethodHandle$Holder.invokeStatic(DirectMethodHandle$Holder) ~[na:na]
+	at java.base/java.lang.invoke.LambdaForm$MH/0x0000000100544400.invoke(LambdaForm$MH) ~[na:na]
+	at java.base/java.lang.invoke.Invokers$Holder.linkToTargetMethod(Invokers$Holder) ~[na:na]
+	at dev.jingyu.jia.victim.LeakyCache.put(LeakyCache.java:77) ~[!/:1.0.0]
+	at dev.jingyu.jia.victim.VictimController.leak(VictimController.java:60) ~[!/:1.0.0]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564) ~[tomcat-embed-core-10.1.55.jar!/:na]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.19.jar!/:6.2.19]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.55.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-10.1.55.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.55.jar!/:na]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.55.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.55.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.55.jar!/:na]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.19.jar!/:6.2.19]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.19.jar!/:6.2.19]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.55.jar!/:na]
+
+2026-09-20 21:37:54.913  INFO 16092 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=246 uptimeMs=12606
+2026-09-20 21:37:54.913  INFO 16092 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=246 uptimeMs=12606

@@ -1,0 +1,130 @@
+package dev.jingyu.jia.analyze;
+
+import dev.jingyu.jia.model.Config;
+import dev.jingyu.jia.model.Finding;
+import dev.jingyu.jia.model.Snapshot;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/** Runs the registered rules over a snapshot and assembles the result. */
+public final class Engine {
+
+    public static final String VERSION = "0.1.0";
+
+    private final List<Rule> rules;
+
+    public Engine() {
+        this(Rules.all());
+    }
+
+    public Engine(List<Rule> rules) {
+        this.rules = List.copyOf(rules);
+    }
+
+    public List<Rule> rules() {
+        return rules;
+    }
+
+    public AnalysisResult analyze(Snapshot snapshot, Config config) {
+        long start = System.nanoTime();
+        List<Finding> findings = new ArrayList<>();
+        Map<String, String> status = new LinkedHashMap<>();
+        List<String> errors = new ArrayList<>();
+        List<String> notes = new ArrayList<>(snapshotNotes(snapshot));
+
+        for (Rule rule : rules) {
+            if (!rule.applies(snapshot)) {
+                status.put(rule.id(), "not-applicable");
+                continue;
+            }
+            try {
+                List<Finding> produced = rule.evaluate(snapshot, config);
+                findings.addAll(produced);
+                status.put(rule.id(), produced.isEmpty() ? "clean" : produced.size() + " finding(s)");
+            } catch (RuntimeException | Error e) {
+                // A broken rule must never cost the reader the rest of the report.
+                status.put(rule.id(), "error");
+                errors.add(rule.id() + " failed: " + e);
+            }
+        }
+        List<Finding> merged = dedupe(findings);
+        Collections.sort(merged);
+
+        List<Hypothesis> hypotheses = new HypothesisBuilder(merged).build();
+        Timeline timeline;
+        try {
+            timeline = Timeline.build(snapshot, config, findings);
+        } catch (RuntimeException e) {
+            timeline = Timeline.empty();
+            errors.add("timeline could not be assembled: " + e);
+        }
+        long elapsed = (System.nanoTime() - start) / 1_000_000L;
+        return new AnalysisResult(snapshot, config, List.copyOf(merged), hypotheses, timeline,
+                List.copyOf(concat(notes, errors)), Map.copyOf(status), Instant.now(), elapsed, VERSION);
+    }
+
+    private static final java.util.regex.Pattern FILE_TOKEN =
+            java.util.regex.Pattern.compile("\\S+\\.(?:dump|log|txt|histo|out|jstack)\\b");
+
+    /**
+     * Two dumps of the same JVM describe the same problem. A finding that recurs across dumps is
+     * merged into one, with the files it was seen in kept as a metric — repeating the identical
+     * paragraph twice costs the reader attention they should spend on the fix.
+     */
+    static List<Finding> dedupe(List<Finding> in) {
+        Map<String, List<Finding>> groups = new LinkedHashMap<>();
+        for (Finding f : in) {
+            String key = f.ruleId() + "|" + f.title() + "|"
+                    + FILE_TOKEN.matcher(f.summary()).replaceAll("<file>");
+            groups.computeIfAbsent(key, k -> new ArrayList<>()).add(f);
+        }
+        List<Finding> out = new ArrayList<>();
+        for (List<Finding> group : groups.values()) {
+            if (group.size() == 1) {
+                out.add(group.get(0));
+                continue;
+            }
+            Finding first = group.get(0);
+            var b = Finding.builder(first.ruleId())
+                    .title(first.title())
+                    .artifact(first.artifact())
+                    .summary(first.summary())
+                    .confidence(group.stream().mapToDouble(Finding::confidence).max().orElse(0.5))
+                    .severity(group.stream().map(Finding::severity).min(java.util.Comparator.naturalOrder())
+                            .orElse(first.severity()));
+            var files = new ArrayList<String>();
+            for (Finding f : group) {
+                b.evidence(f.evidence());
+                f.recommendations().forEach(b::recommend);
+                b.metrics(f.metrics());
+                Object file = f.metrics().get("file");
+                if (file != null) {
+                    files.add(String.valueOf(file));
+                }
+            }
+            if (files.size() > 1) {
+                b.metric("seenIn", files.stream().distinct().toList());
+            }
+            out.add(b.build());
+        }
+        return out;
+    }
+
+    private static List<String> concat(List<String> a, List<String> b) {
+        List<String> out = new ArrayList<>(a);
+        out.addAll(b);
+        return out;
+    }
+
+    private static List<String> snapshotNotes(Snapshot snapshot) {
+        List<String> out = new ArrayList<>();
+        snapshot.unparsed().forEach(u -> out.add(u.file() + ": " + u.reason()));
+        snapshot.gcLog().ifPresent(log -> log.notes().forEach(n -> out.add(log.source().name() + ": " + n)));
+        return out;
+    }
+}

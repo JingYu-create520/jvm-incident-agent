@@ -1,0 +1,8 @@
+ num     #instances         #bytes  class name
+----------------------------------------------
+   1:          4200        2548000  [B
+   2:         12000         960000  [C
+   3:          9800         313600  java.lang.String
+   4:           500         120000  com.example.report.RowBuffer
+   5:            88          14080  java.lang.Class
+Total         26588        3963680

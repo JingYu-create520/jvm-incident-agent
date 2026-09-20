@@ -1,0 +1,77 @@
+# One-click "reproduce the incident" environment for jvm-incident-agent.
+#
+#   victim   : demo-victim on a 256 MB heap, GC log + app log written into the mounted ./corpus
+#   incident : one-shot that fires one endpoint and runs scripts/capture.sh against that JVM
+#   capture  : same, without triggering anything (capture what the running victim already did)
+#
+# The JDK tools (jstack/jmap/jps/jcmd) attach to a JVM through that JVM's own /tmp
+# (hsperfdata_<user>/<pid> plus the .java_pid<pid> UNIX socket), so `victim` and `incident`
+# share both the PID namespace and a /tmp volume. Without `pid: "host"` the capture sidecar
+# sees no Java processes at all. On Docker Desktop this is the VM's PID namespace, which every
+# container of this project shares; on Linux it is literally the host's.
+#
+#   docker compose -f server/docker-compose.yml --profile repro run --rm incident deadlock
+#   ls corpus/incident-deadlock
+#
+# Incidents: deadlock  heap-leak  gc-storm  thread-leak  exceptions  healthy
+# Then point the analyzer at the folder from the host:
+#   sh <mvn> -q -f analyzer/pom.xml exec:java -Dexec.args="--threads corpus/incident-deadlock/threads.dump ..."
+#
+# This file is written to be reviewable without a running daemon; `docker compose config`
+# validates it once Docker is up.
+name: jvm-incident-agent
+
+x-jvm: &jvm
+  image: jvm-incident-agent/demo-victim:local
+  build:
+    context: ..                       # repository root: needs demo-victim/ and scripts/
+    dockerfile: server/Dockerfile
+  environment:
+    JVM_XMS: "256m"
+    JVM_XMX: "256m"
+    HTTP_PORT: "8080"
+    ARTIFACTS_DIR: /artifacts                 # corpus/incident-<x>/ folders land here
+    GC_LOG_FILE: /artifacts/live/gc.log       # the victim's own -Xlog output
+    APP_LOG_FILE: /artifacts/live/app.log     # the victim's own stdout
+  # jps/jstack/jmap/jcmd live in this same image and need the target JVM's pid + /tmp
+  pid: "host"
+  volumes:
+    - jvm-tmp:/tmp
+    - ../corpus:/artifacts
+
+services:
+  victim:
+    <<: *jvm
+    container_name: jvm-incident-victim
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/victim/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 25s
+
+  # one-shot: trigger one incident, then capture the four artifacts next to it
+  incident:
+    <<: *jvm
+    profiles: ["repro"]
+    entrypoint: ["/usr/local/bin/run-incident.sh"]
+    command: ["${INCIDENT:-deadlock}"]
+    depends_on:
+      victim:
+        condition: service_healthy
+
+  # one-shot: capture whatever the currently running victim is doing, no trigger
+  capture:
+    <<: *jvm
+    profiles: ["capture"]
+    entrypoint: ["sh", "/opt/demo-victim/scripts/capture.sh"]
+    command: ["-o", "/artifacts/${OUT:-incident-manual}", "-d", "6",
+              "--gc-log", "/artifacts/live/gc.log", "--app-log", "/artifacts/live/app.log"]
+    depends_on:
+      victim:
+        condition: service_healthy
+
+volumes:
+  jvm-tmp: {}

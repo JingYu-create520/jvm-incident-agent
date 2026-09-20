@@ -1,0 +1,27 @@
+# demo-victim is a bug farm, not a service: keep the log format stable so the analyzer corpus
+# contains wall-clock timestamps, the pid, the thread name and a full stack trace per event.
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: demo-victim
+  main:
+    banner-mode: "off"
+  mvc:
+    log-resolved-exception: true
+
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
+  pattern:
+    # %d with milliseconds + %5p + pid + thread + logger + message; the shape real Spring Boot
+    # logs have, which is what the exception analyzer is tuned against.
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%15.15t] %-40.40logger{39} : %m%n%wEx"
+  level:
+    root: INFO
+    dev.jingyu.jia.victim: INFO
+    # framework noise we deliberately keep at WARN so the log stays readable but genuine
+    org.apache.catalina: INFO
+    org.springframework: INFO

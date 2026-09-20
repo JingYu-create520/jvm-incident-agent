@@ -1,0 +1,27 @@
+# ---------------------------------------------------------------------------
+# build output (both Maven modules)
+target/
+*.class
+# ---------------------------------------------------------------------------
+# added by the demo-victim / capture-tooling half of the project.
+#
+# corpus/** contains the captured incident artifacts. Two of them are literally
+# named gc.log and app.log, so if a broad *.log rule is ever added to this file,
+# these negations are what keeps the corpus from silently disappearing.
+!corpus/**/gc.log
+!corpus/**/app.log
+!corpus/**/app.log.*
+
+# scratch the capture tooling leaves behind if it is interrupted
+demo-victim/target/corpus-work/
+corpus/**/live/
+*.hprof
+hs_err_pid*.log
+replay_pid*.log
+
+# IDE and OS noise
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

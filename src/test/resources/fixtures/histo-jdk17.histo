@@ -1,0 +1,9 @@
+ num     #instances         #bytes  class name (module)
+-------------------------------------------------------
+   1:         49996        3107072  [B (java.base@17.0.5)
+   2:         47503        1140072  java.lang.String (java.base@17.0.5)
+   3:         29021         928672  java.util.concurrent.ConcurrentHashMap$Node (java.base@17.0.5)
+   4:          8034         578448  [Ljava.lang.Object; (java.base@17.0.5)
+   5:          6112         342272  java.lang.Class (java.base@17.0.5)
+   6:            12             96  java.util.IdentityHashMap$KeySet (java.base@17.0.5)
+Total         140678        6096632

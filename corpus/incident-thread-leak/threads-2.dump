@@ -1,0 +1,1970 @@
+2026-09-20 21:38:55
+Full thread dump OpenJDK 64-Bit Server VM (17.0.5+1-b653.25 mixed mode):
+
+Threads class SMR info:
+_java_thread_list=0x0000020fafaa99d0, length=175, elements={
+0x0000020fae034270, 0x0000020fae0350e0, 0x0000020fad54e680, 0x0000020fae04d1a0,
+0x0000020fae04e160, 0x0000020fae04eb10, 0x0000020fae04f7f0, 0x0000020fae0844d0,
+0x0000020fae087df0, 0x0000020fae21c010, 0x0000020fae2058f0, 0x0000020fae47c510,
+0x0000020fb13f0110, 0x0000020fb13f2c60, 0x0000020fb13f22c0, 0x0000020fb13f1920,
+0x0000020fb13f1450, 0x0000020fb13f05e0, 0x0000020fb13f2790, 0x0000020fb13f3600,
+0x0000020fb13f3ad0, 0x0000020fb13f0ab0, 0x0000020fb13f0f80, 0x0000020fb13f1df0,
+0x0000020fb389e6d0, 0x0000020fb389f540, 0x0000020fb389eba0, 0x0000020fb38a16f0,
+0x0000020fb38a33d0, 0x0000020fb38a2f00, 0x0000020fb38a0d50, 0x0000020fb38a38a0,
+0x0000020fb38a3d70, 0x0000020fb389fa10, 0x0000020fb38a03b0, 0x0000020fb38a1bc0,
+0x0000020fb389fee0, 0x0000020fb38a4240, 0x0000020fb389d860, 0x0000020fb38a0880,
+0x0000020fb38a1220, 0x0000020fb38a4710, 0x0000020fb38a4be0, 0x0000020fb38a2090,
+0x0000020fb38a50b0, 0x0000020fb389e200, 0x0000020fb389f070, 0x0000020fb38a2560,
+0x0000020fb38a2a30, 0x0000020fb389dd30, 0x0000020faef27e20, 0x0000020faef2cff0,
+0x0000020faef2de60, 0x0000020faef2a4a0, 0x0000020faef2e330, 0x0000020faef2e800,
+0x0000020faef29fd0, 0x0000020faef29160, 0x0000020faef282f0, 0x0000020faef28c90,
+0x0000020faef29630, 0x0000020faef287c0, 0x0000020faef2a970, 0x0000020faef2ae40,
+0x0000020faef2d4c0, 0x0000020faef2b310, 0x0000020faef29b00, 0x0000020faef2b7e0,
+0x0000020faef2d990, 0x0000020faef2bcb0, 0x0000020faef2c180, 0x0000020faef26fb0,
+0x0000020faef2c650, 0x0000020faef27480, 0x0000020faef2cb20, 0x0000020faef27950,
+0x0000020fb0547c40, 0x0000020fb05485e0, 0x0000020fb0545a90, 0x0000020fb0547770,
+0x0000020fb0548110, 0x0000020fb0546900, 0x0000020fb054a790, 0x0000020fb0548ab0,
+0x0000020fb05450f0, 0x0000020fb0546dd0, 0x0000020fb054ac60, 0x0000020fb0544750,
+0x0000020fb0543410, 0x0000020fb0549450, 0x0000020fb05455c0, 0x0000020fb05472a0,
+0x0000020fb0546430, 0x0000020fb05438e0, 0x0000020fb0548f80, 0x0000020fb0543db0,
+0x0000020fb0544280, 0x0000020fb0545f60, 0x0000020fb0544c20, 0x0000020fb0549920,
+0x0000020fb0549df0, 0x0000020fb054a2c0, 0x0000020fae8f3e30, 0x0000020fae8f4ca0,
+0x0000020fae8f64b0, 0x0000020fae8f6980, 0x0000020fae8f5640, 0x0000020fae8f3490,
+0x0000020fae8f2fc0, 0x0000020fae8f2af0, 0x0000020fae8f5170, 0x0000020fae8f5b10,
+0x0000020fae8f3960, 0x0000020fae8f5fe0, 0x0000020fae8f6e50, 0x0000020fae8f2620,
+0x0000020fae8f4300, 0x0000020fae8f7320, 0x0000020fae8f1c80, 0x0000020fae8f77f0,
+0x0000020fae8f47d0, 0x0000020fae8f17b0, 0x0000020fae8f7cc0, 0x0000020fae8f0470,
+0x0000020fae8f0940, 0x0000020fae8f0e10, 0x0000020fae8f12e0, 0x0000020fae8f2150,
+0x0000020fb368bda0, 0x0000020fb36888b0, 0x0000020fb368a0c0, 0x0000020fb3687f10,
+0x0000020fb3689bf0, 0x0000020fb3687570, 0x0000020fb3688d80, 0x0000020fb368cc10,
+0x0000020fb368a590, 0x0000020fb368aa60, 0x0000020fb368da80, 0x0000020fb368b400,
+0x0000020fb36883e0, 0x0000020fb368df50, 0x0000020fb368e420, 0x0000020fb368e8f0,
+0x0000020fb368b8d0, 0x0000020fb3689250, 0x0000020fb368d0e0, 0x0000020fb368c270,
+0x0000020fb368af30, 0x0000020fb368d5b0, 0x0000020fb3687a40, 0x0000020fb36870a0,
+0x0000020fb3689720, 0x0000020fb368c740, 0x0000020fb15a1210, 0x0000020fb15a2550,
+0x0000020fb15a0870, 0x0000020fb15a2a20, 0x0000020fb15a03a0, 0x0000020fb15a3d60,
+0x0000020fb15a5f10, 0x0000020fb15a33c0, 0x0000020fb15a2ef0, 0x0000020fb15a3890,
+0x0000020fb159fa00, 0x0000020fb15a4230, 0x0000020fb159fed0, 0x0000020fb15a16e0,
+0x0000020fb15a1bb0, 0x0000020fb15a4700, 0x0000020fb15a0d40, 0x0000020fb15a5a40,
+0x0000020fb15a4bd0, 0x0000020fb15a5570, 0x0000020fb15a2080
+}
+
+"Reference Handler" #2 daemon prio=10 os_prio=2 cpu=0.00ms elapsed=23.40s tid=0x0000020fae034270 nid=0x658c waiting on condition  [0x000000bd530ff000]
+   java.lang.Thread.State: RUNNABLE
+	at java.lang.ref.Reference.waitForReferencePendingList(java.base@17.0.5/Native Method)
+	at java.lang.ref.Reference.processPendingReferences(java.base@17.0.5/Reference.java:253)
+	at java.lang.ref.Reference$ReferenceHandler.run(java.base@17.0.5/Reference.java:215)
+
+   Locked ownable synchronizers:
+	- None
+
+"Finalizer" #3 daemon prio=8 os_prio=1 cpu=0.00ms elapsed=23.40s tid=0x0000020fae0350e0 nid=0x34dc in Object.wait()  [0x000000bd531ff000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@17.0.5/Native Method)
+	- waiting on <0x00000000f0001b18> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@17.0.5/ReferenceQueue.java:155)
+	- locked <0x00000000f0001b18> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@17.0.5/ReferenceQueue.java:176)
+	at java.lang.ref.Finalizer$FinalizerThread.run(java.base@17.0.5/Finalizer.java:172)
+
+   Locked ownable synchronizers:
+	- None
+
+"Signal Dispatcher" #4 daemon prio=9 os_prio=2 cpu=0.00ms elapsed=23.39s tid=0x0000020fad54e680 nid=0x56d8 waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Attach Listener" #5 daemon prio=5 os_prio=2 cpu=0.00ms elapsed=23.39s tid=0x0000020fae04d1a0 nid=0x5d14 waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Service Thread" #6 daemon prio=9 os_prio=0 cpu=0.00ms elapsed=23.39s tid=0x0000020fae04e160 nid=0x34e4 runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Monitor Deflation Thread" #7 daemon prio=9 os_prio=0 cpu=0.00ms elapsed=23.39s tid=0x0000020fae04eb10 nid=0x1694 runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"C2 CompilerThread0" #8 daemon prio=9 os_prio=2 cpu=140.62ms elapsed=23.39s tid=0x0000020fae04f7f0 nid=0x16c waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+   No compile task
+
+   Locked ownable synchronizers:
+	- None
+
+"C1 CompilerThread0" #16 daemon prio=9 os_prio=2 cpu=31.25ms elapsed=23.39s tid=0x0000020fae0844d0 nid=0x5b6c waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+   No compile task
+
+   Locked ownable synchronizers:
+	- None
+
+"Sweeper thread" #20 daemon prio=9 os_prio=2 cpu=0.00ms elapsed=23.39s tid=0x0000020fae087df0 nid=0xd64 runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Notification Thread" #21 daemon prio=9 os_prio=0 cpu=0.00ms elapsed=23.37s tid=0x0000020fae21c010 nid=0x4024 runnable  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"Common-Cleaner" #22 daemon prio=8 os_prio=1 cpu=0.00ms elapsed=23.37s tid=0x0000020fae2058f0 nid=0x5a54 in Object.wait()  [0x000000bd53dff000]
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@17.0.5/Native Method)
+	- waiting on <0x00000000f0002cb0> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@17.0.5/ReferenceQueue.java:155)
+	- locked <0x00000000f0002cb0> (a java.lang.ref.ReferenceQueue$Lock)
+	at jdk.internal.ref.CleanerImpl.run(java.base@17.0.5/CleanerImpl.java:140)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+	at jdk.internal.misc.InnocuousThread.run(java.base@17.0.5/InnocuousThread.java:162)
+
+   Locked ownable synchronizers:
+	- None
+
+"Cleaner-0" #23 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=23.28s tid=0x0000020fae47c510 nid=0x463c in Object.wait()  [0x000000bd53eff000]
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+	at java.lang.Object.wait(java.base@17.0.5/Native Method)
+	- waiting on <0x00000000f0000d50> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(java.base@17.0.5/ReferenceQueue.java:155)
+	- locked <0x00000000f0000d50> (a java.lang.ref.ReferenceQueue$Lock)
+	at jdk.internal.ref.CleanerImpl.run(java.base@17.0.5/CleanerImpl.java:140)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+	at jdk.internal.misc.InnocuousThread.run(java.base@17.0.5/InnocuousThread.java:162)
+
+   Locked ownable synchronizers:
+	- None
+
+"Catalina-utility-1" #28 prio=1 os_prio=-2 cpu=0.00ms elapsed=20.59s tid=0x0000020fb13f0110 nid=0x16e0 waiting on condition  [0x000000bd553ff000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000f9105e38> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(java.base@17.0.5/LockSupport.java:252)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(java.base@17.0.5/AbstractQueuedSynchronizer.java:1672)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(java.base@17.0.5/ScheduledThreadPoolExecutor.java:1182)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(java.base@17.0.5/ScheduledThreadPoolExecutor.java:899)
+	at java.util.concurrent.ThreadPoolExecutor.getTask(java.base@17.0.5/ThreadPoolExecutor.java:1062)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.5/ThreadPoolExecutor.java:1122)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.5/ThreadPoolExecutor.java:635)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"Catalina-utility-2" #29 prio=1 os_prio=-2 cpu=0.00ms elapsed=20.59s tid=0x0000020fb13f2c60 nid=0x374c waiting on condition  [0x000000bd554fe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000f9105e38> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(java.base@17.0.5/ScheduledThreadPoolExecutor.java:1177)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(java.base@17.0.5/ScheduledThreadPoolExecutor.java:899)
+	at java.util.concurrent.ThreadPoolExecutor.getTask(java.base@17.0.5/ThreadPoolExecutor.java:1062)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(java.base@17.0.5/ThreadPoolExecutor.java:1122)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(java.base@17.0.5/ThreadPoolExecutor.java:635)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"container-0" #30 prio=5 os_prio=0 cpu=0.00ms elapsed=20.59s tid=0x0000020fb13f22c0 nid=0x327c waiting on condition  [0x000000bd555ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at org.apache.catalina.core.StandardServer.await(StandardServer.java:518)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer$1.run(TomcatWebServer.java:219)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-heartbeat-1" #31 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.55s tid=0x0000020fb13f1920 nid=0x2868 waiting on condition  [0x000000bd556ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ResidentWorkers.parkFor(ResidentWorkers.java:112)
+	at dev.jingyu.jia.victim.ResidentWorkers.lambda$start$0(ResidentWorkers.java:43)
+	at dev.jingyu.jia.victim.ResidentWorkers$$Lambda$764/0x000000010046abd8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-heartbeat-2" #32 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.55s tid=0x0000020fb13f1450 nid=0x445c waiting on condition  [0x000000bd557ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ResidentWorkers.parkFor(ResidentWorkers.java:112)
+	at dev.jingyu.jia.victim.ResidentWorkers.lambda$start$0(ResidentWorkers.java:43)
+	at dev.jingyu.jia.victim.ResidentWorkers$$Lambda$764/0x000000010046abd8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-request-worker-1" #33 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.55s tid=0x0000020fb13f05e0 nid=0x2940 waiting on condition  [0x000000bd558ff000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000ff8bd3e8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(java.base@17.0.5/LockSupport.java:252)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(java.base@17.0.5/AbstractQueuedSynchronizer.java:1672)
+	at java.util.concurrent.LinkedBlockingQueue.poll(java.base@17.0.5/LinkedBlockingQueue.java:460)
+	at dev.jingyu.jia.victim.ResidentWorkers.lambda$start$1(ResidentWorkers.java:55)
+	at dev.jingyu.jia.victim.ResidentWorkers$$Lambda$765/0x000000010046ae20.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-request-worker-2" #34 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.55s tid=0x0000020fb13f2790 nid=0x1e70 waiting on condition  [0x000000bd559fe000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000ff8bd3e8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(java.base@17.0.5/LockSupport.java:252)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(java.base@17.0.5/AbstractQueuedSynchronizer.java:1672)
+	at java.util.concurrent.LinkedBlockingQueue.poll(java.base@17.0.5/LinkedBlockingQueue.java:460)
+	at dev.jingyu.jia.victim.ResidentWorkers.lambda$start$1(ResidentWorkers.java:55)
+	at dev.jingyu.jia.victim.ResidentWorkers$$Lambda$765/0x000000010046ae20.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-request-worker-3" #35 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.55s tid=0x0000020fb13f3600 nid=0x5e14 waiting on condition  [0x000000bd55afe000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000ff8bd3e8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(java.base@17.0.5/LockSupport.java:252)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(java.base@17.0.5/AbstractQueuedSynchronizer.java:1672)
+	at java.util.concurrent.LinkedBlockingQueue.poll(java.base@17.0.5/LinkedBlockingQueue.java:460)
+	at dev.jingyu.jia.victim.ResidentWorkers.lambda$start$1(ResidentWorkers.java:55)
+	at dev.jingyu.jia.victim.ResidentWorkers$$Lambda$765/0x000000010046ae20.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-request-worker-4" #36 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.55s tid=0x0000020fb13f3ad0 nid=0x6884 waiting on condition  [0x000000bd55bfe000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000ff8bd3e8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.parkNanos(java.base@17.0.5/LockSupport.java:252)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(java.base@17.0.5/AbstractQueuedSynchronizer.java:1672)
+	at java.util.concurrent.LinkedBlockingQueue.poll(java.base@17.0.5/LinkedBlockingQueue.java:460)
+	at dev.jingyu.jia.victim.ResidentWorkers.lambda$start$1(ResidentWorkers.java:55)
+	at dev.jingyu.jia.victim.ResidentWorkers$$Lambda$765/0x000000010046ae20.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-idle-scanner" #37 daemon prio=5 os_prio=0 cpu=62.50ms elapsed=20.55s tid=0x0000020fb13f0ab0 nid=0x2310 waiting on condition  [0x000000bd55cff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ResidentWorkers.parkFor(ResidentWorkers.java:112)
+	at dev.jingyu.jia.victim.ResidentWorkers.lambda$start$2(ResidentWorkers.java:73)
+	at dev.jingyu.jia.victim.ResidentWorkers$$Lambda$766/0x000000010046b068.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-1" #38 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb13f0f80 nid=0x32e4 waiting on condition  [0x000000bd55dfe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-2" #39 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb13f1df0 nid=0x6d94 waiting on condition  [0x000000bd55efe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-3" #40 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb389e6d0 nid=0x914 waiting on condition  [0x000000bd55ffe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-4" #41 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb389f540 nid=0x2550 waiting on condition  [0x000000bd560fe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-5" #42 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb389eba0 nid=0x55fc waiting on condition  [0x000000bd561fe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-6" #43 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb38a16f0 nid=0xb1c waiting on condition  [0x000000bd562fe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-7" #44 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb38a33d0 nid=0x415c waiting on condition  [0x000000bd563fe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-8" #45 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb38a2f00 nid=0x123c waiting on condition  [0x000000bd564ff000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-9" #46 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb38a0d50 nid=0x5c34 waiting on condition  [0x000000bd565fe000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-exec-10" #47 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.20s tid=0x0000020fb38a38a0 nid=0x55c4 waiting on condition  [0x000000bd566ff000]
+   java.lang.Thread.State: WAITING (parking)
+	at jdk.internal.misc.Unsafe.park(java.base@17.0.5/Native Method)
+	- parking to wait for  <0x00000000fdea6d20> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+	at java.util.concurrent.locks.LockSupport.park(java.base@17.0.5/LockSupport.java:341)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionNode.block(java.base@17.0.5/AbstractQueuedSynchronizer.java:506)
+	at java.util.concurrent.ForkJoinPool.unmanagedBlock(java.base@17.0.5/ForkJoinPool.java:3463)
+	at java.util.concurrent.ForkJoinPool.managedBlock(java.base@17.0.5/ForkJoinPool.java:3434)
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(java.base@17.0.5/AbstractQueuedSynchronizer.java:1623)
+	at java.util.concurrent.LinkedBlockingQueue.take(java.base@17.0.5/LinkedBlockingQueue.java:435)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:106)
+	at org.apache.tomcat.util.threads.TaskQueue.take(TaskQueue.java:31)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:913)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:960)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-Poller" #48 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=20.19s tid=0x0000020fb38a3d70 nid=0x6718 runnable  [0x000000bd567fe000]
+   java.lang.Thread.State: RUNNABLE
+	at sun.nio.ch.WEPoll.wait(java.base@17.0.5/Native Method)
+	at sun.nio.ch.WEPollSelectorImpl.doSelect(java.base@17.0.5/WEPollSelectorImpl.java:111)
+	at sun.nio.ch.SelectorImpl.lockAndDoSelect(java.base@17.0.5/SelectorImpl.java:129)
+	- locked <0x00000000fda077f0> (a sun.nio.ch.Util$2)
+	- locked <0x00000000fda07450> (a sun.nio.ch.WEPollSelectorImpl)
+	at sun.nio.ch.SelectorImpl.select(java.base@17.0.5/SelectorImpl.java:141)
+	at org.apache.tomcat.util.net.NioEndpoint$Poller.run(NioEndpoint.java:773)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"http-nio-8184-Acceptor" #49 daemon prio=5 os_prio=0 cpu=15.62ms elapsed=20.19s tid=0x0000020fb389fa10 nid=0x1808 runnable  [0x000000bd568ff000]
+   java.lang.Thread.State: RUNNABLE
+	at sun.nio.ch.Net.accept(java.base@17.0.5/Native Method)
+	at sun.nio.ch.ServerSocketChannelImpl.implAccept(java.base@17.0.5/ServerSocketChannelImpl.java:425)
+	at sun.nio.ch.ServerSocketChannelImpl.accept(java.base@17.0.5/ServerSocketChannelImpl.java:391)
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:535)
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:70)
+	at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:127)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- <0x00000000fde8c2e0> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
+
+"DestroyJavaVM" #50 prio=5 os_prio=0 cpu=281.25ms elapsed=20.16s tid=0x0000020fb38a03b0 nid=0x1d68 waiting on condition  [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-1" #51 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a1bc0 nid=0x59a8 waiting on condition  [0x000000bd539fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-2" #52 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb389fee0 nid=0x4c28 waiting on condition  [0x000000bd53aff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-3" #53 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a4240 nid=0x6920 waiting on condition  [0x000000bd53fff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-4" #54 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb389d860 nid=0x6d58 waiting on condition  [0x000000bd540ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-5" #55 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a0880 nid=0x10b0 waiting on condition  [0x000000bd541ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-6" #56 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a1220 nid=0x42ac waiting on condition  [0x000000bd542ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-7" #57 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a4710 nid=0x673c waiting on condition  [0x000000bd543ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-8" #58 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a4be0 nid=0x3388 waiting on condition  [0x000000bd544ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-9" #59 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a2090 nid=0x6ad4 waiting on condition  [0x000000bd569fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-10" #60 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a50b0 nid=0x6cdc waiting on condition  [0x000000bd56aff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-11" #61 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb389e200 nid=0x2e0c waiting on condition  [0x000000bd56bff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-12" #62 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb389f070 nid=0x5150 waiting on condition  [0x000000bd56cfe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-13" #63 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a2560 nid=0x20e8 waiting on condition  [0x000000bd56dff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-14" #64 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb38a2a30 nid=0x1648 waiting on condition  [0x000000bd56eff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-15" #65 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb389dd30 nid=0x6dec waiting on condition  [0x000000bd56fff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-16" #66 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef27e20 nid=0x363c waiting on condition  [0x000000bd570ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-17" #67 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2cff0 nid=0x3740 waiting on condition  [0x000000bd571ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-18" #68 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2de60 nid=0x2d00 waiting on condition  [0x000000bd572ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-19" #69 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2a4a0 nid=0x190 waiting on condition  [0x000000bd573ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-20" #70 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2e330 nid=0x2864 waiting on condition  [0x000000bd574ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-21" #71 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2e800 nid=0x1020 waiting on condition  [0x000000bd575fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-22" #72 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef29fd0 nid=0x3070 waiting on condition  [0x000000bd576ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-23" #73 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef29160 nid=0x6028 waiting on condition  [0x000000bd577ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-24" #74 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef282f0 nid=0x156c waiting on condition  [0x000000bd578ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-25" #75 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef28c90 nid=0x53ec waiting on condition  [0x000000bd579ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-26" #76 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef29630 nid=0x48f4 waiting on condition  [0x000000bd57aff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-27" #77 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef287c0 nid=0x49f8 waiting on condition  [0x000000bd57bff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-28" #78 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2a970 nid=0x329c waiting on condition  [0x000000bd57cff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-29" #79 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2ae40 nid=0x17d0 waiting on condition  [0x000000bd57dff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-30" #80 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2d4c0 nid=0x6464 waiting on condition  [0x000000bd57efe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-31" #81 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2b310 nid=0x1c8c waiting on condition  [0x000000bd57fff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-32" #82 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef29b00 nid=0x39d0 waiting on condition  [0x000000bd580fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-33" #83 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2b7e0 nid=0x2ccc waiting on condition  [0x000000bd581ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-34" #84 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2d990 nid=0x50d0 waiting on condition  [0x000000bd582ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-35" #85 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2bcb0 nid=0x4130 waiting on condition  [0x000000bd583ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-36" #86 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2c180 nid=0x540c waiting on condition  [0x000000bd584ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-37" #87 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef26fb0 nid=0x4934 waiting on condition  [0x000000bd585ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-38" #88 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2c650 nid=0x6154 waiting on condition  [0x000000bd586ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-39" #89 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef27480 nid=0x3170 waiting on condition  [0x000000bd587ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-40" #90 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef2cb20 nid=0x1fbc waiting on condition  [0x000000bd588ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-41" #91 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020faef27950 nid=0x4750 waiting on condition  [0x000000bd589ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-42" #92 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0547c40 nid=0x4028 waiting on condition  [0x000000bd58aff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-43" #93 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb05485e0 nid=0x4bb8 waiting on condition  [0x000000bd58bff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-44" #94 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0545a90 nid=0x163c waiting on condition  [0x000000bd58cff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-45" #95 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0547770 nid=0x664c waiting on condition  [0x000000bd58dff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-46" #96 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0548110 nid=0xb78 waiting on condition  [0x000000bd58eff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-47" #97 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0546900 nid=0x5884 waiting on condition  [0x000000bd58fff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-48" #98 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb054a790 nid=0x3ad8 waiting on condition  [0x000000bd590ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-49" #99 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0548ab0 nid=0x23e0 waiting on condition  [0x000000bd591ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-50" #100 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb05450f0 nid=0x5718 waiting on condition  [0x000000bd592ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-51" #101 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0546dd0 nid=0xba8 waiting on condition  [0x000000bd593ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-52" #102 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb054ac60 nid=0x4bc4 waiting on condition  [0x000000bd594ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-53" #103 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0544750 nid=0x648c waiting on condition  [0x000000bd595ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-54" #104 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0543410 nid=0x3794 waiting on condition  [0x000000bd596ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-55" #105 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0549450 nid=0x19f4 waiting on condition  [0x000000bd597fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-56" #106 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb05455c0 nid=0x57c8 waiting on condition  [0x000000bd598ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-57" #107 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb05472a0 nid=0x45bc waiting on condition  [0x000000bd599ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-58" #108 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0546430 nid=0x1c24 waiting on condition  [0x000000bd59afe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-59" #109 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb05438e0 nid=0x670c waiting on condition  [0x000000bd59bff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-60" #110 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0548f80 nid=0x5930 waiting on condition  [0x000000bd59cfe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-61" #111 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0543db0 nid=0x1e44 waiting on condition  [0x000000bd59dff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-62" #112 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0544280 nid=0x416c waiting on condition  [0x000000bd59efe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-63" #113 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0545f60 nid=0x166c waiting on condition  [0x000000bd59fff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-64" #114 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0544c20 nid=0x6fa0 waiting on condition  [0x000000bd5a0ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-65" #115 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0549920 nid=0x1c7c waiting on condition  [0x000000bd5a1ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-66" #116 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb0549df0 nid=0x5c54 waiting on condition  [0x000000bd5a2ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-67" #117 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fb054a2c0 nid=0x6428 waiting on condition  [0x000000bd5a3ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-68" #118 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f3e30 nid=0x63e0 waiting on condition  [0x000000bd5a4ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-69" #119 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f4ca0 nid=0x2638 waiting on condition  [0x000000bd5a5fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-70" #120 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f64b0 nid=0x1fcc waiting on condition  [0x000000bd5a6ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-71" #121 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f6980 nid=0x5b1c waiting on condition  [0x000000bd5a7fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-72" #122 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f5640 nid=0x24e8 waiting on condition  [0x000000bd5a8ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-73" #123 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f3490 nid=0x3bf0 waiting on condition  [0x000000bd5a9ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-74" #124 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f2fc0 nid=0x1950 waiting on condition  [0x000000bd5aaff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-75" #125 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f2af0 nid=0x1184 waiting on condition  [0x000000bd5abff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-76" #126 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f5170 nid=0x1ce4 waiting on condition  [0x000000bd5acfe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-77" #127 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f5b10 nid=0x6b94 waiting on condition  [0x000000bd5adff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-78" #128 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f3960 nid=0x6b74 waiting on condition  [0x000000bd5aeff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-79" #129 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f5fe0 nid=0x4bc8 waiting on condition  [0x000000bd5afff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-80" #130 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=16.31s tid=0x0000020fae8f6e50 nid=0x396c waiting on condition  [0x000000bd5b0ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-81" #131 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.23s tid=0x0000020fae8f2620 nid=0x5768 waiting on condition  [0x000000bd5b1ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-82" #132 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f4300 nid=0x6d3c waiting on condition  [0x000000bd5b2ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-83" #133 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f7320 nid=0x53f4 waiting on condition  [0x000000bd5b3ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-84" #134 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f1c80 nid=0x3b78 waiting on condition  [0x000000bd5b4ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-85" #135 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f77f0 nid=0x3b60 waiting on condition  [0x000000bd5b5ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-86" #136 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f47d0 nid=0x5c78 waiting on condition  [0x000000bd5b6ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-87" #137 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f17b0 nid=0x6aac waiting on condition  [0x000000bd5b7ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-88" #138 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f7cc0 nid=0x3b84 waiting on condition  [0x000000bd5b8ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-89" #139 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f0470 nid=0x6d28 waiting on condition  [0x000000bd5b9ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-90" #140 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f0940 nid=0x5e34 waiting on condition  [0x000000bd5bafe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-91" #141 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f0e10 nid=0x5d4c waiting on condition  [0x000000bd5bbff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-92" #142 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f12e0 nid=0x2b78 waiting on condition  [0x000000bd5bcfe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-93" #143 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fae8f2150 nid=0x4154 waiting on condition  [0x000000bd5bdff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-94" #144 daemon prio=5 os_prio=0 cpu=15.62ms elapsed=4.22s tid=0x0000020fb368bda0 nid=0x52b8 waiting on condition  [0x000000bd5befe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-95" #145 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb36888b0 nid=0x4bcc waiting on condition  [0x000000bd5bfff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-96" #146 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368a0c0 nid=0x232c waiting on condition  [0x000000bd5c0ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-97" #147 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb3687f10 nid=0x5d4 waiting on condition  [0x000000bd5c1ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-98" #148 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb3689bf0 nid=0x224c waiting on condition  [0x000000bd5c2ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-99" #149 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb3687570 nid=0x4b28 waiting on condition  [0x000000bd5c3ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-100" #150 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb3688d80 nid=0xda4 waiting on condition  [0x000000bd5c4fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-101" #151 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368cc10 nid=0x387c waiting on condition  [0x000000bd5c5ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-102" #152 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368a590 nid=0x91c waiting on condition  [0x000000bd5c6ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-103" #153 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368aa60 nid=0x2500 waiting on condition  [0x000000bd5c7fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-104" #154 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368da80 nid=0x6348 waiting on condition  [0x000000bd5c8ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-105" #155 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368b400 nid=0x4778 waiting on condition  [0x000000bd5c9fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-106" #156 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb36883e0 nid=0x28f0 waiting on condition  [0x000000bd5caff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-107" #157 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368df50 nid=0x63bc waiting on condition  [0x000000bd5cbff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-108" #158 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368e420 nid=0x5584 waiting on condition  [0x000000bd5ccff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-109" #159 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368e8f0 nid=0xce8 waiting on condition  [0x000000bd5cdfe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-110" #160 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368b8d0 nid=0x4ec waiting on condition  [0x000000bd5ceff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-111" #161 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb3689250 nid=0x6ff8 waiting on condition  [0x000000bd5cfff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-112" #162 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368d0e0 nid=0x2e20 waiting on condition  [0x000000bd5d0ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-113" #163 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368c270 nid=0x54b0 waiting on condition  [0x000000bd5d1ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-114" #164 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368af30 nid=0x2bdc waiting on condition  [0x000000bd5d2ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-115" #165 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368d5b0 nid=0xfcc waiting on condition  [0x000000bd5d3ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-116" #166 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb3687a40 nid=0x6d24 waiting on condition  [0x000000bd5d4ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-117" #167 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb36870a0 nid=0x988 waiting on condition  [0x000000bd5d5ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-118" #168 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb3689720 nid=0x6b40 waiting on condition  [0x000000bd5d6ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-119" #169 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb368c740 nid=0x4afc waiting on condition  [0x000000bd5d7ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-120" #170 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a1210 nid=0x1e10 waiting on condition  [0x000000bd5d8ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-121" #171 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a2550 nid=0x980 waiting on condition  [0x000000bd5d9fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-122" #172 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a0870 nid=0x24a4 waiting on condition  [0x000000bd5daff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-123" #173 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a2a20 nid=0x50e8 waiting on condition  [0x000000bd5dbff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-124" #174 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a03a0 nid=0x1568 waiting on condition  [0x000000bd5dcfe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-125" #175 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a3d60 nid=0x618c waiting on condition  [0x000000bd5ddff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-126" #176 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a5f10 nid=0x6b5c waiting on condition  [0x000000bd5deff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-127" #177 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a33c0 nid=0x6a78 waiting on condition  [0x000000bd5dfff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-128" #178 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a2ef0 nid=0x4e88 waiting on condition  [0x000000bd5e0ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-129" #179 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a3890 nid=0x64cc waiting on condition  [0x000000bd5e1ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-130" #180 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb159fa00 nid=0x1af4 waiting on condition  [0x000000bd5e2ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-131" #181 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a4230 nid=0xbec waiting on condition  [0x000000bd5e3fe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-132" #182 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb159fed0 nid=0x2544 waiting on condition  [0x000000bd5e4ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-133" #183 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a16e0 nid=0x20d0 waiting on condition  [0x000000bd5e5ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-134" #184 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a1bb0 nid=0x42b8 waiting on condition  [0x000000bd5e6ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-135" #185 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a4700 nid=0x5d68 waiting on condition  [0x000000bd5e7ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-136" #186 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a0d40 nid=0x4f3c waiting on condition  [0x000000bd5e8ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-137" #187 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a5a40 nid=0x6ee4 waiting on condition  [0x000000bd5e9ff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-138" #188 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a4bd0 nid=0x6b58 waiting on condition  [0x000000bd5eaff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-139" #189 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a5570 nid=0x5b58 waiting on condition  [0x000000bd5ebfe000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"victim-worker-140" #190 daemon prio=5 os_prio=0 cpu=0.00ms elapsed=4.22s tid=0x0000020fb15a2080 nid=0x475c waiting on condition  [0x000000bd5ecff000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+	at java.lang.Thread.sleep(java.base@17.0.5/Native Method)
+	at dev.jingyu.jia.victim.ThreadLeakService.lambda$leak$0(ThreadLeakService.java:40)
+	at dev.jingyu.jia.victim.ThreadLeakService$$Lambda$938/0x000000010053c4e8.run(Unknown Source)
+	at java.lang.Thread.run(java.base@17.0.5/Thread.java:833)
+
+   Locked ownable synchronizers:
+	- None
+
+"VM Thread" os_prio=2 cpu=15.62ms elapsed=23.41s tid=0x0000020fae020010 nid=0x5fa8 runnable  
+
+"GC Thread#0" os_prio=2 cpu=0.00ms elapsed=23.44s tid=0x0000020f94d1a930 nid=0x45f4 runnable  
+
+"GC Thread#1" os_prio=2 cpu=0.00ms elapsed=22.92s tid=0x0000020faee366b0 nid=0x35b0 runnable  
+
+"GC Thread#2" os_prio=2 cpu=0.00ms elapsed=22.92s tid=0x0000020faee36960 nid=0x1bd0 runnable  
+
+"GC Thread#3" os_prio=2 cpu=0.00ms elapsed=22.92s tid=0x0000020faee36c10 nid=0x2b28 runnable  
+
+"GC Thread#4" os_prio=2 cpu=0.00ms elapsed=22.92s tid=0x0000020faeeeccb0 nid=0x49e8 runnable  
+
+"GC Thread#5" os_prio=2 cpu=0.00ms elapsed=22.92s tid=0x0000020faeeecf60 nid=0x660c runnable  
+
+"GC Thread#6" os_prio=2 cpu=0.00ms elapsed=22.23s tid=0x0000020fb1ca4d20 nid=0x656c runnable  
+
+"GC Thread#7" os_prio=2 cpu=0.00ms elapsed=22.23s tid=0x0000020fb0cf80d0 nid=0x3910 runnable  
+
+"GC Thread#8" os_prio=2 cpu=0.00ms elapsed=22.23s tid=0x0000020faf643fc0 nid=0x820 runnable  
+
+"GC Thread#9" os_prio=2 cpu=0.00ms elapsed=22.16s tid=0x0000020fafba86e0 nid=0x2dc4 runnable  
+
+"GC Thread#10" os_prio=2 cpu=0.00ms elapsed=20.65s tid=0x0000020fafba8ef0 nid=0x3878 runnable  
+
+"GC Thread#11" os_prio=2 cpu=0.00ms elapsed=20.65s tid=0x0000020fafba8c40 nid=0x69f8 runnable  
+
+"GC Thread#12" os_prio=2 cpu=0.00ms elapsed=20.65s tid=0x0000020fafba76c0 nid=0x5a24 runnable  
+
+"G1 Main Marker" os_prio=2 cpu=0.00ms elapsed=23.44s tid=0x0000020f94d1d870 nid=0x1d1c runnable  
+
+"G1 Conc#0" os_prio=2 cpu=0.00ms elapsed=23.44s tid=0x0000020f94d1e280 nid=0x35c4 runnable  
+
+"G1 Conc#1" os_prio=2 cpu=0.00ms elapsed=22.16s tid=0x0000020fafba8990 nid=0x28cc runnable  
+
+"G1 Conc#2" os_prio=2 cpu=0.00ms elapsed=22.16s tid=0x0000020fafba8430 nid=0x296c runnable  
+
+"G1 Refine#0" os_prio=2 cpu=0.00ms elapsed=23.44s tid=0x0000020f94dadc60 nid=0x25f4 runnable  
+
+"G1 Service" os_prio=2 cpu=0.00ms elapsed=23.44s tid=0x0000020f94dae680 nid=0xe6c runnable  
+
+"VM Periodic Task Thread" os_prio=2 cpu=0.00ms elapsed=23.37s tid=0x0000020f94d311f0 nid=0x6934 waiting on condition  
+
+JNI global refs: 29, weak refs: 0
+

@@ -1,0 +1,85 @@
+#!/bin/sh
+# ---------------------------------------------------------------------------
+# bin/jia - run the jvm-incident-agent CLI from anywhere.
+#
+#   bin/jia analyze corpus/incident-deadlock
+#   bin/jia analyze ./gc.log --format json
+#   bin/jia rules --format json
+#   bin/jia explain TDA001
+#   bin/jia doctor
+#
+# It runs the shaded jar target/jia.jar (Main-Class dev.jingyu.jia.Main). When
+# that jar is missing, it is built once with the Maven wrapper that sits next to
+# the pom, then the CLI starts; an existing jar is never rebuilt.
+#
+# Environment:
+#   JIA_JAR         jar to run.        Default: <repo>/target/jia.jar
+#   JIA_MAVEN_REPO  only used while building: passed as -Dmaven.repo.local, so
+#                   the downloads can stay inside a project directory instead
+#                   of ~/.m2/repository.
+#   JIA_MAVEN_HOME  passed through to ./mvnw (see its header).
+#   JAVA_HOME       a JDK/JRE home; otherwise java must be on PATH.
+#
+# Exit codes are the CLI's own: 0 nothing high-severity, 1 at least one
+# HIGH/CRITICAL finding, 2 the input could not be understood. 3 is reserved for
+# this launcher (missing java, failed build, missing jar).
+#
+# Every path is quoted: this repository is allowed to live under a directory
+# whose name contains spaces.
+# ---------------------------------------------------------------------------
+
+set -u
+
+die() {
+    printf 'jia: %s\n' "$1" >&2
+    exit 3
+}
+
+# ---- locate this script, following symlinks, so it works from any cwd
+SELF="$0"
+while [ -L "$SELF" ]; do
+    LINK=$(readlink "$SELF" 2>/dev/null) || break
+    case "$LINK" in
+        /*) SELF="$LINK" ;;
+        *) SELF=$(dirname "$SELF")/"$LINK" ;;
+    esac
+done
+BIN_DIR=$(CDPATH= cd -P -- "$(dirname -- "$SELF")" && pwd) \
+    || die "cannot work out the directory of $0"
+ROOT=$(CDPATH= cd -P -- "$BIN_DIR/.." && pwd) \
+    || die "cannot work out the repository root above $BIN_DIR"
+
+JAR="${JIA_JAR:-$ROOT/target/jia.jar}"
+
+# ---- pick the java executable
+find_java() {
+    if [ -n "${JAVA_HOME:-}" ]; then
+        JH="$JAVA_HOME"
+        command -v cygpath >/dev/null 2>&1 && JH=$(cygpath -u "$JAVA_HOME" 2>/dev/null || printf '%s' "$JAVA_HOME")
+        for c in "$JH/bin/java" "$JH/bin/java.exe"; do
+            [ -x "$c" ] && { printf '%s\n' "$c"; return 0; }
+        done
+        die "JAVA_HOME=$JAVA_HOME has no java executable under bin/"
+    fi
+    command -v java >/dev/null 2>&1 || die "JAVA_HOME is not set and java is not on PATH"
+    command -v java
+}
+
+# ---- build the jar on first use only
+if [ ! -f "$JAR" ]; then
+    printf 'jia: %s is missing, building it once with %s\n' "$JAR" "$ROOT/mvnw" >&2
+    [ -f "$ROOT/mvnw" ] || die "no $ROOT/mvnw to build the jar with"
+    if [ -n "${JIA_MAVEN_REPO:-}" ]; then
+        sh "$ROOT/mvnw" -q -DskipTests "-Dmaven.repo.local=$JIA_MAVEN_REPO" package \
+            || die "the build of target/jia.jar failed"
+    else
+        sh "$ROOT/mvnw" -q -DskipTests package || die "the build of target/jia.jar failed"
+    fi
+    [ -f "$JAR" ] || die "the build finished but $JAR is still missing"
+fi
+
+JAVA=$(find_java) || exit 3
+
+# -Dfile.encoding is not optional: without it a JVM on Windows reads the UTF-8
+# corpus and fixtures in the ANSI code page and findings change per machine.
+exec "$JAVA" -Dfile.encoding=UTF-8 -jar "$JAR" "$@"

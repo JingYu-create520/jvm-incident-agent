@@ -1,0 +1,17 @@
+2026-09-20 21:39:21.187  INFO 17720 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.5 with PID 17720 (D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\demo-victim.jar started by Ella in D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\corpus-work\healthy)
+2026-09-20 21:39:21.198  INFO 17720 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 21:39:22.458  INFO 17720 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8186 (http)
+2026-09-20 21:39:22.473  INFO 17720 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 21:39:22.474  INFO 17720 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 21:39:22.518  INFO 17720 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 21:39:22.519  INFO 17720 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1225 ms
+2026-09-20 21:39:22.616  INFO 17720 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 21:39:23.006  INFO 17720 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8186 (http) with context path '/'
+2026-09-20 21:39:23.034  INFO 17720 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 2.653 seconds (process running for 3.158)
+2026-09-20 21:39:23.578  INFO 17720 --- [nio-8186-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 21:39:23.578  INFO 17720 --- [nio-8186-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 21:39:23.580  INFO 17720 --- [nio-8186-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-09-20 21:39:32.630  INFO 17720 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=12753
+2026-09-20 21:39:32.630  INFO 17720 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=12753
+2026-09-20 21:39:42.632  INFO 17720 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=86 uptimeMs=22755
+2026-09-20 21:39:42.632  INFO 17720 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=86 uptimeMs=22756

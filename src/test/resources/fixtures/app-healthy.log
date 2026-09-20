@@ -1,0 +1,7 @@
+2026-09-20 21:04:01.120  INFO 21488 --- [main] d.j.v.VictimApplication           : Started VictimApplication in 3.412 seconds (JVM running for 4.021)
+2026-09-20 21:04:02.001  INFO 21488 --- [http-nio-8080-exec-1] d.j.v.OrderController             : GET /orders 200 12ms
+2026-09-20 21:04:03.500  WARN 21488 --- [http-nio-8080-exec-2] d.j.v.OrderController             : slow request took 910ms, retried after java.net.SocketTimeoutException: read timed out
+2026-09-20 21:04:04.100  INFO 21488 --- [victim-report-exporter] d.j.v.ResidentWorkers           : exported 12 reports
+2026-09-20 21:04:05.220  INFO 21488 --- [http-nio-8080-exec-3] d.j.v.OrderController             : GET /orders 200 9ms
+2026-09-20 21:04:06.800  WARN 21488 --- [victim-worker-pool] d.j.v.ResidentWorkers             : cache entry evicted, java.io.IOException looked like a disk hiccup
+2026-09-20 21:04:07.010  INFO 21488 --- [main] d.j.v.HealthEndpoint               : health check ok

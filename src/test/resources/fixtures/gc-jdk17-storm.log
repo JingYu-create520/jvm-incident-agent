@@ -1,0 +1,34 @@
+[2026-09-20T21:00:00.100+0800][0.010s][info][gc] Using G1
+[2026-09-20T21:00:00.101+0800][0.011s][info][gc,init] Version: 17.0.5+8-b653.25 (release)
+[2026-09-20T21:00:00.101+0800][0.011s][info][gc,init] CPUs: 16 total, 16 available
+[2026-09-20T21:00:00.102+0800][0.012s][info][gc,init] Max Heap Size: 4096M
+[2026-09-20T21:00:00.102+0800][0.012s][info][gc,init] Region Size: 2048K
+[2026-09-20T21:00:01.110+0800][1.020s][info][gc,start    ] GC(0) Pause Young (Concurrent Start) (G1 Humongous Allocation)
+[2026-09-20T21:00:01.111+0800][1.021s][info][gc,heap     ] GC(0) Humongous regions: 12->8
+[2026-09-20T21:00:01.112+0800][1.022s][info][gc          ] GC(0) Pause Young (Concurrent Start) (G1 Humongous Allocation) 1824M->1536M(4096M) 12.456ms
+[2026-09-20T21:00:03.110+0800][3.020s][info][gc,start    ] GC(1) Pause Young (Normal) (G1 Evacuation Pause)
+[2026-09-20T21:00:03.111+0800][3.021s][info][gc,heap     ] GC(1) Survivor regions: 4->0
+[2026-09-20T21:00:03.112+0800][3.022s][info][gc,phases   ] GC(1) To-space exhausted
+[2026-09-20T21:00:03.113+0800][3.023s][info][gc          ] GC(1) Pause Young (Normal) (G1 Evacuation Pause) 3904M->3800M(4096M) 620.100ms
+[2026-09-20T21:00:05.110+0800][5.020s][info][gc,start    ] GC(2) Pause Young (Mixed) (G1 Evacuation Pause)
+[2026-09-20T21:00:05.111+0800][5.021s][info][gc,heap     ] GC(2) Old regions: 320->260
+[2026-09-20T21:00:05.112+0800][5.022s][info][gc          ] GC(2) Pause Young (Mixed) (G1 Evacuation Pause) 3600M->2400M(4096M) 410.500ms
+[2026-09-20T21:00:07.110+0800][7.020s][info][gc,start    ] GC(3) Pause Full (G1 Compaction Pause)
+[2026-09-20T21:00:07.111+0800][7.021s][info][gc,cpu      ] GC(3) User=12.40s Sys=0.10s Real=2.10s
+[2026-09-20T21:00:09.210+0800][9.120s][info][gc,heap     ] GC(3) Old regions: 1900->1600
+[2026-09-20T21:00:09.211+0800][9.121s][info][gc,metaspace] GC(3) Metaspace: 42041K(42752K)->42041K(42752K) NonClass: 36926K(37312K)->36926K(37312K) Class: 5115K(5440K)->5115K(5440K)
+[2026-09-20T21:00:09.212+0800][9.122s][info][gc          ] GC(3) Pause Full (G1 Compaction Pause) 4090M->3200M(4096M) 2100.900ms
+[2026-09-20T21:00:11.110+0800][11.020s][info][gc,start   ] GC(4) Pause Young (Normal) (G1 Humongous Allocation)
+[2026-09-20T21:00:11.111+0800][11.021s][info][gc         ] GC(4) Pause Young (Normal) (G1 Humongous Allocation) 3500M->3300M(4096M) 18.200ms
+[2026-09-20T21:00:13.110+0800][13.020s][info][gc,start   ] GC(5) Pause Full (G1 Compaction Pause)
+[2026-09-20T21:00:15.410+0800][15.320s][info][gc         ] GC(5) Pause Full (G1 Compaction Pause) 4088M->3600M(4096M) 2310.000ms
+[2026-09-20T21:00:17.110+0800][17.020s][info][gc,start   ] GC(6) Pause Young (Normal) (G1 Evacuation Pause)
+[2026-09-20T21:00:17.111+0800][17.021s][info][gc,phases  ] GC(6) Evacuation Failure
+[2026-09-20T21:00:17.112+0800][17.022s][info][gc         ] GC(6) Pause Young (Normal) (G1 Evacuation Pause) 4092M->4020M(4096M) 540.000ms
+[2026-09-20T21:00:19.110+0800][19.020s][info][gc,start   ] GC(7) Pause Full (G1 Compaction Pause)
+[2026-09-20T21:00:21.410+0800][21.320s][info][gc         ] GC(7) Pause Full (G1 Compaction Pause) 4094M->3900M(4096M) 2400.000ms
+[2026-09-20T21:00:23.110+0800][23.020s][info][gc         ] GC(8) Pause Young (Normal) (G1 Humongous Allocation) 3800M->3600M(4096M) 15.000ms
+[2026-09-20T21:00:25.110+0800][25.020s][info][gc         ] GC(9) Pause Young (Normal) (G1 Humongous Allocation) 3700M->3500M(4096M) 14.500ms
+[2026-09-20T21:00:27.110+0800][27.020s][info][gc         ] GC(10) Pause Young (Normal) (G1 Evacuation Pause) 3650M->3400M(4096M) 13.200ms
+[2026-09-20T21:00:29.110+0800][29.020s][info][gc,heap    ] GC(11) Old regions: 1700->1690
+[2026-09-20T21:00:29.111+0800][29.021s][info][gc         ] GC(11) Pause Young (Mixed) (G1 Evacuation Pause) 3500M->3300M(4096M) 220.000ms

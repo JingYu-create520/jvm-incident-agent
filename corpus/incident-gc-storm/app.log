@@ -1,0 +1,66 @@
+2026-09-20 21:50:21.901  INFO 17456 --- [           main] d.jingyu.jia.victim.VictimApplication    : Starting VictimApplication v1.0.0 using Java 17.0.5 with PID 17456 (D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\demo-victim.jar started by Ella in D:\daily-files\Qoder CN\project-3\jvm-incident-agent\demo-victim\target\corpus-work\incident-gc-storm)
+2026-09-20 21:50:21.905  INFO 17456 --- [           main] d.jingyu.jia.victim.VictimApplication    : No active profile set, falling back to 1 default profile: "default"
+2026-09-20 21:50:23.229  INFO 17456 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8182 (http)
+2026-09-20 21:50:23.243  INFO 17456 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-20 21:50:23.244  INFO 17456 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.55]
+2026-09-20 21:50:23.290  INFO 17456 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-09-20 21:50:23.291  INFO 17456 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1296 ms
+2026-09-20 21:50:23.381  INFO 17456 --- [           main] dev.jingyu.jia.victim.ResidentWorkers    : resident workers started: 7 threads
+2026-09-20 21:50:23.713  INFO 17456 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8182 (http) with context path '/'
+2026-09-20 21:50:23.735  INFO 17456 --- [           main] d.jingyu.jia.victim.VictimApplication    : Started VictimApplication in 2.659 seconds (process running for 3.197)
+2026-09-20 21:50:24.277  INFO 17456 --- [nio-8182-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-20 21:50:24.277  INFO 17456 --- [nio-8182-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-20 21:50:24.278  INFO 17456 --- [nio-8182-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-20 21:50:24.500  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 loaded working set 175 MB across 97 humongous arrays (heap max 256 MB)
+2026-09-20 21:50:24.771  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 10 churned 162 MB heapUsedMb 243
+2026-09-20 21:50:24.922  WARN 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 hit the heap ceiling at round 12, trimmed to 168 MB
+2026-09-20 21:50:25.147  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 20 churned 314 MB heapUsedMb 232
+2026-09-20 21:50:25.462  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 30 churned 474 MB heapUsedMb 231
+2026-09-20 21:50:25.744  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 40 churned 636 MB heapUsedMb 225
+2026-09-20 21:50:26.034  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 50 churned 786 MB heapUsedMb 226
+2026-09-20 21:50:26.320  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 60 churned 950 MB heapUsedMb 222
+2026-09-20 21:50:26.603  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 70 churned 1093 MB heapUsedMb 215
+2026-09-20 21:50:26.889  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 80 churned 1237 MB heapUsedMb 214
+2026-09-20 21:50:27.177  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 90 churned 1385 MB heapUsedMb 215
+2026-09-20 21:50:27.463  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 100 churned 1537 MB heapUsedMb 214
+2026-09-20 21:50:27.761  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 110 churned 1691 MB heapUsedMb 217
+2026-09-20 21:50:28.047  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 120 churned 1849 MB heapUsedMb 214
+2026-09-20 21:50:28.337  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 130 churned 2000 MB heapUsedMb 213
+2026-09-20 21:50:28.624  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 140 churned 2160 MB heapUsedMb 221
+2026-09-20 21:50:28.911  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 150 churned 2310 MB heapUsedMb 221
+2026-09-20 21:50:29.199  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 160 churned 2476 MB heapUsedMb 224
+2026-09-20 21:50:29.491  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 170 churned 2626 MB heapUsedMb 222
+2026-09-20 21:50:29.789  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 180 churned 2780 MB heapUsedMb 231
+2026-09-20 21:50:30.079  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 190 churned 2937 MB heapUsedMb 221
+2026-09-20 21:50:30.369  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 200 churned 3099 MB heapUsedMb 229
+2026-09-20 21:50:30.655  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 210 churned 3244 MB heapUsedMb 220
+2026-09-20 21:50:30.949  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 220 churned 3399 MB heapUsedMb 221
+2026-09-20 21:50:33.391  INFO 17456 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=213 uptimeMs=12852
+2026-09-20 21:50:33.391  INFO 17456 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=213 uptimeMs=12852
+2026-09-20 21:50:33.871  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 230 churned 3559 MB heapUsedMb 222
+2026-09-20 21:50:34.162  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 240 churned 3722 MB heapUsedMb 227
+2026-09-20 21:50:34.443  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 250 churned 3878 MB heapUsedMb 228
+2026-09-20 21:50:34.732  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 260 churned 4039 MB heapUsedMb 224
+2026-09-20 21:50:35.018  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 270 churned 4198 MB heapUsedMb 221
+2026-09-20 21:50:35.298  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 280 churned 4342 MB heapUsedMb 220
+2026-09-20 21:50:35.580  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 290 churned 4489 MB heapUsedMb 224
+2026-09-20 21:50:35.861  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 300 churned 4648 MB heapUsedMb 223
+2026-09-20 21:50:36.147  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 310 churned 4803 MB heapUsedMb 212
+2026-09-20 21:50:36.434  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 320 churned 4957 MB heapUsedMb 211
+2026-09-20 21:50:36.718  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 330 churned 5103 MB heapUsedMb 208
+2026-09-20 21:50:37.002  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 340 churned 5267 MB heapUsedMb 216
+2026-09-20 21:50:37.288  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 350 churned 5420 MB heapUsedMb 222
+2026-09-20 21:50:37.573  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 360 churned 5558 MB heapUsedMb 214
+2026-09-20 21:50:37.863  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 370 churned 5711 MB heapUsedMb 216
+2026-09-20 21:50:38.169  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 380 churned 5859 MB heapUsedMb 206
+2026-09-20 21:50:38.541  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 390 churned 6008 MB heapUsedMb 216
+2026-09-20 21:50:38.864  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 400 churned 6170 MB heapUsedMb 228
+2026-09-20 21:50:39.239  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 410 churned 6323 MB heapUsedMb 228
+2026-09-20 21:50:39.603  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 420 churned 6485 MB heapUsedMb 211
+2026-09-20 21:50:39.952  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 430 churned 6641 MB heapUsedMb 210
+2026-09-20 21:50:40.284  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 440 churned 6795 MB heapUsedMb 211
+2026-09-20 21:50:40.594  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 450 churned 6949 MB heapUsedMb 216
+2026-09-20 21:50:40.920  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 460 churned 7106 MB heapUsedMb 226
+2026-09-20 21:50:41.230  INFO 17456 --- [ victim-batch-1] dev.jingyu.jia.victim.GcStormService     : batch 1 round 470 churned 7267 MB heapUsedMb 232
+2026-09-20 21:50:43.405  INFO 17456 --- [tim-heartbeat-1] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-1 heapUsedMb=219 uptimeMs=22867
+2026-09-20 21:50:43.405  INFO 17456 --- [tim-heartbeat-2] dev.jingyu.jia.victim.ResidentWorkers    : heartbeat from victim-heartbeat-2 heapUsedMb=219 uptimeMs=22867
