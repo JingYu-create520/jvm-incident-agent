@@ -175,21 +175,17 @@ public final class VmConfigSmellRule implements Rule {
     public String doc() {
         return """
                 # GCA005 — JVM configuration smell
-
-                **What it looks for.** Two computed signals — collections whose recorded cause is
-                `Metadata GC Threshold` (metaspace, not heap, is driving GC) and any Full GC caused by
-                `System.gc()` — plus a table of verbatim strings the JVM prints when it wants you to
-                change a flag: `concurrent mode failure`, `Could not reserve enough space for object
-                heap`, `Try -XX:+UseCompressedOops`, `GCLocker Initiated GC`, `Heap Dump Initiated GC`.
-
-                **Why it is trustworthy.** The string table quotes the JVM's own complaint and prints the
-                line it came from, so nobody has to take the recommendation on faith. Cause-based signals
-                need two or more occurrences before they fire.
-
-                **Evidence.** The matching log line, or the collection lines carrying the cause.
-
-                **False positives.** `Heap Dump Initiated GC` is reported at INFO, not as a fault — it is
-                a normal consequence of taking a dump, and the report says so.
+                
+                Two computed signals and a string table. The signals: collections whose recorded cause is
+                `Metadata GC Threshold` (metaspace is driving GC, not the heap) and any Full GC caused by
+                `System.gc()`. The table matches verbatim complaints the JVM writes when it wants a flag changed —
+                `concurrent mode failure`, `Could not reserve enough space for object heap`,
+                `Try -XX:+UseCompressedOops`, `GCLocker Initiated GC` — and quotes the line that said it, so the
+                recommendation can be checked rather than trusted.
+                
+                Metaspace needs three or more triggers with at least one after the JVM has been up for a minute.
+                Wrong when: a Spring Boot startup, which produces one or two `Metadata GC Threshold` collections on
+                its own; reporting those is the fastest way to teach a team to ignore this tool.
                 """;
     }
 }

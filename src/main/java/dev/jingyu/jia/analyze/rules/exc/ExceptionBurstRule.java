@@ -96,19 +96,18 @@ public final class ExceptionBurstRule implements Rule {
     public String doc() {
         return """
                 # EXC003 — Exception burst
-
-                **What it looks for.** Occurrences of one stack fingerprint are bucketed into one-minute
-                windows by their parsed log timestamp. Ten or more inside a single window fires; the finding
-                reports when the window starts.
-
-                **Why it is trustworthy.** Rate needs time, and time only exists if the log lines carry
-                stamps — this rule returns nothing at all when fewer than ten occurrences have parseable
-                timestamps, instead of guessing. The reported minute is a real bucket boundary, not a mean.
-
-                **Evidence.** The occurrences inside the burst window, annotated with their own timestamps.
-
-                **False positives.** A log that repeats one stack during a restart loop shows a burst per
-                restart. The count next to each line makes the pattern visible.
+                
+                Bucket one stack fingerprint's occurrences into one-minute windows by their parsed log timestamp,
+                and fire at ten or more inside a window. That minute becomes the start of the incident: whatever
+                changed then is the candidate cause.
+                
+                Rate needs time, and time exists only if the lines carry stamps. With fewer than ten parseable
+                timestamps this rule returns nothing rather than guessing, and the window it reports is a real
+                bucket boundary, not a mean.
+                
+                Evidence: the occurrences inside the burst, annotated with their own timestamps. Wrong when: a
+                restart loop repeating one stack — that shows a burst per restart, which the per-line timestamps
+                make visible.
                 """;
     }
 }

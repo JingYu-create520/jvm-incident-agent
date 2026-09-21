@@ -128,24 +128,14 @@ public final class LockContentionRule implements Rule {
     public String doc() {
         return """
                 # TDA002 — Contended monitor
-
-                **What it looks for.** Every `- waiting to lock <0x…>` line names a monitor
-                address. Addresses with three or more distinct waiters (tune with
-                `--lock-waiters`) are counted and ranked by in-degree — the most-contended
-                lock in a dump is almost always the throughput bottleneck, and it is the
-                lock, not the threads, that needs fixing.
-
-                **Why it is trustworthy.** The holder is resolved from the matching
-                `- locked <0x…>` line, so the finding names the exact code everyone is queued
-                behind, not just "there is contention". The holder's own stack is quoted as
-                evidence; if it is inside I/O, an RPC or a log call, that is your fix.
-
-                **Evidence.** The holder's thread stanza, plus one line per waiter showing the
-                monitor it is queued on.
-
-                **False positives.** A single waiter on a lock is normal and produces nothing;
-                only a queue of three or more fires. The thread that owns the monitor is never
-                counted as a waiter on it.
+                
+                Three or more threads queued on the same monitor address (`--lock-waiters` to move the line) is a
+                queue, and a queue is a bottleneck. The rule ranks monitors by waiter count and names the holder —
+                resolved from the matching `- locked <0x…>` line — because the useful answer is not "there is
+                contention" but "here is the code everyone is standing behind".
+                
+                Quotes the holder's stanza plus one line per waiter. The rule does not fire on a single thread
+                waiting on a single lock, and never counts the holder as a waiter on its own monitor.
                 """;
     }
 }

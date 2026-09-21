@@ -92,21 +92,19 @@ public final class MatWorthyRule implements Rule {
     public String doc() {
         return """
                 # HIS002 — Worth a heap dump
-
-                **What it looks for.** The same table as HIS001, restricted to classes that are not
-                `java.*` / `jdk.*` / `sun.*` / arrays of those. If one of your own classes holds at least
-                10% of counted bytes and 8 MB absolute, the report names it and the sibling classes that
-                are large too.
-
-                **Why it is trustworthy.** A `byte[]` at the top tells you a buffer grew; a domain class at
-                the top tells you *which* state grew. Both are needed, and only the second one is
-                actionable without a dump — so the recommendation is the exact MAT query to run.
-
-                **Evidence.** Every application class above 2 MB, ranked, with instance counts.
-
-                **False positives.** Long-lived caches of your own objects are legitimately large. The
-                instance count in the summary is what lets a reader judge "10 MB across 4 entries" versus
-                "10 MB across 240 000 entries".
+                
+                The same histogram as HIS001, restricted to classes that are not `java.*`, `jdk.*`, `sun.*` or
+                arrays of them. If one of your own classes holds at least 10% of counted bytes and 8 MB absolute,
+                it is named, along with the sibling classes that are large too.
+                
+                The distinction matters because a `byte[]` at the top tells you a buffer grew, while a domain class
+                at the top tells you *which state* grew — and only the second one is actionable without a dump. The
+                recommendation is therefore a concrete MAT query: Histogram → the class → Merge Shortest Paths to
+                GC Roots, excluding weak and soft references.
+                
+                Evidence: every application class above 2 MB, ranked, with instance counts. Wrong when: a
+                long-lived cache of your own objects, which is legitimately large — read the instance count
+                ("10 MB across 4 entries" and "10 MB across 240,000 entries" are different bugs).
                 """;
     }
 }

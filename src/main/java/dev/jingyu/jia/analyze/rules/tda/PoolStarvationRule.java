@@ -112,21 +112,18 @@ public final class PoolStarvationRule implements Rule {
     public String doc() {
         return """
                 # TDA005 — Thread pool starvation
-
-                **What it looks for.** Threads are grouped into pools by name family. A pool fires
-                when at least 80% of its workers are doing something (i.e. not parked in the pool's
-                own work queue) **and** those busy workers share one business frame.
-
-                **Why it is trustworthy.** The idle-worker exclusion is the whole trick: a pool where
-                4 of 10 threads wait in `getTask` is normal, and a pool where 10 of 10 are inside
-                `JdbcTemplate.query` is about to reject traffic. The same-frame requirement stops
-                ordinary concurrency from looking like starvation.
-
-                **Evidence.** Each stuck worker's stanza, with its state.
-
-                **False positives.** A batch job that intentionally saturates its pool at full tilt
-                looks identical to starvation from one dump. Take two dumps seconds apart, or raise
-                `--pool-starve-ratio`.
+                
+                A pool where 4 of 10 threads wait in `getTask` has spare capacity. A pool where 10 of 10 are inside
+                `JdbcTemplate.query` is about to start rejecting work. The rule groups threads into pools by name
+                family, drops the idle ones using the same `ThreadNoise` list TDA004 relies on, and fires when at
+                least 80% of a pool is occupied *and* those busy workers share one business frame.
+                
+                The same-frame requirement is what keeps ordinary concurrency from looking like starvation.
+                Families over 100 members are skipped on purpose: that is a leak, and TDA003 reports it with growth
+                evidence. Calling a 140-thread leak "starvation" would send the reader to pool sizing.
+                
+                Evidence: each stuck worker's stanza with its state. Wrong when: a batch job that saturates its
+                pool deliberately — from one dump it is indistinguishable from starvation.
                 """;
     }
 }

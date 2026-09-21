@@ -515,14 +515,36 @@ class RulesTest {
     @DisplayName("every rule documents itself and declares an artifact")
     void catalogueIsComplete() {
         assertEquals(18, Rules.all().size());
+        java.util.regex.Pattern limits = java.util.regex.Pattern.compile(
+                "(?i)(false positive|wrong when|can be wrong|quiet on|stays silent|does not fire)");
+        java.util.regex.Pattern quotes = java.util.regex.Pattern.compile(
+                "(?i)(evidence|quotes|quotation|one line per|per occurrence)");
+        int templateShaped = 0;
+        List<Integer> lengths = new java.util.ArrayList<>();
         for (Rule r : Rules.all()) {
-            assertTrue(r.doc().startsWith("# " + r.id()), r.id() + " doc must start with its own heading");
-            assertTrue(r.doc().contains("False positives"), r.id() + " must state its own limits");
-            assertTrue(r.doc().contains("Evidence"), r.id() + " must say what it quotes");
+            String doc = r.doc();
+            assertTrue(doc.startsWith("# " + r.id()), r.id() + " doc must start with its own heading");
+            assertTrue(limits.matcher(doc).find(),
+                    r.id() + " must state in its own words when it can be wrong");
+            assertTrue(quotes.matcher(doc).find(), r.id() + " must say what it quotes");
             assertFalse(r.title().isBlank());
             assertTrue(r.artifact() != dev.jingyu.jia.model.ArtifactKind.UNKNOWN,
                     r.id() + " must declare which artifact it reads");
+            if (doc.contains("**What it looks for.**")) {
+                templateShaped++;
+            }
+            lengths.add(doc.split("\\s+").length);
         }
+        // Documentation that shares one skeleton across every rule reads like it was generated,
+        // so the skeleton is not allowed to come back: at most a third of the catalogue may use it.
+        final int shaped = templateShaped;
+        assertTrue(shaped <= 6,
+                () -> shaped + " of 18 rule docs still open with the same boilerplate heading");
+        // And lengths must vary: a rule nobody can trip should not need 200 words.
+        int shortest = java.util.Collections.min(lengths);
+        int longest = java.util.Collections.max(lengths);
+        assertTrue(longest - shortest >= 80,
+                () -> "rule docs are suspiciously uniform in length: " + lengths);
     }
 
     @Test

@@ -156,26 +156,30 @@ public final class BlockedStackRule implements Rule {
     public String doc() {
         return """
                 # TDA004 — Stack hotspot
-
-                **What it looks for.** BLOCKED / WAITING / TIMED_WAITING threads are grouped by a
-                fingerprint of their state plus the top five frames (line numbers excluded, so a
-                rebuild does not split a cluster). Any group of five or more is a hotspot: that is
-                where the traffic jams.
-
-                A second pass catches the opposite disguise — threads that report RUNNABLE while
-                sitting in `socketRead0`, `EPoll.wait` or `epollWait`. They are waiting on a peer,
-                and a JVM without a timeout will happily keep them there forever.
-
-                **Why it is trustworthy.** Idle worker threads are excluded. Two hundred Tomcat
-                workers parked in `ThreadPoolExecutor.getTask` is a healthy server at night, and a
-                naive fingerprint count would call that a hotspot every single time. The exclusion
-                list is explicit in `ThreadNoise`, not inferred from "looks fine".
-
-                **Evidence.** One thread stanza per member of the cluster, with its state.
-
-                **False positives.** A deliberately large pool waiting on a shared queue that the
-                exclusion list does not recognise (a bespoke executor with a custom take method).
-                Raise `--stack-cluster` or add the frame to the idle list.
+                
+                Group BLOCKED / WAITING / TIMED_WAITING threads by their state plus the top five frames, and
+                report any group of five or more. That is where the traffic jams. Line numbers are excluded from
+                the fingerprint, because otherwise one rebuild splits a single bug into two clusters.
+                
+                The hard part is not the grouping. It is knowing what does not count.
+                
+                Two hundred Tomcat workers parked in `ThreadPoolExecutor.getTask` is a healthy server at night. So
+                is a pool waiting on `SynchronousQueue.poll`, `LinkedBlockingQueue.take`, `LockSupport.park` under
+                `getTask`, or its own `Object.wait()`. A naive fingerprint count calls all of that a hotspot, which
+                is exactly why most home-grown thread-dump scripts get dismissed after one use. The exclusion list
+                lives in `ThreadNoise` and is written out frame by frame rather than inferred from "looks idle".
+                Threads sleeping in `Thread.sleep` are excluded too — that is a thread-count question for TDA003,
+                not a contention question.
+                
+                A second pass catches the opposite disguise: threads reporting RUNNABLE while sitting in
+                `socketRead0`, `EPoll.wait` or `kevent0`. They are waiting on a peer, the JVM will not call them
+                blocked, and a dashboard counting blocked threads will look perfectly calm while every worker is
+                gone. That variant is tagged `socket-io` in the metrics so the report can rank it differently.
+                
+                Evidence: one stanza per member of the cluster, with its state.
+                
+                Wrong when: a custom executor whose take method is not in the idle list. Add the frame, or raise
+                `--stack-cluster`.
                 """;
     }
 }

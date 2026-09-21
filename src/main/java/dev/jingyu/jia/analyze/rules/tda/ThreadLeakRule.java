@@ -183,27 +183,28 @@ public final class ThreadLeakRule implements Rule {
     public String doc() {
         return """
                 # TDA003 — Thread leak
-
-                **What it looks for.** Thread names are grouped into families by stripping their
-                numeric suffixes (`pool-3-thread-17` → `pool-3-thread`). Two independent tests run:
-
-                1. **Oversized** — a family with more members than `--thread-leak-threshold`
-                   (default 40). Families the platform bounds itself (`http-nio-*-exec`,
-                   `pool-N-thread-M`, `grpc-*`) need 200+ before they fire, because a busy servlet
-                   container legitimately sits at 150.
-                2. **Only growing** — with two or more dumps, a family whose count never decreases
-                   and grows by at least 25%.
-
-                **Why it is trustworthy.** Test 2 is the one that catches a live leak: bounded pools
-                are large but flat, leaked pools are small then monotonically increasing. JVM
-                housekeeping threads are excluded outright.
-
-                **Evidence.** One quoted thread stanza per dump for the family, with the running count
-                in the annotation, so the growth is visible in the report itself.
-
-                **False positives.** A large-but-stable server pool. Handled by the separate, higher
-                bar for known pool name patterns; if your framework uses a custom prefix that is
-                legitimately huge, raise `--thread-leak-threshold`.
+                
+                Thread names carry their origin: `pool-3-thread-17` came from one creation site, `http-nio-8080-exec-9`
+                from Tomcat's connector. Strip the numeric parts and group by what is left, and a family is a
+                group of threads somebody's code made.
+                
+                Two independent tests then run on those families.
+                
+                **Oversized.** A family larger than `--thread-leak-threshold` (default 40). Families the platform
+                bounds itself — `http-nio-*-exec`, `pool-N-thread-M`, `grpc-*`, and friends listed in
+                `SERVER_POOL` — need 200 or more before they fire, because a busy servlet container sitting at 150
+                worker threads is a normal Tuesday and reporting it would be the single most reliable way to make
+                people stop trusting this tool.
+                
+                **Only growing.** Given two or more dumps, a family whose count never decreases and grows by at
+                least 25%. This is the test that catches a live leak rather than a large pool: bounded pools are
+                big and flat, leaked pools are small and monotonically increasing.
+                
+                Evidence is one thread stanza per dump for the family, with the running count annotated, so the
+                growth is visible in the report itself rather than asserted by it.
+                
+                Quiet on: a bespoke executor with a legitimately huge fixed pool under 200. Raise
+                `--thread-leak-threshold`, or capture two dumps so the growth test can do its job.
                 """;
     }
 }

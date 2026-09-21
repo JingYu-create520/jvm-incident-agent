@@ -145,26 +145,30 @@ public final class HeapLeakFingerprintRule implements Rule {
     public String doc() {
         return """
                 # GCA003 — Rising post-GC live set
-
-                **What it looks for.** After every Full GC (and G1 mixed collection) the heap holds only
-                live objects. Those post-collection values are sampled in time order: if they climb by at
-                least 10% end to end (`--heap-leak-rise`) without more than a quarter of the steps
-                dipping, the live set is growing and something is holding references.
-
-                When the log exposes old-generation detail — G1 `Old regions:` scaled by the region size,
-                or a JDK 8 `[ParOldGen: …]` figure — the rule measures the old generation directly;
-                otherwise it uses post-GC heap used, which is the same quantity for a Full GC.
-
-                **Why it is trustworthy.** This is the definition of a leak from GC data alone, not a
-                heuristic about heap size. Capacity is read from the log so the finding can say how close
-                to the wall you already are, which is what decides severity.
-
-                **Evidence.** Evenly spaced major-collection lines, each annotated with the live bytes it
-                left behind, ending with the last measurement.
-
-                **False positives.** A cache that legitimately fills to its configured maximum produces a
-                rising then flat series; the dip tolerance rejects the flat part, but a snapshot taken
-                entirely during fill-up will look like this. Check `samples` and the capacity share.
+                
+                This is the rule that separates "the app is allocating too much" from "the app is leaking", and it
+                is the reason the two look the same in every other tool: both produce a wall of Full GCs.
+                
+                After a Full GC, garbage is gone. What remains is the live set. Sample that number at every major
+                collection and watch its floor over time.
+                
+                Two shapes mean the same thing. A **climb** is the textbook case: the floor rises by at least 10%
+                (`--heap-leak-rise`) end to end without more than a quarter of the steps dipping. A **plateau** is
+                the same leak after it has filled the heap — the floor sits at 85%+ of capacity for three or more
+                collections and nothing is being reclaimed any more. A purely monotonic test misses the plateau
+                entirely, and the plateau is what a snapshot taken during an actual outage looks like: by the time
+                anyone captures anything, the leak has already saturated the heap.
+                
+                Where the log exposes old-generation detail the rule uses it directly — G1 `Old regions:` scaled by
+                the region size printed at init, or a JDK 8 `[ParOldGen: …]` figure. Otherwise it uses post-GC heap
+                used, which for a Full GC is the same quantity.
+                
+                Evidence: evenly spaced major-collection lines, each annotated with the live bytes it left behind,
+                ending with the last measurement. Severity follows how close to the ceiling the floor already is.
+                
+                Wrong when: a cache legitimately filling to its configured maximum. That produces a rise then a
+                flat line; the dip tolerance rejects the flat part, but a capture taken entirely during fill-up will
+                look exactly like this. Check `samples` and the capacity share before believing it.
                 """;
     }
 }

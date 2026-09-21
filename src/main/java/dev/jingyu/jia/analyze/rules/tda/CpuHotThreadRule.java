@@ -150,21 +150,21 @@ public final class CpuHotThreadRule implements Rule {
     public String doc() {
         return """
                 # TDA006 — Thread burning CPU
-
-                **What it looks for.** `cpu=` and `elapsed=` in each thread header. With one dump the
-                only honest number is a lifetime average (`cpu / elapsed`), so the finding labels it as
-                such and confidence is capped. With two dumps the delta of both columns gives
-                utilisation over the interval between captures, which is what "hot right now" means.
-
-                A thread fires at 0.5 of a core or more. JVM housekeeping (JIT compiler, GC threads)
-                is excluded — those burn CPU on purpose.
-
-                **Evidence.** The thread header line, annotated with the raw `cpu=`/`elapsed=` values
-                the number came from, and the top frame line.
-
-                **False positives.** A thread that spun hard during startup and has been idle since
-                still shows a high lifetime average. That is why the metric carries `basis`; trust
-                `delta` readings over single-dump ones.
+                
+                `jstack` headers carry `cpu=` and `elapsed=`. With one dump the only honest number is a lifetime
+                average, `cpu / elapsed`, and the finding labels it that way and caps its confidence — a thread that
+                spun hard during startup and has been idle since still shows a high average.
+                
+                With two dumps there is something much better: the delta of `cpu` over the delta of `elapsed` is
+                utilisation across the interval between captures, which is what "hot right now" actually means. The
+                metric `basis` says which of the two you are looking at, and the confidence follows (0.85 for a
+                delta, 0.6 for an average).
+                
+                Threads are matched between dumps by `nid`, falling back to name. JIT compiler and GC threads are
+                excluded — they burn CPU as their job.
+                
+                Quotes the header line with the raw `cpu=`/`elapsed=` values it came from, plus the top frame.
+                Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not guess.
                 """;
     }
 }

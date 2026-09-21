@@ -110,24 +110,27 @@ public final class ExceptionClusterRule implements Rule {
     public String doc() {
         return """
                 # EXC001 — Repeated exception cluster
-
-                **What it looks for.** Every throwable block in the application log is reduced to a
-                fingerprint: root-cause class plus the first five frames, with line numbers removed so a
-                rebuild does not split one bug into two clusters. Anything appearing five or more times
-                (`--exception-threshold`) is reported, most frequent first.
-
-                **Why it is trustworthy.** The grouping key is the *root cause* stack, not the wrapper. A
-                service that logs `DataIntegrityViolationException` for 30 different constraint failures
-                produces 30 clusters, while the 400 identical `NullPointerException`s that caused them all
-                collapse into one — which is exactly what you want to see first.
-
-                **Evidence.** The root-cause frames themselves, then one line per occurrence with its log
-                timestamp where available.
-
-                **False positives.** A single expected, handled failure that happens often looks identical to
-                a bug from the log alone. The finding says which class and stack it is, never that it is
-                unhandled — that judgement stays with the reader, which is why severity is MEDIUM unless the
-                root cause is an `Error`.
+                
+                Reduce every throwable block in the log to a fingerprint — root-cause class plus the first five
+                frames, line numbers stripped — then count.
+                
+                Grouping on the *root cause* rather than the wrapper is the whole design. A service that logs
+                `DataIntegrityViolationException` for thirty different constraint failures should produce thirty
+                clusters, and the four hundred identical `NullPointerException`s behind them should collapse into
+                one. Group by the outer class instead and you get the reverse: one meaningless row of five hundred.
+                
+                Severity stays MEDIUM unless the root cause is an `Error`. The log cannot tell you whether an
+                exception was handled gracefully upstream, and pretending otherwise is how these tools get
+                ignored; what it can tell you is that the same stack came back five or more times
+                (`--exception-threshold`).
+                
+                Evidence: the root-cause frames themselves, then one line per occurrence with its log timestamp
+                where the logger printed one.
+                
+                Wrong when: one expected, handled failure that simply happens often. From the log alone that is
+                indistinguishable from a bug, which is why the finding names the class and the stack and stops
+                there — it never claims the exception went unhandled, and severity stays MEDIUM unless the root
+                cause is an `Error`.
                 """;
     }
 

@@ -79,21 +79,17 @@ public final class GcThroughputRule implements Rule {
     public String doc() {
         return """
                 # GCA006 — GC throughput
-
-                **What it looks for.** Sum of all stop-the-world pauses divided by the wall-clock span of
-                the log. Fires below 97% (tune with `--throughput`), and needs at least ten collections
-                over ten seconds so a short excerpt cannot trip it.
-
-                **Why it is trustworthy.** It is arithmetic over the same pause numbers GCA002 reports,
-                and both the sum and the span are printed in the finding. The known limit is honest: a log
-                with only the pauses visible to `-Xlog:gc*` cannot count safepoint work that is not a GC
-                pause, so the real figure can be worse than this, never better.
-
-                **Evidence.** The biggest contributing pauses with their share of the total.
-
-                **False positives.** A log covering a mostly idle period with two long pauses at the start
-                (class loading, JIT) divides by a small denominator. Minimum event and span counts handle
-                the common case; for a five-line excerpt the tool stays quiet anyway.
+                
+                Sum of stop-the-world pauses divided by the wall-clock span of the log. Fires below 97%
+                (`--throughput`) and needs at least ten collections over ten seconds, so a short excerpt stays
+                quiet.
+                
+                Throughput is arithmetic over the same pause numbers GCA002 reports; both the sum and the span are
+                printed in the finding. Evidence is the biggest contributing pauses with their share of the total.
+                
+                Wrong when: the log covers a mostly idle period with two long pauses at the start — a small
+                denominator inflates the percentage. It is also a floor, never a ceiling: `-Xlog:gc*` cannot see
+                safepoint work that is not a GC pause, so the real figure can be worse than this, never better.
                 """;
     }
 }

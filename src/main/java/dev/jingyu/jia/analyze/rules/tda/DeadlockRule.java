@@ -150,27 +150,32 @@ public final class DeadlockRule implements Rule {
         return """
                 # TDA001 — Deadlock
 
-                **What it looks for.** Every `waiting to lock <0x…>` / `parking to wait for <0x…>`
-                line is paired with whichever thread prints `locked <0x…>` (or lists that address
-                under *Locked ownable synchronizers*) for the same monitor address. That produces a
-                directed wait-for graph over the threads in one dump. Tarjan's strongly-connected
-                components algorithm finds every component with two or more members — inside such a
-                component each thread waits on a monitor held by another member, so no member can
-                ever proceed.
+                Every `waiting to lock <0x…>` / `parking to wait for <0x…>` line is paired with
+                whichever thread prints `locked <0x…>` (or lists that address under *Locked ownable
+                synchronizers*) for the same monitor. That gives a directed graph over the threads in
+                one dump, edge from waiter to owner, and Tarjan's strongly-connected-components
+                algorithm returns every component with two or more members. Inside such a component
+                each thread waits on a monitor another member holds, so none of them can ever run
+                again: that is the definition of a deadlock, not a heuristic about it.
 
-                **Why it is trustworthy.** This is the same graph the JVM itself builds when it
-                prints `Found one Java-level deadlock`. TDA001 runs the algorithm independently and
-                then cross-checks: if the JVM trailer agrees, confidence is 0.99; if the JVM said
-                nothing but a cycle exists, the tool still reports it (a `ReentrantLock` cycle is
-                invisible to jstack's own detector); if the trailer fires but no cycle can be
-                reconstructed, that is reported as a parser limitation rather than hidden.
+                Two things make this more than a re-implementation of what jstack already prints.
 
-                **Evidence.** The full stanza of each thread in the cycle, plus the exact line where
-                the owner holds the monitor the next thread is waiting for.
+                The graph covers `java.util.concurrent` locks as well as monitors. A cycle of threads
+                parked on each other's `ReentrantLock` is completely invisible to jstack's own
+                detector — it prints no trailer at all — and shows up here. When the trailer does
+                fire and the graph agrees, confidence is 0.99; when only the graph fires, 0.92; when
+                the trailer fires but the lock lines will not reconstruct into a cycle, that is
+                reported as a parser limitation rather than dropped.
 
-                **False positives.** Essentially none by construction — a cycle in a wait-for graph
-                is a definition, not a heuristic. A healthy dump produces zero edges between owners
-                and waiters and cannot fire.
+                Tarjan is written iteratively. Recursion depth tracks chain length and a tired
+                production JVM can hold tens of thousands of threads; a stack overflow in the tool
+                you reach for at 3 a.m. is not an acceptable failure mode.
+
+                Evidence is the full stanza of each thread in the cycle plus the exact line where its
+                partner holds the monitor it is queued on.
+
+                Can be wrong when: effectively never, which is why this is the only thread rule with
+                no threshold. It would need two unrelated objects to share a monitor address.
                 """;
     }
 }

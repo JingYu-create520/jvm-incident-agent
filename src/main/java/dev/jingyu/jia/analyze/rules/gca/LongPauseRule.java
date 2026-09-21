@@ -94,19 +94,17 @@ public final class LongPauseRule implements Rule {
     public String doc() {
         return """
                 # GCA002 — Pause over SLA
-
-                **What it looks for.** Every stop-the-world pause is collected and ranked. The
-                distribution (p50 / p95 / p99 / max) is compared with `--sla-ms` (default 200 ms), and
-                severity follows how far p99 — not the maximum — sits over the line.
-
-                **Why it is trustworthy.** A single 4 s pause in a six-hour log is a fluke; a p99 of
-                400 ms is what every tenth request feels. Reporting both numbers is the point.
-
-                **Evidence.** The five worst pause lines with their kind and cause.
-
-                **False positives.** A log that includes startup and shutdown, or that was captured
-                while the machine was swapping, shows long pauses that are not the app's fault. The
-                uptime next to each event lets you see whether they cluster at boot.
+                
+                Collect every stop-the-world pause, rank them, compare the distribution against `--sla-ms`
+                (default 200 ms). p50, p95, p99 and the maximum all appear in the finding, because they answer
+                different questions: the maximum is what shows up in an incident review, p99 is what every tenth
+                request feels. Severity follows how far p99 sits over the line, not how bad the single worst pause
+                was.
+                
+                Evidence is the five worst pause lines with their kind and cause.
+                
+                Wrong when: the log is dominated by startup or shutdown, where long pauses are not the
+                application's fault — check the uptime printed next to each event before resizing anything.
                 """;
     }
 }

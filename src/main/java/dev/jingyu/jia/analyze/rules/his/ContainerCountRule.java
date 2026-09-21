@@ -122,21 +122,21 @@ public final class ContainerCountRule implements Rule {
     public String doc() {
         return """
                 # HIS003 — Collection count anomaly
-
-                **What it looks for.** Instance counts for the standard collection classes — and their
-                internal `$Node` / `$Entry` types, which is where the entries of a `HashMap` or
-                `ConcurrentHashMap` actually live. Anything at 50 000+ instances, or 5% of all objects in
-                the histogram, fires.
-
-                **Why it is trustworthy.** Bytes can be legitimately large in a buffering application; half
-                a million separate map nodes almost never is. The finding quotes corroborating rows from
-                the same table, so it is a pattern across several lines rather than one big number.
-
-                **Evidence.** The offending row plus up to three related container rows.
-
-                **False positives.** Big in-memory data grids and ORMs with deep entity graphs really do
-                hold hundreds of thousands of nodes. That is why severity keys off bytes as well as count,
-                and why the recommendation is to group by owning field rather than a claim of leakage.
+                
+                Ten thousand maps is a program. Two million is a bug, and the histogram can see the difference even
+                though it cannot see a single reference.
+                
+                Instance counts for the standard containers — and their internal `$Node` / `$Entry` types, where the
+                entries of a `HashMap` or `ConcurrentHashMap` actually live — fire at 50,000 or more, or at 5% of
+                all objects in the table. Bytes can be legitimately large in a buffering application; half a million
+                separate map nodes almost never is.
+                
+                Evidence: the offending row plus up to three corroborating container rows, so the finding rests on a
+                pattern across lines rather than one big number.
+                
+                Wrong when: an in-memory data grid or a deep ORM entity graph, which really does hold hundreds of
+                thousands of nodes. Severity keys off bytes as well as count for that reason, and the
+                recommendation is to group by owning field, not a claim of leakage.
                 """;
     }
 }
