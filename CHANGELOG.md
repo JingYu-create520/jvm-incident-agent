@@ -4,7 +4,7 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.1.2 — 2026-09-21
 
 Found by re-running the Docker path on a machine that already had six containers published
 (8080, 8081, 3000, 5432, 6379, 9090 all taken) — which is the situation 0.1.1's port fix was
