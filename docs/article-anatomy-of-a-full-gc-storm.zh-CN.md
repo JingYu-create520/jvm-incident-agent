@@ -9,11 +9,13 @@
 一个跑 G1 的 JVM,`-Xmx256m`,开始疯狂 Full GC。这是每个值班人都见过的画面:
 
 ```
-$ grep -c 'Pause Full' corpus/incident-gc-storm/gc.log
+$ grep -cE 'Pause Full .*ms' corpus/incident-gc-storm/gc.log
 8
 $ head -1 corpus/incident-gc-storm/gc.log
 [2026-09-20T21:50:20.547+0800][0.010s][info][gc] Using G1
 ```
+
+(注意用汇总行来数:`grep -c 'Pause Full'` 会给你 16,因为每次 Full GC 有 `gc,start` 和汇总两行。)
 
 22 秒的日志里 2555 次回收、8 次 Full GC。第一反应,也是绝大多数人的反应,是"堆给小了,加
 `-Xmx`"。这个反应在这起事故里是错的,而且错得很典型——**它把症状当成了原因**。
@@ -104,9 +106,9 @@ GCA005 MEDIUM  The log itself says: "GCLocker Initiated GC" — JNI critical sec
 (想确认到底谁在 JNI 临界区里,需要 `-Xcheck:jni` 或 async-profiler;`jia` 只报"日志里说了这件事",
 不做超出证据的推断。)
 
-另一条更常见:健康服务的日志里也有 `Metadata GC Threshold` 触发的 Full GC(Spring Boot 启动
-几乎必然产生一两次)。它如果被抓出来当事故报,这个工具就废了。判定条件因此是"3 次以上、且至少一次
-发生在 JVM 稳定 60 秒之后"。启动噪声不是事故。
+另一条更常见:我们那份健康服务的日志里,也有 `Metadata GC Threshold` 触发的 Full GC(Spring Boot
+启动阶段产生一两次是很正常的)。它如果被当成事故报出来,这个工具就废了。判定条件因此是"3 次以上、且至少
+一次发生在 JVM 稳定 60 秒之后"。启动噪声不是事故。
 
 ## 第 5 步:如果你只有一台机器,先做这三件事
 
@@ -128,7 +130,8 @@ jia analyze /tmp/incident
 
 `jia analyze corpus/incident-gc-storm` 和 `corpus/incident-heap-leak` 会分别把
 `H-ALLOCATION-STORM` 和 `H-HEAP-LEAK` 排在第一名,`corpus/healthy` 输出零结论。
-这四条断言就是 `CorpusTest` 里的测试用例,改坏任何一条,CI 直接红。
+这些不是"我跑给你看",是 `CorpusTest` 里的断言:五个场景的第一名假设各一条,加上健康样本零结论一条,
+共六条,改坏任何一条 CI 直接红。
 
 > 本文所有结论由确定性规则产生,语言模型只参与把结论写成段落——它没有能力新增、删除或改写任何
 > 一条结论(仓库里有一个测试专门锁死这件事)。所以你可以在凌晨三点相信这份报告。
