@@ -54,6 +54,34 @@ class CorpusTest {
                 + r.findings().stream().map(f -> f.ruleId() + "/" + f.severity()).toList());
     }
 
+    /**
+     * The exact rule set each scenario fires, pinned.
+     *
+     * <p>{@code TRUTH.md} documents a must-not-fire list per scenario, but the ranking check above
+     * only looks at the top hypothesis — so a rule drifting into or out of a scenario stayed
+     * invisible until somebody read the markdown. One scenario's list was already wrong that way
+     * (TDA005 does fire on {@code incident-deadlock}: the deadlock starves the whole worker pool).
+     * This is the assertion that keeps the documentation and the engine from separating again.
+     */
+    @ParameterizedTest(name = "{0} fires exactly [{1}]")
+    @CsvSource({
+            "incident-deadlock,    'TDA001 TDA002 TDA004 TDA005'",
+            "incident-heap-leak,   'GCA001 GCA003 GCA004 HIS001'",
+            "incident-gc-storm,    'GCA001 GCA004 GCA005 GCA006 HIS001'",
+            "incident-thread-leak, 'TDA003 TDA005'",
+            "incident-exceptions,  'EXC001 EXC002 EXC003'",
+            "healthy,              ' '",
+    })
+    void firesExactlyTheDocumentedRules(String scenario, String expected) {
+        List<String> fired = analyze(scenario).findings().stream()
+                .map(f -> f.ruleId())
+                .distinct()
+                .sorted()
+                .toList();
+        List<String> want = expected.isBlank() ? List.of() : List.of(expected.trim().split("\\s+"));
+        assertEquals(want, fired, () -> scenario + " actually fired " + fired);
+    }
+
     @Test
     @DisplayName("the healthy capture yields zero findings — the hard gate")
     void healthyIsSilent() {

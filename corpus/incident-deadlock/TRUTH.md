@@ -63,12 +63,15 @@ a live service rather than an empty VM.
   owner (`victim-report-exporter`, which is itself WAITING/sleeping while holding it).
 - **TDA004 (blocked-stack hotspots)** — `DeadlockPlant.fetchReport(DeadlockPlant.java:135)` is the
   identical top frame of 8 BLOCKED threads; the two cycle threads add 2 more BLOCKED fingerprints.
+- **TDA005 (pool starvation)** — all 8 workers of `victim-report-fetcher` are occupied, and they are
+  occupied *by* the deadlock. Starving that pool is a consequence of what was planted here, not a
+  separate condition; an earlier version of this file listed TDA005 under "must NOT fire", which the
+  capture itself contradicts.
 
 ## Rules that must NOT fire
 
 GCA001-005 (no Full GC in this log), HIS001/HIS002 (13.1 MB live total), EXC001/EXC002 (no ERROR,
-no `Caused by:`), TDA003 (no repeating `victim-worker-` prefix: 0 occurrences), TDA005 (see the
-corpus-wide note in `corpus/incident-thread-leak/TRUTH.md`).
+no `Caused by:`), TDA003 (no repeating `victim-worker-` prefix: 0 occurrences).
 
 ## Parser notes (shapes that are easy to get wrong)
 

@@ -43,12 +43,17 @@ services:
   victim:
     <<: *jvm
     container_name: jvm-incident-victim
-    # Published only so a human can poke at /victim/* in a browser. The one-click flow
-    # does not need it: run-incident.sh reaches this container over the compose network at
-    # http://victim:8080. It is configurable because binding 8080 is exactly the kind of
-    # thing that collides with whatever else is already on a developer laptop.
-    ports:
-      - "${VICTIM_PORT:-8081}:8080"
+    # Deliberately NOT published. The one-click flow reaches this container over the
+    # compose network at http://victim:8080, so a host port buys nothing the repro
+    # needs — and binding one is exactly how the one-command path collides with
+    # whatever else is already on a developer laptop. It did: with another stack
+    # holding 8081, `run --rm incident deadlock` died on
+    # "Bind for 0.0.0.0:8081 failed: port is already allocated".
+    #
+    # Want to poke at /victim/* in a browser? Forward it yourself, on a port you know
+    # is free:  docker compose -f server/docker-compose.yml port victim 8080
+    expose:
+      - "8080"
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/victim/health"]
       interval: 5s

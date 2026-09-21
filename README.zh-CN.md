@@ -222,9 +222,11 @@ docker compose -f server/docker-compose.yml --profile repro run --build --rm inc
 jia analyze corpus/incident-deadlock
 ```
 
-靶子应用不要求你预留端口:宿主机端口是 `VICTIM_PORT`(默认 8081),而且一键流程根本不用它
-——触发脚本走 compose 网络直连容器。事故种类:`deadlock`、`heap-leak`、`gc-storm`、
-`thread-leak`、`exceptions`、`healthy`。不想用 Docker,在宿主机上直接跑:
+靶子应用**完全不占用宿主机端口**:触发脚本走 compose 网络直连容器 `http://victim:8080`。
+这是特意改的——它以前默认发布 8081,于是一台 8081 已被占用的机器上,那条一键命令会直接死在
+`Bind for 0.0.0.0:8081 failed: port is already allocated`,而这条流程根本不需要那个端口。
+想在浏览器里点 `/victim/*`,自己指定端口跑:`docker compose -f server/docker-compose.yml run --publish 8081:8080 victim`。
+事故种类:`deadlock`、`heap-leak`、`gc-storm`、`thread-leak`、`exceptions`、`healthy`。不想用 Docker,在宿主机上直接跑:
 
 ```bash
 cd demo-victim && ../mvnw -q -DskipTests package && cd ..

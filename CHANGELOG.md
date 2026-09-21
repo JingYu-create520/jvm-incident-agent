@@ -4,7 +4,40 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+Found by re-running the Docker path on a machine that already had six containers published
+(8080, 8081, 3000, 5432, 6379, 9090 all taken) — which is the situation 0.1.1's port fix was
+supposed to survive.
+
+### Fixed
+
+- `server/docker-compose.yml` no longer publishes **any** host port. 0.1.1 moved the victim off
+  a hardcoded 8080 and made it `VICTIM_PORT` (default 8081), but that only relocated the same
+  failure: with something else on 8081, `docker compose --profile repro run --build --rm incident
+  deadlock` still died with `Bind for 0.0.0.0:8081 failed: port is already allocated`. The
+  one-click flow reaches the container over the compose network, so the mapping was never needed;
+  README (both languages) now says so and shows how to publish a port deliberately if you want a
+  browser URL.
+- `corpus/incident-deadlock/TRUTH.md` listed TDA005 under "rules that must NOT fire". It fires,
+  and it is right to: the planted deadlock occupies all 8 workers of `victim-report-fetcher`, so
+  the pool really is starved. Moved to the SHOULD-fire list with the reason.
+
+### Added
+
+- `CorpusTest` now pins the **exact** rule set each scenario fires. The ranking check only looked
+  at the top hypothesis, so a rule drifting in or out of a scenario stayed invisible — that is how
+  the TDA005 line above survived contact with the corpus it describes.
+
+### Verified
+
+- `docker compose --profile repro run --build --rm incident deadlock` end to end on Docker Desktop
+  29.8.0 / Windows: image builds, deadlock plants, four artifacts land in `corpus/incident-deadlock`,
+  and `jia analyze` on the fresh capture reports TDA001 (99%), TDA005, TDA004, TDA002 — with the
+  whole suite (80 tests) green against the newly captured files.
+
 ## 0.1.1 — 2026-09-21
+
 
 Found by actually running the Docker path end to end, which 0.1.0 shipped unverified because no
 daemon was available during the build. Everything below is a defect in the reproduction

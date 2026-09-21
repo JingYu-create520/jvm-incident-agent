@@ -280,9 +280,13 @@ docker compose -f server/docker-compose.yml --profile repro run --build --rm inc
 jia analyze corpus/incident-deadlock
 ```
 
-The victim publishes nothing you must reserve: its host port is `VICTIM_PORT` (default 8081),
-and the one-click flow does not use it at all — the trigger reaches the container over the
-compose network. Incidents: `deadlock`, `heap-leak`, `gc-storm`, `thread-leak`, `exceptions`,
+The victim binds **no host port at all** — the trigger reaches it over the compose network at
+`http://victim:8080`. That is deliberate: it used to publish `8081` by default, and on a machine
+that already had something listening there the one-command repro died with
+`Bind for 0.0.0.0:8081 failed: port is already allocated`, which is a confusing way to fail a flow
+that never needed the port. Want a browser URL for `/victim/*`, run it on a port you choose:
+`docker compose -f server/docker-compose.yml run --publish 8081:8080 victim`.
+Incidents: `deadlock`, `heap-leak`, `gc-storm`, `thread-leak`, `exceptions`,
 `healthy`. On the host without Docker:
 
 ```bash
