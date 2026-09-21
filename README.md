@@ -41,32 +41,23 @@ code `0`. That is the gate this project is built around — see [False positives
 
 ---
 
-## Contents
-
-- [Why not just …](#why-not-just-)
-- [Install](#install)
-- [Quickstart](#quickstart)
-- [What it reads](#what-it-reads)
-- [The 18 rules](#the-18-rules)
-- [Evidence, not vibes](#evidence-not-vibes)
-- [LLM: narration only](#llm-narration-only)
-- [Use it from an agent (MCP)](#use-it-from-an-agent-mcp)
-- [CI gate](#ci-gate)
-- [Reproduce an incident on purpose](#reproduce-an-incident-on-purpose)
-- [False positives are the real problem](#false-positives-are-the-real-problem)
-- [Limits](#limits)
-- [Development](#development) · [License](#license)
-
 ## Why not just …
 
-| | |
-|---|---|
-| **Eclipse MAT** | The right tool for a heap dump, and this project sends you to it deliberately. But it is an IDE-shaped GUI, has a real learning curve, cannot be scripted at 3 a.m., and cannot read a GC log or a thread dump as a single incident. |
-| **gceasy.io** | Good GC analysis. You have to upload your production GC log to a website. |
-| **Asking a chatbot** | It will happily tell you "increase `-Xmx`" from a stack trace with no evidence chain, no reproducibility, and no idea that 200 idle Tomcat threads are a healthy server. |
-| **`jstack` + grep** | What most of us do. This is that, with the wait-for graph, the sliding GC windows and the histogram arithmetic already done — and it reads all four artifacts together. |
+Eclipse MAT is the right tool for a heap dump, and this project sends you to MAT on purpose. But
+MAT is an IDE-shaped GUI with a real learning curve; you cannot script it at 3 a.m., and it does
+not read your GC log and your thread dump as one incident.
 
-The position: **command-line, scriptable, agent-callable, data never leaves the machine.**
+gceasy.io does good GC analysis for a price: your production GC log ends up on someone's website.
+
+Asking a chatbot gets you "increase `-Xmx`" from a stack trace, with no evidence chain, no
+reproducibility, and no idea that 200 idle Tomcat workers are just a healthy server at night.
+
+`jstack` plus grep is what most of us actually do. This is that, except the wait-for graph, the
+sliding GC windows and the histogram arithmetic are already done, and it reads all four artifacts
+together instead of one at a time.
+
+The position I am claiming is narrow on purpose: command line, scriptable, callable by an agent,
+data never leaves the machine.
 
 ## Install
 
@@ -348,6 +339,36 @@ ranking), `llm/`, `report/`, `mcp/`, `Cli.java`. `docs/PLAN.md` is the original 
 the build follows.
 
 Contributions that add a rule must add its negative case. That is the actual requirement.
+
+## How this was actually built
+
+Not the polished version. The rules all look reasonable now because the corpus kept catching them
+being wrong in specific ways:
+
+- The exception parser found **zero** stacks in a real Spring Boot log for a whole day. Cause: my
+  frame regex demanded the line end with `)`, and logback appends `~[spring-web-6.2.8.jar:6.2.8]`
+  after it. Every fixture I had written by hand passed.
+- `[Metaspace: 3072K->3072K(1056768K)]` has exactly the shape of a heap transition and sits at the
+  end of the line, so the "last transition wins" rule read a JDK 8 heap as 1032 MB.
+- `Found one Java-level deadlock:` ends with a colon. I matched it with `matches()`, which demands
+  a whole-line match, so the check never fired and the trailer's `- locked` lines were attributed
+  to whichever thread stanza happened to be open — the last real thread appeared to own monitors
+  it never touched, and the cycle disappeared.
+- The same `matches()` mistake meant all four content signatures were silently dead and file
+  identification was working off filenames alone. Nothing failed; the tool was just quietly wrong.
+- jstack prints the capture date on the line *before* `Full thread dump`, and that branch rebuilt
+  the parser state unconditionally. Result: every timeline entry said `—`.
+- The healthy capture kept tripping GCA005, because every Spring Boot log has a `Metadata GC
+  Threshold` collection or two during startup. The threshold is now "three or more, at least one
+  after the JVM has been up for a minute".
+- The Docker path shipped unverified in 0.1.0 because no daemon was running. Running it found
+  `capture.sh` dying under `sh` on `set -o pipefail`, port 8080 already taken, and the one-click
+  thread-leak capture firing both bursts *before* the first dump — so it produced 140/140 and
+  could not demonstrate the growth rule at all.
+
+`docs/PLAN.md` is the design document I worked from, including the list of places where the build
+diverged from it. `CHANGELOG.md` records what changed and why. Both are honest about the mistakes
+above; that is the part I would want to read if I were evaluating someone else's repo.
 
 ## License
 
