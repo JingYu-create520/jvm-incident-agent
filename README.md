@@ -345,7 +345,8 @@ Contributions that add a rule must add its negative case. That is the actual req
 Not the polished version. The rules all look reasonable now because the corpus kept catching them
 being wrong in specific ways:
 
-- The exception parser found **zero** stacks in a real Spring Boot log for a whole day. Cause: my
+- The exception parser found **zero** stacks in a real Spring Boot log, while every hand-written
+  fixture passed. Cause: my
   frame regex demanded the line end with `)`, and logback appends `~[spring-web-6.2.8.jar:6.2.8]`
   after it. Every fixture I had written by hand passed.
 - `[Metaspace: 3072K->3072K(1056768K)]` has exactly the shape of a heap transition and sits at the
@@ -358,9 +359,9 @@ being wrong in specific ways:
   identification was working off filenames alone. Nothing failed; the tool was just quietly wrong.
 - jstack prints the capture date on the line *before* `Full thread dump`, and that branch rebuilt
   the parser state unconditionally. Result: every timeline entry said `—`.
-- The healthy capture kept tripping GCA005, because every Spring Boot log has a `Metadata GC
-  Threshold` collection or two during startup. The threshold is now "three or more, at least one
-  after the JVM has been up for a minute".
+- The healthy capture kept tripping GCA005, because our Spring Boot startup logs produce a
+  `Metadata GC Threshold` collection or two during startup. The threshold is now "three or more,
+  at least one after the JVM has been up for a minute".
 - The Docker path shipped unverified in 0.1.0 because no daemon was running. Running it found
   `capture.sh` dying under `sh` on `set -o pipefail`, port 8080 already taken, and the one-click
   thread-leak capture firing both bursts *before* the first dump — so it produced 140/140 and

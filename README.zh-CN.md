@@ -242,7 +242,7 @@ scripts/capture.sh -o /tmp/incident -d 6        # jstack -l、jmap -histo、gc.l
 
 1. **健康输入必须零结论。** `corpus/healthy` 是一个真实运行、有负载的 Spring Boot 应用,10 个
    servlet 线程、直方图榜首就是 `[B`,测试断言它一条都不报。启动期的 `Metadata GC Threshold`
-   ——每个 Spring Boot 日志都有——被明确判定为不算事故。
+   ——我们自己的 Spring Boot 启动日志里就有——被明确判定为不算事故。
 2. **"空转"不等于"卡住"。** 200 个 worker 停在 `ThreadPoolExecutor.getTask` 上是安静的夜晚。
    排除名单是 `ThreadNoise` 里显式写出来的,不是猜出来的——这一条决定了线程 dump 规则到底能用
    还是只会吵。
@@ -278,7 +278,7 @@ jia rules --format json           # 机器可读的规则目录
 
 说点不加修饰的。现在这些规则看着合理,是因为语料一直在以很具体的方式抓到它们错:
 
-- 异常解析器在真实 Spring Boot 日志里**一个栈都找不到**,找了一整天。原因是我的帧正则要求行尾
+- 异常解析器在真实 Spring Boot 日志里**一个栈都找不到**,而我手写的那些用例全都通过。原因是我的帧正则要求行尾
   收在 `)` 上,而 logback 在后面还加了 `~[spring-web-6.2.8.jar:6.2.8]`。我自己手写的所有用例都是过的。
 - `[Metaspace: 3072K->3072K(1056768K)]` 和堆变化的形状一模一样,又在同一行末尾,于是"取最后一个
   变化"的规则把一份 JDK 8 的堆读成了 1032 MB。
@@ -289,7 +289,7 @@ jia rules --format json           # 机器可读的规则目录
   就是 quietly wrong。
 - jstack 的捕获日期打在 `Full thread dump` 的**前一行**,而那个分支会无条件重建解析状态。结果时间轴
   上每一条都是 `—`。
-- 健康样本一直触发 GCA005,因为每个 Spring Boot 日志启动时都有一两次 `Metadata GC Threshold`。
+- 健康样本一直触发 GCA005,因为我们自己的 Spring Boot 启动日志里就有一两次 `Metadata GC Threshold`。
   现在的判定是"3 次以上,且至少一次发生在 JVM 起来一分钟之后"。
 - Docker 那条路 0.1.0 是**没验证就发了**,因为当时没有守护进程。真跑一遍就发现:`capture.sh` 被 `sh`
   起会死在 `set -o pipefail`;8080 端口被占;一键 thread-leak 把两次 burst 都放在第一次 dump 之前,
