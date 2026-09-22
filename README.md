@@ -342,7 +342,7 @@ by `RulesTest.catalogueIsComplete`.
 ## Development
 
 ```bash
-./mvnw test                       # 74 tests, ~4 s
+./mvnw test                       # 87 tests, ~4 s
 ./mvnw -q -DskipTests package     # target/jia.jar
 jia rules --format json           # the machine-readable catalogue
 ```

@@ -33,6 +33,8 @@ Documentation and tests only — no change to the analyzer's behaviour, so no ne
 - Both READMEs' no-Docker capture snippet started the victim without `-Xlog:gc*`, so the fourth
   artifact it claims to collect could not exist. The snippet now passes the flag and the
   `--gc-log` / `--app-log` paths, verified end to end against a fresh 256 MB G1 storm.
+- Both READMEs quoted the suite as 74 tests; it is 87. Nothing reads that number, which is the
+  same failure mode as the ground-truth lists above, one floor lower down.
 
 ## 0.1.2 — 2026-09-21
 

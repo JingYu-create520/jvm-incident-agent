@@ -273,7 +273,7 @@ scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app
 ## 开发
 
 ```bash
-./mvnw test                       # 74 个测试,约 4 秒
+./mvnw test                       # 87 个测试,约 4 秒
 ./mvnw -q -DskipTests package     # target/jia.jar
 jia rules --format json           # 机器可读的规则目录
 ```
