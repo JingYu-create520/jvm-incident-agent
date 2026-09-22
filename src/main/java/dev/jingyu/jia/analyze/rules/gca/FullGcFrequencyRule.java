@@ -40,7 +40,11 @@ public final class FullGcFrequencyRule implements Rule {
         if (log == null) {
             return List.of();
         }
-        List<GcEvent> full = log.majorCollections();
+        // A startup metaspace collection and a jmap-forced inspection are not heap pressure; a
+        // rate rule cannot tell them from a storm, so the causes are filtered before the counting.
+        List<GcEvent> full = log.majorCollections().stream()
+                .filter(e -> !GcNoise.notHeapPressure(e, config.gcSettleSec()))
+                .toList();
         if (full.size() < 2) {
             return List.of();
         }
@@ -125,7 +129,14 @@ public final class FullGcFrequencyRule implements Rule {
 
                 **Evidence.** Each Full GC line in the densest window, annotated with uptime and cause.
 
-                **False positives.** A log covering less than one window at the very end of the JVM's
+                **False positives.** Full GCs caused by `Metadata GC Threshold` inside the first `--gc-settle-sec`
+                (default 60 s of uptime) and ones an outside actor forced (`Heap Inspection Initiated GC` from
+                `jmap -histo:live`, a heap dump) are dropped before the rate is computed: they are real collections
+                and they say nothing about memory pressure. That filter is the reason a 78-line startup slice of a
+                healthy Parallel GC service produces no findings; without it the same bytes came back as a storm.
+                Nothing filters `GCLocker Initiated GC` -- that one is the JVM complaining, and GCA005 quotes it.
+
+                A log covering less than one window at the very end of the JVM's
                 life, or shutdown-time `System.gc()` calls, can look dense. The causes printed next to
                 each event let a reader check: `Allocation Failure`/`Ergonomics` is pressure,
                 `System.gc()` is somebody's code.

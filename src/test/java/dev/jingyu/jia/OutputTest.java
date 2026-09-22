@@ -21,6 +21,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -189,6 +190,47 @@ class OutputTest {
         assertEquals(0, Cli.run(new String[]{"explain", "GCA003"}));
         assertEquals(2, Cli.run(new String[]{"explain", "NOPE"}));
         assertEquals(0, Cli.run(new String[]{"doctor"}));
+    }
+
+    @Test
+    @DisplayName("no rule documents a flag that does not exist, and no knob is published that moves nothing")
+    void knobsAreReachable() {
+        java.util.Set<String> flags = new java.util.LinkedHashSet<>();
+        for (picocli.CommandLine.Model.OptionSpec o : Cli.command()
+                .getSubcommands().get("analyze").getCommandSpec().options()) {
+            for (String n : o.names()) {
+                if (n.startsWith("--")) {
+                    flags.add(n.substring(2));
+                }
+            }
+        }
+        assertTrue(flags.size() > 20, "the analyze command should expose its tuning, saw " + flags.size());
+
+        List<String> documentedButMissing = new ArrayList<>();
+        for (dev.jingyu.jia.analyze.Rule r : dev.jingyu.jia.analyze.Rules.all()) {
+            java.util.regex.Matcher m = java.util.regex.Pattern
+                    .compile("--([a-z][a-z0-9-]+)").matcher(r.doc());
+            while (m.find()) {
+                if (!flags.contains(m.group(1))) {
+                    documentedButMissing.add(r.id() + " documents --" + m.group(1));
+                }
+            }
+        }
+        assertTrue(documentedButMissing.isEmpty(),
+                () -> "rule docs promise flags nobody implemented: " + documentedButMissing);
+
+        // The report publishes Config.asMap() under `thresholds`. A key there that no flag can move
+        // is a number the reader is meant to trust but cannot re-run — which is how cpu-hot-ratio
+        // sat in Config for three releases reading like a knob and controlling nothing.
+        List<String> unreachable = new ArrayList<>();
+        java.util.Set<String> shapesOutput = java.util.Set.of("max-evidence", "cpu-hot-top-n");
+        Config.defaults().asMap().forEach((k, v) -> {
+            if (!flags.contains(k) && !shapesOutput.contains(k)) {
+                unreachable.add(k + "=" + v);
+            }
+        });
+        assertTrue(unreachable.isEmpty(),
+                () -> "thresholds the JSON advertises that no flag controls: " + unreachable);
     }
 
     @Test

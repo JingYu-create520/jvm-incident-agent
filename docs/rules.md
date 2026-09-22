@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-19 rules ship in jvm-incident-agent 0.3.0.
+19 rules ship in jvm-incident-agent 0.3.1.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -121,7 +121,14 @@ as a separate metric.
 
 **Evidence.** Each Full GC line in the densest window, annotated with uptime and cause.
 
-**False positives.** A log covering less than one window at the very end of the JVM's
+**False positives.** Full GCs caused by `Metadata GC Threshold` inside the first `--gc-settle-sec`
+(default 60 s of uptime) and ones an outside actor forced (`Heap Inspection Initiated GC` from
+`jmap -histo:live`, a heap dump) are dropped before the rate is computed: they are real collections
+and they say nothing about memory pressure. That filter is the reason a 78-line startup slice of a
+healthy Parallel GC service produces no findings; without it the same bytes came back as a storm.
+Nothing filters `GCLocker Initiated GC` -- that one is the JVM complaining, and GCA005 quotes it.
+
+A log covering less than one window at the very end of the JVM's
 life, or shutdown-time `System.gc()` calls, can look dense. The causes printed next to
 each event let a reader check: `Allocation Failure`/`Ergonomics` is pressure,
 `System.gc()` is somebody's code.
@@ -170,6 +177,9 @@ captures.
 Where the log exposes old-generation detail the rule uses it directly — G1 `Old regions:` scaled by
 the region size printed at init, or a JDK 8 `[ParOldGen: …]` figure. Otherwise it uses post-GC heap
 used, which for a Full GC is the same quantity.
+
+Startup `Metadata GC Threshold` collections and inspection-forced Full GCs are excluded from the
+series, for the reason GCA001 states: two of them during a Spring Boot start are not a rising floor.
 
 Evidence: evenly spaced major-collection lines, each annotated with the live bytes it left behind,
 ending with the last measurement. Severity follows how close to the ceiling the floor already is.
@@ -481,4 +491,4 @@ Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not gue
 
 ---
 
-_19 rules, rendered from `jvm-incident-agent 0.3.0 rules --format json` by scripts/render-rules.sh._
+_19 rules, rendered from `jvm-incident-agent 0.3.1 rules --format json` by scripts/render-rules.sh._

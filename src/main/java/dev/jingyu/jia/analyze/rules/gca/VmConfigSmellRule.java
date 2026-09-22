@@ -80,7 +80,7 @@ public final class VmConfigSmellRule implements Rule {
         // metaspace collector that keeps coming back after the JVM has settled.
         long metadataAfterWarmup = log.events().stream()
                 .filter(e -> e.cause() != null && e.cause().contains("Metadata GC Threshold"))
-                .filter(e -> e.atSec() > 60)
+                .filter(e -> e.atSec() > config.gcSettleSec())
                 .count();
         long explicit = log.events().stream()
                 .filter(e -> e.cause() != null && (e.cause().contains("System.gc()")

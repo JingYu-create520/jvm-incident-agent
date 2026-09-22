@@ -339,6 +339,26 @@ class RulesTest {
         }
 
         @Test
+        @DisplayName("a Spring Boot startup's metaspace Full GCs are not a storm, and the window is real")
+        void startupMetaspaceNoiseIsNotAnIncident() {
+            // 78 lines of a real Parallel GC service: two `Pause Full (Metadata GC Threshold)` at
+            // uptime 1.0 s and 2.1 s, nothing else wrong with it. The tool called this
+            // "Full GC storm, HIGH" until the cause filter existed; the promise that startup noise
+            // is not an incident had only ever been kept inside GCA005.
+            Snapshot boot = withGc(Fixtures.source("gc-jdk17-parallel-startup.log"));
+            assertIds(run(rule("GCA001"), boot), "two startup metaspace collections are not a storm");
+            assertIds(run(rule("GCA003"), boot), "and they are not a leak fingerprint either");
+
+            // The window has to be doing the work, not the parser dropping events: widen it to zero
+            // and the same bytes become a storm again.
+            List<Finding> immediate = rule("GCA001").evaluate(boot,
+                    Config.builder().gcSettleSec(0).build());
+            assertFalse(immediate.isEmpty(),
+                    "GCA001 should fire once the settle window is turned off -- otherwise this test "
+                            + "is passing because the events were never parsed");
+        }
+
+        @Test
         @DisplayName("GCA002 compares p99 with the stated SLA")
         void longPauses() {
             var log = withGc(Fixtures.source("gc-jdk17-storm.log"));

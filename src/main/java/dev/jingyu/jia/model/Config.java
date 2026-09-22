@@ -22,10 +22,11 @@ public final class Config {
     private final double poolStarveSameFrameRatio;
     private final double throughputFloor;
     private final int cpuHotThreadTopN;
-    private final double cpuHotThreadRatio;
     private final int exceptionClusterThreshold;
     private final double histoDominanceRatio;
     private final int maxEvidencePerFinding;
+    /** how long a JVM is still booting: a metaspace-driven Full GC before this point is startup noise, not a storm (GCA005 has always said so; GCA001/GCA003 now agree) */
+    private final double gcSettleSec;
     /** absolute floor for HIS001: the dominating class must hold at least this many bytes */
     private final long histoTopMinLeaderBytes;
     /** absolute floor for HIS001 when the dominator is a primitive bag (byte[]/char[]/Integer[]) */
@@ -69,10 +70,10 @@ public final class Config {
         this.poolStarveSameFrameRatio = b.poolStarveSameFrameRatio;
         this.throughputFloor = b.throughputFloor;
         this.cpuHotThreadTopN = b.cpuHotThreadTopN;
-        this.cpuHotThreadRatio = b.cpuHotThreadRatio;
         this.exceptionClusterThreshold = b.exceptionClusterThreshold;
         this.histoDominanceRatio = b.histoDominanceRatio;
         this.maxEvidencePerFinding = b.maxEvidencePerFinding;
+        this.gcSettleSec = b.gcSettleSec;
         this.histoTopMinLeaderBytes = b.histoTopMinLeaderBytes;
         this.histoTopMinBagBytes = b.histoTopMinBagBytes;
         this.histoMatMinBytes = b.histoMatMinBytes;
@@ -149,10 +150,6 @@ public final class Config {
         return cpuHotThreadTopN;
     }
 
-    public double cpuHotThreadRatio() {
-        return cpuHotThreadRatio;
-    }
-
     public int exceptionClusterThreshold() {
         return exceptionClusterThreshold;
     }
@@ -163,6 +160,10 @@ public final class Config {
 
     public int maxEvidencePerFinding() {
         return maxEvidencePerFinding;
+    }
+    /** how long a JVM is still booting, in seconds of uptime. */
+    public double gcSettleSec() {
+        return gcSettleSec;
     }
     /** absolute floor for HIS001: the dominating class must hold at least this many bytes */
     public long histoTopMinLeaderBytes() {
@@ -231,8 +232,8 @@ public final class Config {
         java.util.Map<String, String> m = new java.util.LinkedHashMap<>();
         m.put("sla-ms", String.valueOf(slaPauseMs));
         m.put("full-gc-per-min", String.valueOf(fullGcPerMinute));
-        m.put("full-gc-window-sec", String.valueOf(fullGcWindowSec));
-        m.put("heap-leak-min-full-gc", String.valueOf(heapLeakMinFullGc));
+        m.put("gc-window", String.valueOf(fullGcWindowSec));
+        m.put("heap-leak-min-collections", String.valueOf(heapLeakMinFullGc));
         m.put("heap-leak-rise", String.valueOf(heapLeakRiseRatio));
         m.put("thread-leak-threshold", String.valueOf(threadLeakThreshold));
         m.put("thread-leak-growth", String.valueOf(threadLeakGrowthRatio));
@@ -242,7 +243,6 @@ public final class Config {
         m.put("pool-starve-same-frame", String.valueOf(poolStarveSameFrameRatio));
         m.put("throughput", String.valueOf(throughputFloor));
         m.put("cpu-hot-top-n", String.valueOf(cpuHotThreadTopN));
-        m.put("cpu-hot-ratio", String.valueOf(cpuHotThreadRatio));
         m.put("exception-threshold", String.valueOf(exceptionClusterThreshold));
         m.put("histo-share", String.valueOf(histoDominanceRatio));
         m.put("max-evidence", String.valueOf(maxEvidencePerFinding));
@@ -260,6 +260,7 @@ public final class Config {
         m.put("leak-stagnant-share", String.valueOf(leakStagnantShare));
         m.put("leak-stalled-floor", String.valueOf(leakStalledFloorShare));
         m.put("stall-min", String.valueOf(stallMinCount));
+        m.put("gc-settle-sec", String.valueOf(gcSettleSec));
         return m;
     }
 
@@ -278,10 +279,10 @@ public final class Config {
         private double poolStarveSameFrameRatio = 0.80;
         private double throughputFloor = 0.97;
         private int cpuHotThreadTopN = 3;
-        private double cpuHotThreadRatio = 0.25;
         private int exceptionClusterThreshold = 5;
         private double histoDominanceRatio = 0.35;
         private int maxEvidencePerFinding = 6;
+        private double gcSettleSec = 60;
         private long histoTopMinLeaderBytes = 16L * 1024 * 1024;
         private long histoTopMinBagBytes = 32L * 1024 * 1024;
         private long histoMatMinBytes = 8L * 1024 * 1024;
@@ -362,11 +363,6 @@ public final class Config {
             return this;
         }
 
-        public Builder cpuHotThreadRatio(double v) {
-            this.cpuHotThreadRatio = v;
-            return this;
-        }
-
         public Builder exceptionClusterThreshold(int v) {
             this.exceptionClusterThreshold = v;
             return this;
@@ -436,6 +432,10 @@ public final class Config {
         }
         public Builder stallMinCount(int v) {
             this.stallMinCount = v;
+            return this;
+        }
+        public Builder gcSettleSec(double v) {
+            this.gcSettleSec = v;
             return this;
         }
         public Config build() {

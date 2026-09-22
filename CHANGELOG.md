@@ -4,6 +4,57 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.1 — 2026-09-22
+
+The README has claimed since 0.1.0 that a startup `Metadata GC Threshold` collection is not an
+incident. It was true of one rule. A 78-line slice of a healthy service's own boot log — the first
+9.7 seconds of a Parallel GC Spring Boot process, nothing wrong with its heap or its threads — came
+back as **`GCA001 Full GC storm, HIGH`**, top hypothesis "allocation pressure rather than a leak",
+on the strength of two Full GCs at uptime 1.0 s and 2.1 s.
+
+### Fixed
+
+- **Startup and tooling Full GCs are no longer storm or leak evidence.** GCA001 and GCA003 now drop
+  majors caused by `Metadata GC Threshold` inside `--gc-settle-sec` (default 60 s of uptime, the
+  window GCA005 has always used and now shares), and drop — at any time — the ones an outside actor
+  forced: `Heap Inspection Initiated GC`, `Collect For Dumping`, `Heap Dump Initiated GC`. The last
+  group matters for this repository's own workflow: `capture.sh` runs `jmap -histo:live` after it
+  copies the GC log, so an incident snapshot that copies late can otherwise contain the tool's own
+  two collections and be read as heap pressure. `GCLocker Initiated GC` is deliberately not filtered
+  — that one is the JVM complaining, and GCA005 quotes it.
+  Positive control on the same capture: once the leak starts, the full log still reports
+  `GCA001`/`GCA003` CRITICAL and ranks the leak first, and with `--gc-settle-sec 0` the startup
+  slice goes back to being a storm — so the window is what does the work, not dropped events.
+- **`Config.asMap()` published a knob that reads nothing.** `cpuHotThreadRatio` had been in `Config`
+  since 0.1.0 without any rule consulting it, and 0.3.0's `thresholds` object put it in every
+  report: a number the reader is told to trust, and cannot move. Removed.
+- **Two flags that rule documentation promised but nobody implemented**: `--gc-window` (GCA001's
+  burst window) and `--heap-leak-rise` (GCA003's climb threshold) — both were Config fields with no
+  CLI path. `--heap-leak-min-collections`, `--thread-leak-growth`, `--pool-starve-min-size` and
+  `--pool-starve-same-frame` were missing the same way; the deciding knobs are now all reachable,
+  and `thresholds` keys are named exactly like the flags that move them.
+
+### Added
+
+- `OutputTest.knobsAreReachable`: every `--flag` a rule doc mentions must exist on `analyze`, and
+  every key `Config.asMap()` publishes must be movable except the two that shape evidence volume
+  (`max-evidence`, `cpu-hot-top-n`). Mutation-checked: a fake `--not-a-real-flag` in a rule doc
+  fails the build with `GCA006 documents --not-a-real-flag`.
+- `src/test/resources/fixtures/gc-jdk17-parallel-startup.log`: those 78 real startup lines, asserted
+  to produce no GCA001 and no GCA003, and a storm at `--gc-settle-sec 0`.
+- `GcNoise`, the third exclusion list in this project after `ThreadNoise` and the parser's
+  `withoutMetaspace`: the causes that are real collections but not evidence of memory pressure.
+
+### Also in this release
+
+A sweep of the collectors the corpus does not contain (Parallel and Serial, both on this JDK 17)
+found no defect — each reported the planted leak first, with GCA001/GCA003/HIS001/GCA006 as
+expected — and the degenerate-input sweep (truncated dumps, trailer-only dumps, zero-byte and
+BOM/CRLF files, a headerless histogram, a 400 KB log line, an unrecognisable directory) produced no
+crash and no fabricated evidence: on a trailer-only dump the tool keeps TDA001 but drops its
+confidence to 80 % and states `0 threads` in the header.
+
+
 ## 0.3.0 — 2026-09-22
 
 Everything that decides a finding is now a number you can see and move. Defaults are unchanged —

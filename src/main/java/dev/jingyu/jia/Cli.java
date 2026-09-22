@@ -49,7 +49,12 @@ public final class Cli {
     private Cli() {
     }
 
-    public static int run(String[] args) {
+    /**
+     * The wired-up command line. Public because a reader of `jia analyze --help` and a reader of the
+     * rule docs must see the same set of flags, and that is only checkable if both are reachable
+     * from outside this class — see {@code OutputTest.knobsAreReachable}.
+     */
+    public static CommandLine command() {
         CommandLine cli = new CommandLine(new Cli());
         // The version is read from a Maven-filtered resource so it cannot drift from the pom, which
         // makes it not a compile-time constant — and an annotation's `version` has to be one. So the
@@ -59,8 +64,11 @@ public final class Cli {
                 .setExecutionExceptionHandler((ex, cmd, spec) -> {
                     cmd.getErr().println(cmd.getColorScheme().errorText(String.valueOf(ex)));
                     return 2;
-                })
-                .execute(args);
+                });
+    }
+
+    public static int run(String[] args) {
+        return command().execute(args);
     }
 }
 
@@ -156,6 +164,27 @@ final class Analyze implements Callable<Integer> {
 
     @Option(names = "--stall-min", description = "allocation stalls before GCA007 calls it a pattern rather than a hiccup (default 3)")
     private Integer stallMin;
+
+    @Option(names = "--gc-settle-sec", description = "uptime below which a Metadata-GC-Threshold Full GC is startup noise and not storm evidence (default 60)")
+    private Double gcSettleSec;
+
+    @Option(names = "--gc-window", description = "burst window in seconds that GCA001 measures Full GC rate over (default 300)")
+    private Long gcWindow;
+
+    @Option(names = "--heap-leak-rise", description = "rise in the post-GC live set, as a fraction of the first sample, that GCA003 calls a leak (default 0.10)")
+    private Double heapLeakRise;
+
+    @Option(names = "--heap-leak-min-collections", description = "major collections GCA003 needs before it will describe a floor at all (default 3)")
+    private Integer heapLeakMinCollections;
+
+    @Option(names = "--thread-leak-growth", description = "how much a named thread family must grow between two dumps for TDA003 (default 1.25x)")
+    private Double threadLeakGrowth;
+
+    @Option(names = "--pool-starve-min-size", description = "smallest name family TDA005 will consider a pool (default 4)")
+    private Integer poolStarveMinSize;
+
+    @Option(names = "--pool-starve-same-frame", description = "share of a pool that must be busy and in one frame for TDA005 (default 0.8)")
+    private Double poolStarveSameFrame;
 
     @Option(names = "--fail-on", paramLabel = "SEVERITY",
             description = "Lowest severity that makes the process exit 1: never, info, low, medium, "
@@ -292,6 +321,27 @@ final class Analyze implements Callable<Integer> {
         }
         if (stallMin != null) {
             b.stallMinCount(stallMin);
+        }
+        if (gcSettleSec != null) {
+            b.gcSettleSec(gcSettleSec);
+        }
+        if (gcWindow != null) {
+            b.fullGcWindowSec(gcWindow);
+        }
+        if (heapLeakRise != null) {
+            b.heapLeakRiseRatio(heapLeakRise);
+        }
+        if (heapLeakMinCollections != null) {
+            b.heapLeakMinFullGc(heapLeakMinCollections);
+        }
+        if (threadLeakGrowth != null) {
+            b.threadLeakGrowthRatio(threadLeakGrowth);
+        }
+        if (poolStarveMinSize != null) {
+            b.poolStarveMinSize(poolStarveMinSize);
+        }
+        if (poolStarveSameFrame != null) {
+            b.poolStarveSameFrameRatio(poolStarveSameFrame);
         }
         return b.build();
     }

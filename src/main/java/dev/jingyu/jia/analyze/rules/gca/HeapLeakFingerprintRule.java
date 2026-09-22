@@ -45,7 +45,8 @@ public final class HeapLeakFingerprintRule implements Rule {
         List<Point> points = new ArrayList<>();
         for (GcEvent e : log.events()) {
             Long v = e.oldAfterBytes() != null ? e.oldAfterBytes() : e.heapAfterBytes();
-            if (v != null && v > 0 && (log.isMajor(e.kind()) || e.kind() == GcEvent.Kind.MIXED)) {
+            if (v != null && v > 0 && (log.isMajor(e.kind()) || e.kind() == GcEvent.Kind.MIXED)
+                    && !GcNoise.notHeapPressure(e, config.gcSettleSec())) {
                 points.add(new Point(e, v));
             }
         }
@@ -195,6 +196,9 @@ public final class HeapLeakFingerprintRule implements Rule {
                 the region size printed at init, or a JDK 8 `[ParOldGen: …]` figure. Otherwise it uses post-GC heap
                 used, which for a Full GC is the same quantity.
                 
+                Startup `Metadata GC Threshold` collections and inspection-forced Full GCs are excluded from the
+                series, for the reason GCA001 states: two of them during a Spring Boot start are not a rising floor.
+
                 Evidence: evenly spaced major-collection lines, each annotated with the live bytes it left behind,
                 ending with the last measurement. Severity follows how close to the ceiling the floor already is.
                 

@@ -258,7 +258,11 @@ scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app
 
 1. **健康输入必须零结论。** `corpus/healthy` 是一个真实运行、有负载的 Spring Boot 应用,10 个
    servlet 线程、直方图榜首就是 `[B`,测试断言它一条都不报。启动期的 `Metadata GC Threshold`
-   ——我们自己的 Spring Boot 启动日志里就有——被明确判定为不算事故。
+   ——我们自己的 Spring Boot 启动日志里就有——被明确判定为不算事故;0.3.1 起这句话终于在真正要命
+   的地方也成立了:算 Full GC **频率**的规则和活集合指纹规则,会先把这类回收(以及外部动作逼出来的,
+   比如 `jmap -histo:live` 造成的 `Heap Inspection Initiated GC`)在 `--gc-settle-sec` 窗口里丢掉再计数。
+   在此之前只有"配置异味"那一条规则知道这个区分,而一份健康服务启动日志的 78 行切片会被报成
+   "Full GC 风暴,HIGH"。
 2. **"空转"不等于"卡住"。** 200 个 worker 停在 `ThreadPoolExecutor.getTask` 上是安静的夜晚。
    排除名单是 `ThreadNoise` 里显式写出来的,不是猜出来的——这一条决定了线程 dump 规则到底能用
    还是只会吵。

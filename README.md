@@ -326,7 +326,12 @@ A triage tool that cries wolf gets uninstalled. Three rules of construction, all
 1. **Healthy input must produce zero findings.** `corpus/healthy` is a real Spring Boot app
    under load with 10 servlet threads and a `[B` top row in its histogram, and the suite asserts
    it comes back silent. Startup `Metadata GC Threshold` collections — which every Spring Boot
-   log contains — are explicitly not a finding.
+   log contains — are explicitly not a finding, and that sentence is now enforced where it matters:
+   the Full-GC **rate** rule and the leak-fingerprint rule drop them (and anything an outside actor
+   forced, like the `Heap Inspection Initiated GC` a `jmap -histo:live` causes) before they count,
+   inside `--gc-settle-sec` of uptime. Until 0.3.1 only the config-smell rule knew about the
+   distinction, and a 78-line slice of a healthy service's own boot log came back as
+   "Full GC storm, HIGH".
 2. **Idle is not stuck.** Two hundred workers parked in `ThreadPoolExecutor.getTask` is a quiet
    night. The exclusion list is explicit (`ThreadNoise`) rather than inferred, and it is the
    single biggest difference between a usable thread-dump rule and a noisy one.
