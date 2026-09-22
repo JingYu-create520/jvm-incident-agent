@@ -42,6 +42,16 @@ public final class JsonReport {
         n.put("version", r.toolVersion());
         n.put("generatedAt", r.generatedAt().toString());
         n.put("elapsedMillis", r.elapsedMillis());
+        // Not findings and not warnings: inputs that were read off disk and deliberately left out of
+        // these findings. An agent that cannot see this list cannot tell a covered window from a half one.
+        ArrayNode ignored = n.putArray("ignoredInputs");
+        for (Snapshot.Skipped s : r.snapshot().skipped()) {
+            ObjectNode drop = ignored.addObject();
+            drop.put("kind", s.kind());
+            drop.put("kept", s.kept());
+            drop.set("notAnalysed", mapper.valueToTree(s.dropped()));
+            drop.put("note", s.sentence());
+        }
         n.set("snapshot", snapshot(r.snapshot()));
         n.set("config", config(r));
         n.set("thresholds", thresholds(r.config()));

@@ -193,6 +193,92 @@ class OutputTest {
     }
 
     @Test
+    @DisplayName("an input that was read off disk but not analysed is named in both reports")
+    void partialWindowsAreDisclosed(@TempDir Path tmp) throws Exception {
+        // Rotated -Xlog output (gc.log plus gc.log.0) is the normal shape of a GC log on a server, and a
+        // snapshot carries one GC log. Halving the window silently is how a partial report becomes a
+        // confident one; keeping the *second* file silently would be worse, since that is the one the
+        // reader never saw mentioned. So: keep the first, name the loss, in Markdown and in JSON.
+        Path dir = Files.createDirectories(tmp.resolve("rotated"));
+        String storm = String.join("\n", Fixtures.source("gc-jdk17-storm.log").lines());
+        Files.writeString(dir.resolve("gc.log"), storm, StandardCharsets.UTF_8);
+        Files.writeString(dir.resolve("gc.log.0"), storm, StandardCharsets.UTF_8);
+        Files.writeString(dir.resolve("gc.log.1"), storm, StandardCharsets.UTF_8);
+        Path out = Files.createDirectories(tmp.resolve("rotated-out"));
+        Cli.run(new String[]{"analyze", dir.toString(), "--no-narrative", "-f", "both", "-o", out.toString()});
+        String md = Files.readString(out.resolve("report.md"), StandardCharsets.UTF_8);
+        var json = MAPPER.readTree(out.resolve("report.json").toFile());
+        assertTrue(md.contains("gc.log.0") && md.contains("not analysed"),
+                "the report must name the file it could not use:\n" + md.lines()
+                        .filter(l -> l.contains("gc.log")).reduce((a, b) -> a + "\n" + b).orElse("<none>"));
+        assertEquals(1, md.lines().filter(l -> l.contains("read off disk and not analysed")).count(),
+                "two rotations are one fact, so they get one bullet rather than two screens of it");
+        assertEquals("gc.log", json.path("snapshot").path("gcLog").path("file").asText(),
+                "the suffix-less rotation is the live window and the one that has to survive");
+        var drop = json.path("ignoredInputs").get(0);
+        assertEquals("gc.log", drop.path("kept").asText(),
+                "the JSON has to say which window the findings describe, not only that something is missing");
+        assertEquals("gc.log.0", drop.path("notAnalysed").get(0).asText());
+        assertEquals("gc.log.1", drop.path("notAnalysed").get(1).asText());
+        assertTrue(drop.path("note").asText().contains("not analysed"),
+                "and carry the same sentence the human report shows");
+
+        // Two logs passed as two paths is the same trap, reached a different way.
+        Path two = Files.createDirectories(tmp.resolve("two"));
+        Files.writeString(two.resolve("a.log"), storm, StandardCharsets.UTF_8);
+        Files.writeString(two.resolve("b.log"), storm, StandardCharsets.UTF_8);
+        Path twoOut = Files.createDirectories(tmp.resolve("two-out"));
+        Cli.run(new String[]{"analyze", two.resolve("a.log").toString(), two.resolve("b.log").toString(),
+                "--no-narrative", "-f", "both", "-o", twoOut.toString()});
+        String md2 = Files.readString(twoOut.resolve("report.md"), StandardCharsets.UTF_8);
+        assertTrue(md2.contains("b.log") && md2.contains("not analysed"),
+                "a second GC log passed as its own path has to be disclosed too");
+        assertEquals("a.log", MAPPER.readTree(twoOut.resolve("report.json").toFile())
+                .path("snapshot").path("gcLog").path("file").asText(),
+                "and the file passed first is the one the findings describe");
+
+        // A heap histogram is one instant; two of them cannot both be "the" heap.
+        Path his = Files.createDirectories(tmp.resolve("histos"));
+        String histo = String.join("\n", Fixtures.source("histo-jdk17.histo").lines());
+        Files.writeString(his.resolve("heap.histo"), histo, StandardCharsets.UTF_8);
+        Files.writeString(his.resolve("heap2.histo"), histo, StandardCharsets.UTF_8);
+        Path hisOut = Files.createDirectories(tmp.resolve("histo-out"));
+        Cli.run(new String[]{"analyze", his.toString(), "--no-narrative", "-f", "both", "-o", hisOut.toString()});
+        assertTrue(Files.readString(hisOut.resolve("report.md"), StandardCharsets.UTF_8).contains("heap2.histo"),
+                "the dropped histogram has to be named as well");
+    }
+
+    @Test
+    @DisplayName("CLI: an output target is honoured in full, or the run is a usage error")
+    void outputTargetsAreNotHalfHonoured(@TempDir Path tmp) throws Exception {
+        Path incident = Files.createDirectories(tmp.resolve("one"));
+        Files.writeString(incident.resolve("threads.dump"), String.join("\n",
+                Fixtures.source("jdk17-deadlock.jstack").lines()), StandardCharsets.UTF_8);
+
+        // The README's own shape: a directory that does not exist yet, named with a trailing separator.
+        // java.nio.Path drops that separator on Windows, which used to turn this request into "write
+        // the Markdown into a file called results" — and silently discard the JSON half.
+        for (String sep : new String[]{"/", "\\"}) {
+            Path fresh = tmp.resolve("results" + (sep.equals("/") ? "Slash" : "Back"));
+            assertEquals(0, Cli.run(new String[]{"analyze", incident.toString(), "--no-narrative",
+                    "--fail-on", "never", "-f", "both", "-o", fresh + sep}), "the directory is creatable");
+            assertTrue(Files.isRegularFile(fresh.resolve("report.md")), "markdown arrives via " + sep);
+            assertTrue(Files.isRegularFile(fresh.resolve("report.json")), "and so does json, via " + sep);
+        }
+
+        Path file = tmp.resolve("both.md");
+        assertEquals(2, Cli.run(new String[]{"analyze", incident.toString(), "--no-narrative", "-f", "both",
+                "-o", file.toString()}),
+                "two formats cannot fit one file name: that is a usage error, not a half report");
+        assertFalse(Files.exists(file), "and the run has to stop before writing the half it could fit");
+
+        assertEquals(2, Cli.run(new String[]{"analyze", incident.toString(), "--no-narrative", "-f", "yaml",
+                "-o", tmp.resolve("nope.md").toString()}),
+                "an unknown -f used to match neither writer, print nothing, and exit as if the run were clean");
+        assertFalse(Files.exists(tmp.resolve("nope.md")));
+    }
+
+    @Test
     @DisplayName("no rule documents a flag that does not exist, and no knob is published that moves nothing")
     void knobsAreReachable() {
         java.util.Set<String> flags = new java.util.LinkedHashSet<>();

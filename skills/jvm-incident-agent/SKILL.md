@@ -52,6 +52,10 @@ analyzed without writing it to disk first.
   not independent incidents.
 - Every finding carries `file:line` evidence. If a claim matters, open that line and check it
   before repeating it — that is what the evidence column is for.
+- **Check `ignoredInputs` (`report.json`, or the bullets under "Coverage and limits") before you say
+  a window was covered.** A snapshot reads one GC log and one histogram; if the folder had a rotated
+  set or two `jmap` outputs, the extras were dropped and named. "No leak in this incident" means
+  something different when the findings describe 40 minutes of a 3-hour log.
 - Rule IDs are stable. `jia explain <ID>` gives the mechanism and the known false positives;
   quote it rather than re-deriving why a rule fired.
 

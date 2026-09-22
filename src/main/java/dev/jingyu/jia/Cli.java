@@ -84,8 +84,10 @@ final class Analyze implements Callable<Integer> {
     private String format = "md";
 
     @Option(names = {"-o", "--out"},
-            description = "Write report files here instead of stdout (a directory, or a file for one format).")
-    private Path out;
+            description = "Write report files here instead of stdout: a directory (existing, or named with a "
+                    + "trailing separator, which is then created) receives report.md and/or report.json; "
+                    + "a file name receives exactly one format.")
+    private String out;
 
     @Option(names = "--llm", description = "Ask an OpenAI-compatible endpoint for the narrative section. "
             + "Findings are identical either way; only the prose differs.")
@@ -208,6 +210,11 @@ final class Analyze implements Callable<Integer> {
         if (paths.isEmpty()) {
             // `docker run -v ./incident:/input jia` should need no argument: WORKDIR is /input.
             paths = List.of(Path.of("."));
+        }
+        String badOutput = outputProblem();
+        if (badOutput != null) {
+            Cli.ERR.println(badOutput);
+            return 2;
         }
         Config cfg = configOverrides();
         Snapshot.Builder merged = Snapshot.builder();
@@ -358,6 +365,28 @@ final class Analyze implements Callable<Integer> {
         }
     }
 
+    /**
+     * Reject an output request that cannot be honoured, before spending a run on it. Two ways to lose
+     * half a report quietly: {@code -f both} into a file name (only one of the two would ever be
+     * written), and a {@code -f} value that is not a format at all (nothing matched, so nothing was
+     * written, and the exit code said the analysis was clean).
+     */
+    private String outputProblem() {
+        boolean md = format.equalsIgnoreCase("md") || format.equalsIgnoreCase("both");
+        boolean json = format.equalsIgnoreCase("json") || format.equalsIgnoreCase("both");
+        if (!md && !json) {
+            return "-f expects md, json or both, was: " + format;
+        }
+        if (out == null || !(md && json)) {
+            return null;
+        }
+        String name = out.replace('\\', '/');
+        boolean directory = name.endsWith("/") || Files.isDirectory(Path.of(out));
+        return directory ? null
+                : "-f both needs a directory: name --out with a trailing separator and it will be created, "
+                        + "or ask for one format to write to \"" + out + "\"";
+    }
+
     private void emit(String md, String js) throws IOException {
         boolean wantMd = format.equalsIgnoreCase("md") || format.equalsIgnoreCase("both");
         boolean wantJson = format.equalsIgnoreCase("json") || format.equalsIgnoreCase("both");
@@ -374,9 +403,12 @@ final class Analyze implements Callable<Integer> {
             stdout.flush();
             return;
         }
-        String name = out.toString().replace('\\', '/');
+        // Kept as the typed string on purpose: java.nio.Path drops a trailing separator on Windows,
+        // and "-o results/" is the README's own shape. Without that separator the fresh-directory
+        // case used to write the Markdown into a *file* called "results" and lose the JSON.
+        String name = out.replace('\\', '/');
         boolean trailingSlash = name.endsWith("/");
-        Path target = trailingSlash ? Path.of(name.substring(0, name.length() - 1)) : out;
+        Path target = trailingSlash ? Path.of(name.substring(0, name.length() - 1)) : Path.of(name);
         if (trailingSlash || Files.isDirectory(target)) {
             Files.createDirectories(target);
             write(wantMd, target.resolve("report.md"), md);
@@ -420,8 +452,28 @@ final class Analyze implements Callable<Integer> {
 
     private static void mergeInto(Snapshot.Builder into, Snapshot from) {
         from.threadDumps().forEach(into::addDump);
-        from.gcLog().ifPresent(into::gcLog);
-        from.histo().ifPresent(into::histo);
+        // What a folder already disclosed stays disclosed when its snapshot is merged into the run.
+        from.skipped().forEach(into::skip);
+        // A snapshot carries one GC log and one histogram, so the second of either has to be dropped.
+        // Dropping it silently is how half an incident window presents as the whole of one, and
+        // overwriting is worse still: the file the reader was never told about would win. Keep the
+        // first — the order the paths are passed in is the order of preference — and name what was lost.
+        if (from.gcLog().isPresent()) {
+            if (into.hasGcLog()) {
+                into.skip("GC log", into.gcLogValue().get().source().name(), from.gcLog().get().source().name(),
+                        Snapshot.Skipped.GC_LOG_ADVICE);
+            } else {
+                into.gcLog(from.gcLog().get());
+            }
+        }
+        if (from.histo().isPresent()) {
+            if (into.hasHisto()) {
+                into.skip("heap histogram", into.histoValue().get().source().name(),
+                        from.histo().get().source().name(), Snapshot.Skipped.HISTO_ADVICE);
+            } else {
+                into.histo(from.histo().get());
+            }
+        }
         from.exceptions().forEach(into::addException);
         from.unparsed().forEach(into::addUnparsed);
         from.filesSeen().forEach(into::fileSeen);

@@ -59,7 +59,7 @@ public final class SnapshotLoader {
                         notes.add(name + ": " + e);
                     }
                 }
-                return ParseReport.of(b.build(), notes);
+                return finish(b, notes);
             }
             if (Files.isRegularFile(target)) {
                 String name = target.getFileName().toString();
@@ -69,12 +69,12 @@ public final class SnapshotLoader {
                     b.addUnparsed(new Snapshot.Unparsed(name, "parser threw " + e.getClass().getSimpleName()));
                     notes.add(name + ": " + e);
                 }
-                return ParseReport.of(b.build(), notes);
+                return finish(b, notes);
             }
         } catch (IOException | UncheckedIOException e) {
             notes.add("cannot read " + target + ": " + e.getMessage());
         }
-        return ParseReport.of(b.build(), notes);
+        return finish(b, notes);
     }
 
     /** For the MCP surface, where a chat agent pastes dump text instead of a path. */
@@ -88,7 +88,7 @@ public final class SnapshotLoader {
             b.addUnparsed(new Snapshot.Unparsed(fileName, "parser threw " + e.getClass().getSimpleName()));
             notes.add(fileName + ": " + e);
         }
-        return ParseReport.of(b.build(), notes);
+        return finish(b, notes);
     }
 
     private static boolean isNoise(String name) {
@@ -139,7 +139,13 @@ public final class SnapshotLoader {
                 if (r.value().events().isEmpty()) {
                     b.addUnparsed(new Snapshot.Unparsed(fileName, "no GC events recognised"));
                 } else if (b.hasGcLog()) {
-                    notes.add("additional GC log ignored: " + fileName);
+                    // A rotated -Xlog set (gc.log, gc.log.0, …) is the normal way to find a GC log, and
+                    // a snapshot can carry one. Saying so is the difference between a partial report and
+                    // a report that presents half the incident as the whole of it. Files are walked in
+                    // sorted order and JDK rotation leaves the live window in the suffix-less file, so
+                    // the one kept here is also the newest — which is why the disclosure names it.
+                    b.skip("GC log", b.gcLogValue().get().source().name(), fileName,
+                            Snapshot.Skipped.GC_LOG_ADVICE);
                 } else {
                     b.gcLog(r.value());
                 }
@@ -150,7 +156,8 @@ public final class SnapshotLoader {
                 if (r.value().empty()) {
                     b.addUnparsed(new Snapshot.Unparsed(fileName, "no histogram rows recognised"));
                 } else if (b.hasHisto()) {
-                    notes.add("additional histogram ignored: " + fileName);
+                    b.skip("heap histogram", b.histoValue().get().source().name(), fileName,
+                            Snapshot.Skipped.HISTO_ADVICE);
                 } else {
                     b.histo(r.value());
                 }
@@ -166,5 +173,15 @@ public final class SnapshotLoader {
             }
             default -> b.addUnparsed(new Snapshot.Unparsed(fileName, "unrecognised artifact type"));
         }
+    }
+
+    /**
+     * Close a load: the inputs that were dropped are a fact about the snapshot, and the stderr notes
+     * a run with nothing recognised prints are generated from the same sentence the report shows. One
+     * source, so the two channels cannot contradict each other.
+     */
+    private static ParseReport<Snapshot> finish(Snapshot.Builder b, List<String> notes) {
+        b.skippedSoFar().forEach(s -> notes.add(s.sentence()));
+        return ParseReport.of(b.build(), notes);
     }
 }

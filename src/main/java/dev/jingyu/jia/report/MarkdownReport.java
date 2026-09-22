@@ -226,6 +226,9 @@ public final class MarkdownReport {
     private void coverage(StringBuilder sb, AnalysisResult r) {
         sb.append("## Coverage and limits\n\n");
         Snapshot s = r.snapshot();
+        for (String note : s.skippedSentences()) {
+            sb.append("- ").append(md(note)).append('\n');
+        }
         if (s.threadDumps().isEmpty()) {
             sb.append("- no thread dump in this snapshot — the TDA rules had nothing to read\n");
         } else {

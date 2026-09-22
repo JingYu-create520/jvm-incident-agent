@@ -33,6 +33,35 @@ on the strength of two Full GCs at uptime 1.0 s and 2.1 s.
   CLI path. `--heap-leak-min-collections`, `--thread-leak-growth`, `--pool-starve-min-size` and
   `--pool-starve-same-frame` were missing the same way; the deciding knobs are now all reachable,
   and `thresholds` keys are named exactly like the flags that move them.
+- **A terminal-coloured application log parsed as no log at all.** The `ESC[…m` sequences Spring Boot
+  writes whenever its output is redirected — into a file, a CI runner's log, a `script` capture — sat
+  in front of every timestamp and frame line. Measured on `fixtures/app-exceptions-ansi.log`, the
+  exception capture with colour on 133 of its 186 lines: `Nothing recognised in […]: no
+  exception stacks found`, exit 2 — a full incident reported as no incident, which is the worst thing
+  an analyzer can do quietly. CSI and bare escapes are now stripped at read time, so every rule and
+  every evidence quote sees the text a human reads; the bytes on disk are untouched and a line number
+  still points at the same line. `ParserTest.ansiColouredLog` compares the coloured parse against the
+  plain one class-by-class, frame-by-frame and line-by-line.
+- **`-o results/ -f both` wrote a *file* called `results` and lost the JSON.** `java.nio.Path` drops a
+  trailing separator on Windows, so a directory that did not exist yet failed the "is this a
+  directory" test, took the single-file branch, and only one of the two formats could fit — no error,
+  no `report.json`. `--out` is the typed string now, so the intent survives; `-f both` into a
+  non-directory is a usage error (exit 2) raised before any analysis runs, and so is an unrecognised
+  `-f`, which previously matched neither writer and exited as if the run had been clean. Both
+  separator spellings are covered, because PowerShell users type `results\`.
+- **An input the tool could not use was dropped in silence — and when two arrived, the second won.**
+  A rotated `-Xlog` set (`gc.log` plus `gc.log.0`, `.1`, `.2`) is the normal shape of a GC log on a
+  server. A snapshot carries one, and the loader's "additional GC log ignored" note was only ever
+  printed when *nothing* was recognised — so a successful report said nothing about describing one
+  window out of four. Passing two logs as two arguments was worse still: the merge overwrote the
+  first, meaning the findings described the file nobody chose. The first input now survives (a
+  directory walk is sorted, and JDK rotation keeps the live window in the suffix-less file), and every
+  drop becomes a `Snapshot.Skipped`, disclosed once per kind: *"GC logs `gc.log.0`, `gc.log.1`,
+  `gc.log.2` were read off disk and not analysed: a run reads exactly one, and `gc.log` is the one
+  these findings describe."* Same sentence in the Markdown's coverage section, in the stderr notes, and
+  in `report.json` under `ignoredInputs` as `kind`/`kept`/`notAnalysed`/`note`. Mutation-checked from
+  both ends: severing the disclosure fails the report test, restoring last-wins merging fails the
+  "which file survived" assertion.
 
 ### Added
 
@@ -44,6 +73,14 @@ on the strength of two Full GCs at uptime 1.0 s and 2.1 s.
   to produce no GCA001 and no GCA003, and a storm at `--gc-settle-sec 0`.
 - `GcNoise`, the third exclusion list in this project after `ThreadNoise` and the parser's
   `withoutMetaspace`: the causes that are real collections but not evidence of memory pressure.
+- `src/test/resources/fixtures/app-exceptions-ansi.log`: the twenty-stack exception capture as a
+  terminal would have written it, and `OutputTest.partialWindowsAreDisclosed` /
+  `outputTargetsAreNotHalfHonoured`, which together pin what a report may claim about the inputs it
+  was handed — including that the dropped histogram and the dropped rotation are named, and that the
+  survivor is the file the findings actually describe.
+- Both READMEs say what happens to a second GC log, and `skills/jvm-incident-agent/SKILL.md` tells the
+  agent reading the JSON to check `ignoredInputs` before it says a window was covered: "no leak in
+  this incident" means something different when the findings describe 40 minutes of a 3-hour log.
 
 ### Also in this release
 

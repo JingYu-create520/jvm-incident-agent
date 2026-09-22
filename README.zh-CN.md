@@ -113,9 +113,17 @@ cd .. && jia analyze ./incident-2026-09-20 -o ./incident-2026-09-20/ --format bo
 | 线程 dump | `jstack -l`、`jcmd Thread.print`,一个文件里多份 | 显式状态机而不是一个大正则——JDK 8→21 的漂移(`cpu=`/`elapsed=` 列、模块限定帧、死锁尾巴重复线程段)逐个处理 |
 | GC 日志 | JDK 8 传统 `-XX:+PrintGCDetails`,JDK 9+ 统一 `-Xlog:gc*` | 逐行归一成一条时间线;`GC(n)` 的多条记录合并回一次回收 |
 | 堆直方图 | `jmap -histo[:live]`、`jcmd GC.class_histogram` | 表格解析,剥掉模块后缀,`Total` 行缺失时用可见行求和兜底 |
-| 应用日志 | 任何含堆栈的文本,适配 logback/log4j 形态 | 提取 throwable 块与 `Caused by:` 链,按"根因类 + 前 5 帧"做指纹 |
+| 应用日志 | 任何含堆栈的文本,适配 logback/log4j 形态,终端着色过的日志也算 | 提取 throwable 块与 `Caused by:` 链,按"根因类 + 前 5 帧"做指纹 |
 
-字符集会探测(UTF-8 → GBK → Latin-1),因为这些文件来自别人的机器。
+字符集会探测(UTF-8 → GBK → Latin-1),BOM 和 CRLF 会剥掉,终端转义序列(`ESC[…m` 这些颜色码——
+Spring Boot 输出被重定向进文件、或者被 CI 录下来时就会写进去)在读入时一律清除,所以证据引用是
+人能读的文本,行号也还对得上同一行。这些文件都来自别人的机器。
+
+一次运行只读**一份 GC 日志、一张堆直方图**,因为一次事故本来就只有这些:一个时间窗、一个瞬时。
+你把轮转过的整套(`gc.log` 加 `gc.log.0`)或者两份 `jmap` 丢进来时,它保留先看到的那份——扫目录的
+顺序意味着没有后缀的当前文件会胜出——并在 Markdown 的"覆盖范围与局限"一段、`report.json` 的
+`ignoredInputs` 字段里点名丢掉的那份。只覆盖半个窗口的报告必须自己说清楚,否则它和覆盖了整个窗口的
+报告长得一模一样。
 
 ## 19 条规则
 

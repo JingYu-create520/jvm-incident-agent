@@ -129,10 +129,18 @@ open an issue about it.
 | Thread dump | `jstack -l <pid>`, `jcmd Thread.print`; several captures in one file | state machine, not one regex — JDK 8 → 21 drift (the `cpu=`/`elapsed=` columns, module-qualified frames, the deadlock trailer that repeats stanzas) is handled explicitly |
 | GC log | JDK 8 traditional `-XX:+PrintGCDetails`, and JDK 9+ unified `-Xlog:gc*` | per-line parse into one normalised event timeline; `GC(n)` records merged back into one collection |
 | Heap histogram | `jmap -histo[:live]`, `jcmd GC.class_histogram` | table parse, module suffix stripped, totals recovered when the `Total` row is missing |
-| Application log | any text with stack traces; logback/log4j shapes | throwable blocks lifted out with their `Caused by:` chains, fingerprinted by class + first 5 root frames |
+| Application log | any text with stack traces, including a log a terminal coloured (`logback`/`log4j` shapes) | throwable blocks lifted out with their `Caused by:` chains, fingerprinted by class + first 5 root frames |
 
 Charsets are detected (UTF-8, else GBK, else Latin-1) because these files come from other
-people's machines.
+people's machines. Terminal escape sequences — the `ESC[…m` colour codes a Spring Boot process
+writes when its output is redirected into a file, or a CI runner captures — are stripped at read
+time, so evidence quotes show text a human can read and line numbers still point at the same line.
+
+A run reads **one GC log and one histogram**, because that is what one incident has: a window and an
+instant. When you hand it a rotated set (`gc.log` plus `gc.log.0`) or two `jmap` files, it keeps the
+first one it sees — walking a directory means the suffix-less, live rotation wins — and names what it
+dropped, in the Markdown's "Coverage and limits" section and in `report.json` under `ignoredInputs`. A report over half the
+window has to say so, because it otherwise looks exactly like a report over all of it.
 
 ## The 19 rules
 
