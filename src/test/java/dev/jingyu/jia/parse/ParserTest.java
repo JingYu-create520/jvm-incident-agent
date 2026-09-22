@@ -227,6 +227,32 @@ class ParserTest {
         }
 
         @Test
+        @DisplayName("every permanent-generation spelling is kept out of the heap numbers")
+        void nonHeapPoolSpellings() {
+            // The claim in GcLogParser's comment is that these are the names real builds print. Each
+            // one has the shape of a heap transition and sits last on the line, so a name the stripper
+            // does not know turns into "heap capacity: 21M" -- which is the 0.3.3 bug, spelled one
+            // character differently. Checked here directly so the doc list cannot rot.
+            String[] pools = {
+                    "[Metaspace: 3072K->3072K(1056768K)]",
+                    "[CMS Perm: 21402K->21400K(21504K)]",
+                    "[CMS Perm : 21402K->21400K(21504K)]",
+                    "[PSPermGen: 21300K->21100K(21600K)]",
+                    "[Perm: 21400K->21200K(21700K)]",
+            };
+            for (String pool : pools) {
+                String line = "12.345: [Full GC (Ergonomics) [CMS: 30000K->31245K(284160K)] "
+                        + "61784K->31245K(502784K), " + pool + ", 0.2512970 secs]";
+                String stripped = GcLogParser.withoutNonHeapPool(line);
+                assertFalse(stripped.contains("21504K") || stripped.contains("1056768K")
+                                || stripped.contains("21600K") || stripped.contains("21700K"),
+                        () -> pool + " left its capacity in the line: " + stripped);
+                assertTrue(stripped.contains("31245K(502784K)"),
+                        () -> pool + " also ate the heap transition: " + stripped);
+            }
+        }
+
+        @Test
         @DisplayName("a JDK 7 CMS log: PermGen is not the heap, phases are not pauses")
         void jdk7CmsPermGenIsNotHeap() {
             // A hand-written shape fixture, not a capture — this machine has no JDK 7, and the CMS
