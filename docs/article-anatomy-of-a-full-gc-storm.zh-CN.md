@@ -121,9 +121,10 @@ GCA005 MEDIUM  The log itself says: "GCLocker Initiated GC" — JNI critical sec
 ## 复现它
 
 ```bash
-# 0) 两个 jar:分析器和靶子
-sh mvnw -q -DskipTests package                          # -> target/jia.jar
-cd demo-victim && ../mvnw -q -DskipTests package        # -> target/demo-victim.jar && cd ..
+# 0) 两个 jar:分析器和靶子(保持在仓库根目录跑)
+./mvnw -q -DskipTests package                       # -> target/jia.jar
+(cd demo-victim && ../mvnw -q -DskipTests package)  # -> demo-victim/target/demo-victim.jar
+mkdir -p live
 
 # 1) 起一个 256 MB 的 G1 JVM。GC 日志必须开,不然没东西可抓
 java -Xms256m -Xmx256m -XX:+UseG1GC \
@@ -135,7 +136,7 @@ curl 'http://localhost:18080/victim/gcstorm?rounds=600&workingSetMb=175' &
 sleep 4
 scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app.log
 
-# 3) 读
+# 3) 读(下面简称 jia)
 java -jar target/jia.jar analyze /tmp/incident
 ```
 
