@@ -27,7 +27,6 @@ import java.util.Optional;
 public final class PoolStarvationRule implements Rule {
 
     /** Beyond this, a same-name family is a leak (TDA003), not a sizing decision. */
-    private static final int MAX_PLAUSIBLE_POOL = 100;
 
     @Override
     public String id() {
@@ -55,7 +54,7 @@ public final class PoolStarvationRule implements Rule {
                 }
                 // A 140-member family of identical threads is a leak, which TDA003 reports with the
                 // growth evidence. Calling that "starvation" would send the reader to pool sizing.
-                if (members.size() > MAX_PLAUSIBLE_POOL) {
+                if (members.size() > config.poolMaxPlausibleSize()) {
                     continue;
                 }
                 List<JThread> busy = members.stream().filter(ThreadNoise::activeOrStuck).toList();

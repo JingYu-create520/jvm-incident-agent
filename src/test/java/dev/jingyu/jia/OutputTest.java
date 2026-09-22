@@ -192,6 +192,28 @@ class OutputTest {
     }
 
     @Test
+    @DisplayName("every threshold flag is accepted and reaches the JSON report")
+    void thresholdFlagsAreWired(@TempDir Path tmp) throws Exception {
+        Path dir = Files.createDirectories(tmp.resolve("snap"));
+        Files.writeString(dir.resolve("threads.dump"), String.join("\n",
+                Fixtures.source("jdk17-healthy.jstack").lines()), StandardCharsets.UTF_8);
+        Path out = tmp.resolve("r.json");
+        int code = Cli.run(new String[]{"analyze", dir.toString(), "--no-narrative", "-f", "json",
+                "-o", out.toString(), "--mat-share", "0.09", "--mat-min-mb", "4", "--stall-min", "1",
+                "--burst-bucket-sec", "30", "--burst-min", "3", "--pool-max-size", "50",
+                "--cpu-min-cores", "0.2", "--container-min-instances", "1000",
+                "--leak-pinned-share", "0.5", "--leak-stagnant-share", "0.05",
+                "--leak-stalled-floor", "0.2", "--histo-top-min-bag-mb", "8",
+                "--histo-top-min-leader-mb", "4", "--cpu-min-elapsed-sec", "0.5"});
+        assertEquals(0, code, "the flags must parse and the clean dump must stay silent");
+        JsonNode thresholds = MAPPER.readTree(out.toFile()).get("thresholds");
+        assertNotNull(thresholds, "the report should say which thresholds were in force");
+        assertEquals("0.09", thresholds.get("mat-share").asText());
+        assertEquals("4", thresholds.get("mat-min-mb").asText());
+        assertEquals("30", thresholds.get("burst-bucket-sec").asText());
+    }
+
+    @Test
     @DisplayName("the version the tool prints is the version the pom builds")
     void versionHasOneSource() throws Exception {
         String pom = Files.readString(Path.of("pom.xml"), StandardCharsets.UTF_8);

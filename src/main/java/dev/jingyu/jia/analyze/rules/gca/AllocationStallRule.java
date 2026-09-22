@@ -21,7 +21,6 @@ import java.util.Locale;
  */
 public final class AllocationStallRule implements Rule {
 
-    private static final int MIN_STALLS = 3;
 
     @Override
     public String id() {
@@ -47,7 +46,7 @@ public final class AllocationStallRule implements Rule {
         List<GcEvent> stalls = log.allocationStalls();
         double longest = stalls.stream().mapToDouble(e -> e.pauseMs() == null ? 0 : e.pauseMs())
                 .max().orElse(0);
-        if (stalls.size() < MIN_STALLS && longest < config.slaPauseMs()) {
+        if (stalls.size() < config.stallMinCount() && longest < config.slaPauseMs()) {
             return List.of();
         }
         Severity severity = stalls.size() >= 20 || longest >= 1_000 ? Severity.CRITICAL : Severity.HIGH;
@@ -63,7 +62,7 @@ public final class AllocationStallRule implements Rule {
                 .title(title())
                 .artifact(artifact())
                 .severity(severity)
-                .confidence(stalls.size() >= MIN_STALLS * 2 ? 0.92 : 0.8)
+                .confidence(stalls.size() >= config.stallMinCount() * 2L ? 0.92 : 0.8)
                 .summary(stalls.size() + " allocation stall(s), longest "
                         + String.format(Locale.ROOT, "%.0f", longest) + " ms, affecting: " + victims
                         + ". Under ZGC this is what a heap that cannot keep up looks like — there is"

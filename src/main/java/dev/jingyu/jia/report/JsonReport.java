@@ -44,6 +44,7 @@ public final class JsonReport {
         n.put("elapsedMillis", r.elapsedMillis());
         n.set("snapshot", snapshot(r.snapshot()));
         n.set("config", config(r));
+        n.set("thresholds", thresholds(r.config()));
         n.set("census", census(r));
         n.set("hypotheses", hypotheses(r.hypotheses()));
         n.set("findings", findings(r.findings()));
@@ -152,6 +153,17 @@ public final class JsonReport {
         n.put("exceptionClusterThreshold", r.config().exceptionClusterThreshold());
         n.put("throughputFloor", r.config().throughputFloor());
         n.put("histoDominanceRatio", r.config().histoDominanceRatio());
+        return n;
+    }
+
+    /**
+     * Every threshold in force, keyed by the CLI flag that moves it. A finding that depends on a
+     * boundary is only as trustworthy as the reader's ability to re-run it at another boundary, so
+     * the numbers that decided the report travel with the report.
+     */
+    private ObjectNode thresholds(dev.jingyu.jia.model.Config config) {
+        ObjectNode n = mapper.createObjectNode();
+        config.asMap().forEach(n::put);
         return n;
     }
 

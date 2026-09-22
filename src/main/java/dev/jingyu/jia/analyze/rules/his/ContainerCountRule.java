@@ -62,7 +62,7 @@ public final class ContainerCountRule implements Rule {
         if (histo == null || histo.totalInstances() <= 0) {
             return List.of();
         }
-        long bar = Math.max(50_000, histo.totalInstances() / 20);
+        long bar = Math.max(config.containerMinInstances(), histo.totalInstances() / 20);
         ClassStat worst = null;
         long worstCount = 0;
         for (ClassStat c : histo.classes()) {

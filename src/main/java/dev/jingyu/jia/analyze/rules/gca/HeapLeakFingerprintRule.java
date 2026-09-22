@@ -74,7 +74,7 @@ public final class HeapLeakFingerprintRule implements Rule {
         // ceiling is the same leak after it has filled the heap — collections stop reclaiming
         // anything at all, which a purely monotonic test would miss.
         long pinned = capacity == null ? 0 : points.stream()
-                .filter(p -> p.value() >= capacity * 0.85)
+                .filter(p -> p.value() >= capacity * config.leakSaturatedShare())
                 .count();
         // A third shape, and the one Shenandoah on JDK 17 shows: the floor is not near the
         // ceiling (63 % of a 1 GB heap), it simply does not move. Every major collection returns
@@ -88,19 +88,19 @@ public final class HeapLeakFingerprintRule implements Rule {
             if (before == null || before <= 0) {
                 continue;
             }
-            if ((double) (before - p.value()) / before < 0.02) {
+            if ((double) (before - p.value()) / before < config.leakStagnantShare()) {
                 stagnant++;
             }
         }
         boolean climbing = rise >= config.heapLeakRiseRatio();
         boolean saturated = pinned >= Math.max(3, config.heapLeakMinFullGc());
         boolean stalled = dips == 0 && capacity != null && stagnant >= Math.max(3, config.heapLeakMinFullGc())
-                && last >= capacity * 0.4;
+                && last >= capacity * config.leakStalledFloorShare();
         if (!climbing && !saturated && !stalled) {
             return List.of();
         }
         boolean plateau = saturated || stalled;
-        Severity severity = ofCapacity > 0.85 ? Severity.CRITICAL : (ofCapacity > 0.6 ? Severity.HIGH : Severity.MEDIUM);
+        Severity severity = ofCapacity > config.leakSaturatedShare() ? Severity.CRITICAL : (ofCapacity > 0.6 ? Severity.HIGH : Severity.MEDIUM);
         String unit = points.get(0).event.oldAfterBytes() != null ? "old gen" : "heap";
 
         List<Evidence> ev = new ArrayList<>();

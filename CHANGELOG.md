@@ -4,11 +4,36 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.3.0 — 2026-09-22
 
-Documentation only, in text written today.
+Everything that decides a finding is now a number you can see and move. Defaults are unchanged —
+the seven corpus scenarios and their pinned rule sets pass without a single edit to `TRUTH.md` —
+which is the point: this release changes how the thresholds are reachable, not what they are.
+
+### Added
+
+- **Fourteen thresholds left in the rules as `private static final`; they are in `Config` now** and
+  each has a CLI flag: `--histo-top-min-leader-mb`, `--histo-top-min-bag-mb`, `--mat-min-mb`,
+  `--mat-share`, `--container-min-instances`, `--cpu-min-cores`, `--cpu-min-elapsed-sec`,
+  `--pool-max-size`, `--burst-min`, `--burst-bucket-sec`, `--leak-pinned-share`,
+  `--leak-stagnant-share`, `--leak-stalled-floor`, `--stall-min`. The last five are the shapes
+  added in 0.2.x, which had been constants one hour after they shipped.
+- `report.json` carries a `thresholds` object keyed by those flag names, so the numbers that made a
+  report travel with the report. `Config.asMap()` is its single source.
+- Two tests that make the tunability real rather than claimed: one runs `corpus/incident-heap-leak`
+  at the documented default (HIS002 silent, because `CachedRow` is 9.32 % against a 10 % floor) and
+  then at 0.09 (HIS002 fires), and one passes all fourteen flags through the CLI and asserts the
+  JSON echoes them back.
+
+### Changed
+
+- `jia analyze --help` is now the complete list of what you can disagree with. Deliberately no
+  count of it in the READMEs: the last three times a document quoted a number the build owns, that
+  number went stale within a day.
 
 ### Fixed
+
+- Two statements written today, measured after the fact. See the corpus and article notes below.
 
 - `corpus/incident-gc-storm/TRUTH.md` quoted `Humongous regions: 228->228` and "peak 230, stable all
   storm". Neither number was measured: the value that recurs most is `200->200` (516 collections),

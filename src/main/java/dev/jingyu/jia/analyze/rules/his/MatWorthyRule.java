@@ -19,8 +19,6 @@ import java.util.Locale;
  */
 public final class MatWorthyRule implements Rule {
 
-    private static final long MIN_BYTES = 8L * 1024 * 1024;
-    private static final double MIN_SHARE = 0.10;
 
     @Override
     public String id() {
@@ -51,11 +49,11 @@ public final class MatWorthyRule implements Rule {
                 .max((a, b) -> Long.compare(a.bytes(), b.bytes()))
                 .orElseThrow();
         double share = histo.shareOf(leader);
-        if (leader.bytes() < MIN_BYTES || share < MIN_SHARE) {
+        if (leader.bytes() < config.histoMatMinBytes() || share < config.histoMatMinShare()) {
             return List.of();
         }
         List<ClassStat> next = business.stream()
-                .filter(c -> c.bytes() >= MIN_BYTES / 4)
+                .filter(c -> c.bytes() >= config.histoMatMinBytes() / 4)
                 .sorted((a, b) -> Long.compare(b.bytes(), a.bytes()))
                 .limit(config.maxEvidencePerFinding())
                 .toList();
@@ -94,7 +92,7 @@ public final class MatWorthyRule implements Rule {
                 # HIS002 — Worth a heap dump
                 
                 The same histogram as HIS001, restricted to classes that are not `java.*`, `jdk.*`, `sun.*` or
-                arrays of them. If one of your own classes holds at least 10% of counted bytes and 8 MB absolute,
+                arrays of them. If one of your own classes holds at least 10% of counted bytes and 8 MB absolute (`--mat-share`, `--mat-min-mb`),
                 it is named, along with the sibling classes that are large too.
                 
                 The distinction matters because a `byte[]` at the top tells you a buffer grew, while a domain class

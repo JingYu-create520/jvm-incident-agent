@@ -115,6 +115,48 @@ final class Analyze implements Callable<Integer> {
     @Option(names = "--throughput", description = "Minimum acceptable GC throughput (default 0.97).")
     private Double throughput;
 
+    @Option(names = "--histo-top-min-leader-mb", description = "absolute MB a single class must hold before HIS001 calls the heap dominated (default 16)")
+    private Integer histoTopMinLeaderMb;
+
+    @Option(names = "--histo-top-min-bag-mb", description = "absolute MB a byte[]/char[]/Integer[] bag must hold before HIS001 reports it (default 32)")
+    private Integer histoTopMinBagMb;
+
+    @Option(names = "--mat-min-mb", description = "absolute MB an application class must hold before HIS002 names it (default 8)")
+    private Integer matMinMb;
+
+    @Option(names = "--mat-share", description = "share of counted bytes HIS002 requires (default 0.10 — the heap-leak corpus sits at 0.0932, which is why that folder has no HIS002)")
+    private Double matShare;
+
+    @Option(names = "--container-min-instances", description = "instance floor for HIS003; it also scales with the heap as totalInstances/20, the larger wins (default 50000)")
+    private Long containerMinInstances;
+
+    @Option(names = "--cpu-min-cores", description = "cores a thread must gain between two dumps before TDA006 calls it hot (default 0.5)")
+    private Double cpuMinCores;
+
+    @Option(names = "--cpu-min-elapsed-sec", description = "minimum uptime before a single dump may be read as CPU load (default 1.0)")
+    private Double cpuMinElapsedSec;
+
+    @Option(names = "--pool-max-size", description = "above this member count a name family is a thread leak, not a starved pool (default 100)")
+    private Integer poolMaxSize;
+
+    @Option(names = "--burst-min", description = "occurrences inside one bucket before EXC003 calls it a burst (default 10)")
+    private Integer burstMin;
+
+    @Option(names = "--burst-bucket-sec", description = "width of the EXC003 time bucket in seconds (default 60)")
+    private Integer burstBucketSec;
+
+    @Option(names = "--leak-pinned-share", description = "how full the heap must be for a dip-free plateau to be GCA003 without a climb (default 0.85)")
+    private Double leakPinnedShare;
+
+    @Option(names = "--leak-stagnant-share", description = "a major collection reclaiming less than this counts as stagnant for GCA003 (default 0.02)")
+    private Double leakStagnantShare;
+
+    @Option(names = "--leak-stalled-floor", description = "how full the heap must be for a dip-free stagnant floor to be a finding at all (default 0.40)")
+    private Double leakStalledFloor;
+
+    @Option(names = "--stall-min", description = "allocation stalls before GCA007 calls it a pattern rather than a hiccup (default 3)")
+    private Integer stallMin;
+
     @Option(names = "--fail-on", paramLabel = "SEVERITY",
             description = "Lowest severity that makes the process exit 1: never, info, low, medium, "
                     + "high (default, the historical behaviour) or critical. Use critical in a CI gate "
@@ -208,6 +250,48 @@ final class Analyze implements Callable<Integer> {
         }
         if (throughput != null) {
             b.throughputFloor(throughput);
+        }
+        if (histoTopMinLeaderMb != null) {
+            b.histoTopMinLeaderBytes(histoTopMinLeaderMb * 1024L * 1024L);
+        }
+        if (histoTopMinBagMb != null) {
+            b.histoTopMinBagBytes(histoTopMinBagMb * 1024L * 1024L);
+        }
+        if (matMinMb != null) {
+            b.histoMatMinBytes(matMinMb * 1024L * 1024L);
+        }
+        if (matShare != null) {
+            b.histoMatMinShare(matShare);
+        }
+        if (containerMinInstances != null) {
+            b.containerMinInstances(containerMinInstances);
+        }
+        if (cpuMinCores != null) {
+            b.cpuHotMinCores(cpuMinCores);
+        }
+        if (cpuMinElapsedSec != null) {
+            b.cpuHotMinElapsedSec(cpuMinElapsedSec);
+        }
+        if (poolMaxSize != null) {
+            b.poolMaxPlausibleSize(poolMaxSize);
+        }
+        if (burstMin != null) {
+            b.burstMinPerBucket(burstMin);
+        }
+        if (burstBucketSec != null) {
+            b.burstBucketMillis(burstBucketSec * 1000L);
+        }
+        if (leakPinnedShare != null) {
+            b.leakSaturatedShare(leakPinnedShare);
+        }
+        if (leakStagnantShare != null) {
+            b.leakStagnantShare(leakStagnantShare);
+        }
+        if (leakStalledFloor != null) {
+            b.leakStalledFloorShare(leakStalledFloor);
+        }
+        if (stallMin != null) {
+            b.stallMinCount(stallMin);
         }
         return b.build();
     }

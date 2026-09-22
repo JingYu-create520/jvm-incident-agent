@@ -28,8 +28,6 @@ import java.util.Map;
  */
 public final class CpuHotThreadRule implements Rule {
 
-    private static final double MIN_CORES = 0.5;
-    private static final double MIN_ELAPSED_SEC = 1.0;
 
     @Override
     public String id() {
@@ -82,13 +80,13 @@ public final class CpuHotThreadRule implements Rule {
                 }
                 cores = dCpu / dWall;
             } else {
-                if (t.elapsedSeconds() < MIN_ELAPSED_SEC) {
+                if (t.elapsedSeconds() < config.cpuHotMinElapsedSec()) {
                     continue;
                 }
                 cores = t.cpuMillis() / (t.elapsedSeconds() * 1000.0);
             }
             totalCores += cores;
-            if (cores >= MIN_CORES) {
+            if (cores >= config.cpuHotMinCores()) {
                 hot.add(new Hot(t, cores));
             }
         }
@@ -104,7 +102,7 @@ public final class CpuHotThreadRule implements Rule {
 
         List<Finding> out = new ArrayList<>();
         for (Hot h : top) {
-            if (h.cores < MIN_CORES) {
+            if (h.cores < config.cpuHotMinCores()) {
                 continue;
             }
             String where = h.thread.topFrame().map(f -> f.display()).orElse("(no frames)");

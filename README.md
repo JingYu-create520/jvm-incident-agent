@@ -109,10 +109,18 @@ You get `report.md` for a human and `report.json` for a program, each finding ca
 --thread-leak-threshold 60
 --lock-waiters 5        how many waiters make a monitor "contended"
 --exception-threshold 10
+--mat-share 0.09        the boundary in the corpus docs: CachedRow holds 9.32%, so 9% names it
+--stall-min 1           how many ZGC allocation stalls make a pattern
 --format json           structured findings
 --llm                   narrate with an OpenAI-compatible endpoint (findings unchanged)
 --no-narrative          rule output only
 ```
+
+Every threshold that can decide a finding is a flag (`jia analyze --help` lists them all), and
+`report.json` echoes the whole set under `thresholds`. That is deliberate: a boundary you cannot
+move is not an engineering decision, it is a default somebody picked — so if you disagree with
+"9.32 % is not enough to call a leak", you can prove the other answer in one command rather than
+open an issue about it.
 
 ## What it reads
 

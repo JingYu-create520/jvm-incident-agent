@@ -94,10 +94,17 @@ cd .. && jia analyze ./incident-2026-09-20 -o ./incident-2026-09-20/ --format bo
 --thread-leak-threshold 60
 --lock-waiters 5        多少个等待者算锁竞争
 --exception-threshold 10
+--mat-share 0.09        文档里那条边界:CachedRow 占 9.32%,调到 9% 就会点名它
+--stall-min 1           多少次 ZGC 分配停顿才算"成模式"
 --format json           结构化输出
 --llm                   用 OpenAI 兼容端点生成叙述(结论不变)
 --no-narrative          只要规则输出
 ```
+
+凡是能决定一条结论的阈值都做成了参数(`jia analyze --help` 全列),而 `report.json` 会在
+`thresholds` 里把整套阈值原样吐出来。这是故意的:一条你动不了的边界不叫工程决策,只是某人随手
+定的默认值 —— 所以如果你不认同"9.32 % 不足以判定泄漏",你可以用一条命令把另一种答案跑出来,
+而不是去开一个 issue。
 
 ## 能读什么
 

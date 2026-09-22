@@ -19,8 +19,6 @@ import java.util.Locale;
  */
 public final class TopConsumerRule implements Rule {
 
-    private static final long MIN_LEADER_BYTES = 16L * 1024 * 1024;
-    private static final long MIN_BAG_BYTES = 32L * 1024 * 1024;
 
     @Override
     public String id() {
@@ -51,7 +49,7 @@ public final class TopConsumerRule implements Rule {
         List<Finding> out = new ArrayList<>();
         // On a 13 MB heap "byte[] is a quarter of everything" proves nothing. Absolute floors keep
         // a small or freshly started JVM from looking like an incident.
-        if (share >= config.histoDominanceRatio() && leader.bytes() >= MIN_LEADER_BYTES) {
+        if (share >= config.histoDominanceRatio() && leader.bytes() >= config.histoTopMinLeaderBytes()) {
             boolean opaque = leader.isPrimitiveArray() || Histo.STRING.equals(leader.className());
             out.add(Finding.builder(id())
                     .title(opaque ? "Heap is mostly byte[]/char[]/String" : title())
@@ -79,7 +77,7 @@ public final class TopConsumerRule implements Rule {
                     .metric("instances", leader.instances())
                     .build());
         }
-        if (bag >= 0.6 && histo.primitiveBagBytes() >= MIN_BAG_BYTES
+        if (bag >= 0.6 && histo.primitiveBagBytes() >= config.histoTopMinBagBytes()
                 && share < config.histoDominanceRatio()) {
             out.add(Finding.builder(id())
                     .title("Heap is raw buffers, not identifiable objects")

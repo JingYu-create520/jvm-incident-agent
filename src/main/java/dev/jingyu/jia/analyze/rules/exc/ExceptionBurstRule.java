@@ -23,8 +23,6 @@ import java.util.Optional;
  */
 public final class ExceptionBurstRule implements Rule {
 
-    private static final long BUCKET_MILLIS = 60_000L;
-    private static final int MIN_BURST = 10;
 
     @Override
     public String id() {
@@ -45,7 +43,7 @@ public final class ExceptionBurstRule implements Rule {
     public List<Finding> evaluate(Snapshot snapshot, Config config) {
         List<ExceptionOccurrence> all = snapshot.exceptions();
         long timed = all.stream().filter(o -> o.epochMillis() != null).count();
-        if (timed < MIN_BURST) {
+        if (timed < config.burstMinPerBucket()) {
             return List.of();
         }
         List<Finding> out = new ArrayList<>();
@@ -56,8 +54,8 @@ public final class ExceptionBurstRule implements Rule {
             if (reported >= 2) {
                 break;
             }
-            Optional<ExceptionCluster.Burst> burst = c.burst(BUCKET_MILLIS);
-            if (burst.isEmpty() || burst.get().count() < MIN_BURST) {
+            Optional<ExceptionCluster.Burst> burst = c.burst(config.burstBucketMillis());
+            if (burst.isEmpty() || burst.get().count() < config.burstMinPerBucket()) {
                 continue;
             }
             reported++;
@@ -75,7 +73,7 @@ public final class ExceptionBurstRule implements Rule {
                     .evidence(c.items().stream()
                             .filter(o -> o.epochMillis() != null
                                     && o.epochMillis() >= burst.get().bucketStartMillis()
-                                    && o.epochMillis() < burst.get().bucketStartMillis() + BUCKET_MILLIS)
+                                    && o.epochMillis() < burst.get().bucketStartMillis() + config.burstBucketMillis())
                             .limit(config.maxEvidencePerFinding())
                             .map(o -> Evidence.of(o.source(), o.startLine(),
                                     o.timestampRaw() == null ? "in burst" : o.timestampRaw()))

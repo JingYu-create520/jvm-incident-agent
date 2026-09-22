@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-19 rules ship in jvm-incident-agent 0.2.2.
+19 rules ship in jvm-incident-agent 0.3.0.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -302,7 +302,7 @@ state from growth.
 **Application class holds a large share of the heap** · heap histogram · `jia explain HIS002`
 
 The same histogram as HIS001, restricted to classes that are not `java.*`, `jdk.*`, `sun.*` or
-arrays of them. If one of your own classes holds at least 10% of counted bytes and 8 MB absolute,
+arrays of them. If one of your own classes holds at least 10% of counted bytes and 8 MB absolute (`--mat-share`, `--mat-min-mb`),
 it is named, along with the sibling classes that are large too.
 
 The distinction matters because a `byte[]` at the top tells you a buffer grew, while a domain class
@@ -481,4 +481,4 @@ Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not gue
 
 ---
 
-_19 rules, rendered from `jvm-incident-agent 0.2.2 rules --format json` by scripts/render-rules.sh._
+_19 rules, rendered from `jvm-incident-agent 0.3.0 rules --format json` by scripts/render-rules.sh._

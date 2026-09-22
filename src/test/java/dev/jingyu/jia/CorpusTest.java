@@ -134,6 +134,35 @@ class CorpusTest {
         assertTrue(ms < 5_000, () -> "analysed a multi-megabyte log in " + ms + " ms");
     }
 
+    @Test
+    @DisplayName("the thresholds that decided a finding are the ones a reader can move")
+    void boundariesAreReproducible() {
+        // corpus/incident-heap-leak is the documented boundary case: LeakyCache$CachedRow holds
+        // 22,400,000 bytes = 9.32 % of counted bytes, and HIS002 asks for 10 %. The point is not
+        // that 10 % is the right number — it is that a reader must be able to disagree and re-run.
+        Config tenPercent = Config.defaults();
+        List<String> atDefault = new Engine().analyze(load("incident-heap-leak"), tenPercent)
+                .findings().stream().map(f -> f.ruleId()).distinct().toList();
+        assertFalse(atDefault.contains("HIS002"), "the documented 9.32 % case must not fire at 10 %");
+
+        List<String> atNine = new Engine().analyze(load("incident-heap-leak"),
+                Config.builder().histoMatMinShare(0.09).build())
+                .findings().stream().map(f -> f.ruleId()).distinct().toList();
+        assertTrue(atNine.contains("HIS002"),
+                "lowering --mat-share below the measured share has to produce the finding — "
+                        + "a rule that ignores its own knob is not tunable, it is fixed");
+
+        // Defaults are published in docs/rules.md and the article; pin the ones quoted there.
+        assertEquals("0.1", tenPercent.asMap().get("mat-share"));
+        assertEquals("8", tenPercent.asMap().get("mat-min-mb"));
+        assertEquals("50000", tenPercent.asMap().get("container-min-instances"));
+        assertEquals("0.5", tenPercent.asMap().get("cpu-min-cores"));
+        assertEquals("3", tenPercent.asMap().get("stall-min"));
+        assertTrue(tenPercent.asMap().size() >= 30,
+                "every threshold in force should be readable from the JSON report, was "
+                        + tenPercent.asMap().size());
+    }
+
     private static AnalysisResult analyze(String scenario) {
         return new Engine().analyze(load(scenario), Config.defaults());
     }
