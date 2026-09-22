@@ -121,17 +121,38 @@ GCA005 MEDIUM  The log itself says: "GCLocker Initiated GC" — JNI critical sec
 ## 复现它
 
 ```bash
-cd demo-victim && ../mvnw -q -DskipTests package
-java -Xmx256m -Xms256m -XX:+UseG1GC -jar target/demo-victim.jar
-curl 'http://localhost:8080/victim/gcstorm?rounds=40&workingSetMb=96&blocking=true'
-scripts/capture.sh -o /tmp/incident -d 6
-jia analyze /tmp/incident
+# 0) 两个 jar:分析器和靶子
+sh mvnw -q -DskipTests package                          # -> target/jia.jar
+cd demo-victim && ../mvnw -q -DskipTests package        # -> target/demo-victim.jar && cd ..
+
+# 1) 起一个 256 MB 的 G1 JVM。GC 日志必须开,不然没东西可抓
+java -Xms256m -Xmx256m -XX:+UseG1GC \
+     -Xlog:gc*:file=live/gc.log:time,uptime,level,tags \
+     -jar demo-victim/target/demo-victim.jar --server.port=18080 > live/app.log 2>&1 &
+
+# 2) 埋事故。async 是故意的 —— 现场得在风暴进行中抓
+curl 'http://localhost:18080/victim/gcstorm?rounds=600&workingSetMb=175' &
+sleep 4
+scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app.log
+
+# 3) 读
+java -jar target/jia.jar analyze /tmp/incident
 ```
+
+跑完你大概率看到:`gc.log` 4 MB 出头、四万多行、十几次 Full GC,`HIS001` 说 `[B` 占了绝大多数可统计
+字节,第一名假设是 `H-ALLOCATION-STORM`。`-d 6` 是两次 `jstack` 之间的间隔;`--between-cmd` 可以在两次
+dump 中间再推一把(线程泄漏那个语料就是靠它拍出 80→140 的增长的)。
 
 `jia analyze corpus/incident-gc-storm` 和 `corpus/incident-heap-leak` 会分别把
 `H-ALLOCATION-STORM` 和 `H-HEAP-LEAK` 排在第一名,`corpus/healthy` 输出零结论。
-这些不是"我跑给你看",是 `CorpusTest` 里的断言:五个场景的第一名假设各一条,加上健康样本零结论一条,
-共六条,改坏任何一条 CI 直接红。
+这些不是"我跑给你看",是 `CorpusTest` 的 15 个用例:5 个场景的第一名假设、每个场景**精确到触发了
+哪几条规则**、健康样本零结论,外加解析完整性和 5 秒耗时预算。
+
+写这篇的时候又给 `corpus/*/TRUTH.md` 补了一道断言(`TruthDocTest`,7 个用例):每个语料的
+"应该触发 / 不该触发"两张清单必须和引擎实际输出逐条对齐,而且 18 条规则得全部被点名。它第一次跑就
+抓到了东西——gc-storm 的 TRUTH.md 把 GCA005 写在"不该触发"那一栏,而日志里明明白白有
+`GCLocker Initiated GC`;另外三个语料的清单各漏了几条规则,健康样本那份还在说"14 条规则"(早就是 18 条了)。
+文档和引擎分家,就是这么发生的:测试只盯第一名,下面的清单就没人看着了。
 
 > 本文所有结论由确定性规则产生,语言模型只参与把结论写成段落——它没有能力新增、删除或改写任何
 > 一条结论(仓库里有一个测试专门锁死这件事)。所以你可以在凌晨三点相信这份报告。

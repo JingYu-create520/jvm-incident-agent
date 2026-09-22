@@ -53,19 +53,51 @@ the heap is not.
 ## Rules that SHOULD fire
 
 - **GCA001 (full-GC frequency)** — 8 Full GCs inside ~4 s of the storm window, and 1886 young
-  collections inside ~20 s: whichever rate the rule uses, this is the pathological log.
+  collections inside ~20 s: whichever rate the rule uses, this is the pathological log. Verbatim:
+  `8 Full GC collections inside 1.0 minute(s) (8.0/min, threshold 1.0), stopping the world for
+  99 ms in total, worst pause 17 ms`.
 - **GCA004 (premature promotion)** — read it from `[gc,heap]`, and note the trap: the batch's
   175 MB never shows up as `Old regions` (that peaks at only `0->16`), because arrays larger than
   half a region are accounted as **`Humongous regions: 228->228`** (peak 230, stable all storm). A promotion rule that watches
   only `Old regions` will report nothing here; it has to count humongous regions too (or use the
-  `217M-236M of 256M` post-pause floor).
-- **HIS001 (top consumers)** — `[B` = 173 MB of the live histogram (this histogram was taken
-  mid-batch, so the batch is visible; if you re-capture after the batch ends, it disappears).
+  `217M-236M of 256M` post-pause floor). Verbatim: `1894 collection(s) triggered by humongous
+  (direct-to-old) allocation; 1880 young collections reclaimed under 5% of the heap`.
+- **GCA006 (GC throughput below target)** — `Over 22 s of log, 48.6% of wall time was spent in
+  stop-the-world pauses (10694 ms across 2555 pauses)`. This is the finding that decides whether
+  the Full GC count means anything; the `2555` is parsed events (concurrent phases included) while
+  the pause sum counts stop-the-world lines only.
+- **HIS001 (top consumers)** — `[B` holds 173.0 MB of 180.8 MB counted, 43,794 instances averaging
+  4143 bytes (95.7 % of counted bytes). This histogram was taken mid-batch, so the batch is
+  visible; if you re-capture after the batch ends, it disappears.
+- **GCA005 (JVM configuration smell)** — fires on a line the JVM wrote itself,
+  `Pause Young (Normal) (GCLocker Initiated GC)`, not on a heuristic. It is MEDIUM and it is
+  deliberately not the top hypothesis: the rule reports that JNI critical sections are forcing
+  collections, which is real and worth knowing, and it is *not* where the 48.6 % went. An earlier
+  version of this file had GCA005 under "must NOT fire", which the log contradicts — the same
+  mistake `corpus/incident-deadlock` records for TDA005, in the opposite direction.
 
 ## Rules that must NOT fire
 
-TDA001-005 (no blocked threads at all), EXC001/EXC002 (0 ERROR lines, 0 `Caused by:`; the one OOME backoff
-appears only as a one-line WARN with no stack trace, `batch 1 hit the heap ceiling at round 12, trimmed to 168 MB`), GCA005.
+- **TDA001-003** — 0 BLOCKED threads, no `Found one Java-level deadlock`, and the only busy Java
+  thread is the single `victim-batch-1`.
+- **TDA004/TDA005** — no cluster of threads sharing a frame, and no name family with a counter
+  behind it; the storm is one thread and a collector, not a pool.
+- **TDA006 (thread burning CPU)** — the batch thread allocates rather than computes; nothing
+  reaches the half-a-core floor the rule needs between the two dumps.
+- **GCA002 (pause over SLA)** — max pause 16.774 ms against a 200 ms SLA. On a 256 MB heap an
+  absolute pause threshold is unreachable, which is exactly why the rate and throughput rules
+  exist instead of relying on one.
+- **GCA003 (heap-leak fingerprint)** — the discrimination test of this folder, see the caveats
+  below. Post-GC occupancy oscillates in a 217M-236M band instead of climbing and staying there.
+- **HIS002 (application class share)** — the largest non-JDK row in this histogram is
+  `ch.qos.logback.classic.Logger` at 15,792 bytes. Nothing comes near the 8 MB absolute floor,
+  because the bytes are in `[B`, and that is HIS001's sentence to say.
+- **HIS003 (container count)** — the widest container row is `ConcurrentHashMap$Node` at 27,829
+  instances against a floor of `max(50,000, totalInstances/20)` = 50,000 on `Total 252542`. The
+  batch is arrays, not map entries.
+- **EXC001/EXC002/EXC003** — 0 ERROR lines, 0 `Caused by:`, and 0 throwables to cluster in a
+  minute; the one OOME backoff appears only as a one-line WARN with no stack trace,
+  `batch 1 hit the heap ceiling at round 12, trimmed to 168 MB`.
 
 ## Honest caveats for rule tuning
 

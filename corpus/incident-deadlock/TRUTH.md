@@ -70,8 +70,21 @@ a live service rather than an empty VM.
 
 ## Rules that must NOT fire
 
-GCA001-005 (no Full GC in this log), HIS001/HIS002 (13.1 MB live total), EXC001/EXC002 (no ERROR,
-no `Caused by:`), TDA003 (no repeating `victim-worker-` prefix: 0 occurrences).
+- **TDA003 (thread leak)** — no repeating `victim-worker-` prefix: 0 occurrences. The families here
+  are 8 `victim-report-fetcher-N` and the Spring Boot baseline, and neither grows between dumps 1
+  and 2.
+- **TDA006 (thread burning CPU)** — the four cycle threads and the eight waiters are all on a
+  monitor, so none of them accumulates the half-core the rule needs to call anything hot. A
+  deadlock is invisible to CPU and unmistakable in a dump, which is the whole reason both signal
+  families exist.
+- **GCA001-006** — no Full GC in this log. GCA006 also abstains on window: the flushed part covers
+  2.78 s of uptime and the rule refuses to divide pause time by anything under 10 s.
+- **HIS001/HIS002** — 13.1 MB live total, the same shape as `corpus/healthy`. Two threads holding
+  two locks do not show up in a histogram.
+- **HIS003 (container count)** — the widest container row is `ConcurrentHashMap$Node` at 28,410
+  instances, under the `max(50,000, totalInstances/20)` = 50,000 floor (`Total 300211`).
+- **EXC001/EXC002/EXC003** — no ERROR lines and no `Caused by:` in `app.log`: the deadlock was
+  planted inside a request that never returned, so nothing was ever logged to fail.
 
 ## Parser notes (shapes that are easy to get wrong)
 

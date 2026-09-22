@@ -230,13 +230,20 @@ jia analyze corpus/incident-deadlock
 
 ```bash
 cd demo-victim && ../mvnw -q -DskipTests package && cd ..
-java -Xmx256m -Xms256m -jar demo-victim/target/demo-victim.jar &
-scripts/capture.sh -o /tmp/incident -d 6        # jstack -l、jmap -histo、gc.log、app.log
+mkdir -p live
+java -Xmx256m -Xms256m -XX:+UseG1GC \
+     -Xlog:gc*:file=live/gc.log:time,uptime,level,tags \
+     -jar demo-victim/target/demo-victim.jar > live/app.log 2>&1 &
+scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app.log
 ```
 
+`capture.sh` 是去抄 JVM 自己的 `-Xlog` 输出,它变不出一份 GC 日志,所以那个参数才是第四件产物存在的前提。
+趁 JVM 还在跑,用上面那张表里的触发接口埋个事故,再 analyze。
+
 [`corpus/`](corpus) 里的每个字节都是活 JVM 的真产物,没有一份是手写的。六个场景,每个配一份
-`TRUTH.md` 写清埋了什么、应该触发哪些规则。`CorpusTest` 就断言这些,所以"改了一条规则,结果
-分不清堆泄漏和分配风暴"这种提交会直接把构建搞挂。
+`TRUTH.md` 写清埋了什么、应该触发哪些规则。`CorpusTest` 断言的就是这些;`TruthDocTest` 再把
+那份 markdown 本身对着引擎核一遍——18 条规则在每个场景里都必须被点名。所以不管是"改了一条规则,
+结果分不清堆泄漏和分配风暴",还是"文档说的和工具报的对不上",构建都会直接红。
 
 ## 误报才是真问题
 

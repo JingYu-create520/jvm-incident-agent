@@ -54,12 +54,29 @@ apart from the message text — that is what a fingerprinting rule must cluster 
   (40 / 27 / 14), each with an identical frame list, plus 2 singletons.
 - **EXC002 (causal chain)** — all 81 app-logged throwables carry exactly one `Caused by:`; the 3
   chain roots differ from the 3 wrapper types, so the rule can prove it reads the chain and not
-  just the header.
+  just the header. Verbatim: `40 wrapped failure(s) all bottom out at java.net.SocketTimeoutException
+  thrown from at dev.jingyu.jia.victim.FlakyOrderService.readFromGateway(…)`, and 14 more at
+  `checkStock(…)`.
+- **EXC003 (burst in time)** — the same 40 do not merely repeat, they arrive inside one minute:
+  `java.net.SocketTimeoutException arrives 40 times inside a single minute (total 40 in this log),
+  starting 2026-09-20 21:44:00.000`, plus `TimeoutException … 14 times inside a single minute`. The
+  rule exists because a cluster spread over an hour and a cluster that lands in one minute are
+  different incidents, and only the second one has a timestamp worth paging somebody with.
 
 ## Rules that must NOT fire
 
-TDA001-005 (the failures are logged, they never park on a monitor: **0 BLOCKED**), GCA001-005,
-HIS001/HIS002 (13 MB live total — the exception traffic does not retain anything).
+- **TDA001/TDA002/TDA004** — the failures are logged, they never park on a monitor: **0 BLOCKED**
+  threads in either dump, and no deadlock trailer.
+- **TDA003/TDA005** — no `victim-worker-` family grows between the dumps and no pool is fully
+  occupied; the request threads are busy failing, not stuck.
+- **TDA006 (thread burning CPU)** — nothing reaches half a core between the two dumps.
+- **GCA001-006** — 0 Full GC in this window; the exception traffic costs strings, not the
+  collector. GCA006 additionally abstains because the flushed log covers 2.62 s and the rule needs
+  10 s before it will quote a throughput percentage.
+- **HIS001/HIS002** — 13 MB live total, the same baseline as `corpus/healthy`: the failures do not
+  retain anything, they just allocate.
+- **HIS003 (container count)** — the widest container row is `ConcurrentHashMap$Node` at 29,608
+  against the `max(50,000, totalInstances/20)` = 50,000 floor (`Total 304012`).
 
 ## Honest caveats for rule tuning
 

@@ -4,6 +4,36 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+Documentation and tests only — no change to the analyzer's behaviour, so no new release.
+
+### Added
+
+- `TruthDocTest` asserts each `corpus/*/TRUTH.md` against the engine: its SHOULD-fire list must
+  equal the rules that actually fire, its must-NOT-fire list must be disjoint from them, and
+  together the two must account for all 18 rules — so a rule can no longer be added without
+  somebody deciding, in prose, what it says about each capture. Both markdown shapes the corpus
+  grew up with are parsed (id-prefixed bullets, and the healthy folder's rule-by-rule table),
+  including ranges like `GCA001-006`. Mutation-checked: moving a fired rule into the must-NOT
+  list, deleting a row, and naming a rule that does not exist each fail the build.
+
+### Fixed
+
+- Five of the six ground-truth files disagreed with the tool they document. Two had a fired rule
+  in the "must NOT fire" list (`incident-gc-storm` → GCA005, which the log itself justifies with
+  `GCLocker Initiated GC`; `incident-thread-leak` → TDA005, which fires because all 80 leaked
+  workers are occupied in one frame); `incident-heap-leak` claimed HIS002 fires when it does not,
+  and omitted GCA004, which does; `incident-exceptions` omitted EXC003; `corpus/healthy` still
+  said "14 rules" and accounted for 14 of 18. Each list is now complete, with the measurement
+  that decides each call, including the two boundary cases worth knowing about: HIS002 misses the
+  leak by 0.7 points of share (9.32 % against a 10 % floor) because the `[B` bag around it is 72 %
+  of the histogram, and GCA006 stays quiet on four folders because the rule refuses to divide
+  pause time by a flushed window under 10 s.
+- Both READMEs' no-Docker capture snippet started the victim without `-Xlog:gc*`, so the fourth
+  artifact it claims to collect could not exist. The snippet now passes the flag and the
+  `--gc-log` / `--app-log` paths, verified end to end against a fresh 256 MB G1 storm.
+
 ## 0.1.2 — 2026-09-21
 
 Found by re-running the Docker path on a machine that already had six containers published

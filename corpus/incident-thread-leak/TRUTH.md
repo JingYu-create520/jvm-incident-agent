@@ -51,12 +51,32 @@ The two bursts are 80 and 60, and they are the *only* `victim-worker-` threads i
 
 - **TDA003 (thread leak)** — a numeric-suffix name prefix with 80 members in dump 1 growing to 140
   in dump 2, all alive at the same parking frame, and no pool lifecycle call anywhere near them.
+  This is the rule that names the planted bug, and the hypothesis ranking puts `H-THREAD-LEAK`
+  first because of it.
+- **TDA005 (thread pool starvation)** — `All 80 workers of "victim-worker" are occupied and 80 of
+  them sit in the same frame (dev.jingyu.jia.victim.ThreadLeakService#lambda$leak$0)`. That reads
+  as a second opinion on the same fact, and it is true on its own terms: a family that is 100 %
+  occupied and 100 % parked in one user frame cannot take work. An earlier version of this file
+  listed TDA005 under "must NOT fire" on the reasoning that the planted bug is a leak, not a
+  starved pool — but the rule never claims to know which of the two you planted, and the pool
+  really is unusable. Note the asymmetry with TDA004 below: sleeping threads are not a *hotspot*
+  and they are not *available*, and the two rules draw that line on purpose.
 
 ## Rules that must NOT fire
 
-TDA001 (`Found one Java-level deadlock` appears 0 times), TDA002/TDA004 (**0 BLOCKED threads**),
-TDA005, GCA001-005, HIS001/HIS002 (12.5 MB live total, same as `corpus/healthy`), EXC001/EXC002
-(0 ERROR lines, 0 `Caused by:` — the only log noise is the two WARN bookkeeping lines).
+- **TDA001** — `Found one Java-level deadlock` appears 0 times.
+- **TDA002/TDA004** — **0 BLOCKED threads**, so no contended monitor and no blocked-stack cluster.
+  TDA004 additionally skips threads parked in `Thread.sleep` before it fingerprints anything, which
+  is why 140 identical stacks do not make it a hotspot finding here.
+- **TDA006 (thread burning CPU)** — every leaked worker is sleeping; none of them accumulates the
+  half-a-core of CPU the rule wants.
+- **GCA001-006** — 0 Full GC, 4 young pauses, max pause 6.1 ms, and the flushed window is 2.80 s
+  of uptime, below the 10 s GCA006 needs before it will quote a throughput percentage at all.
+- **HIS001/HIS002** — 12.5 MB live total, same as `corpus/healthy`; the leak is threads, not bytes.
+- **HIS003 (container count)** — the widest container row is `ConcurrentHashMap$Node` at 28,339
+  instances against the rule's `max(50,000, totalInstances/20)` = 50,000 floor.
+- **EXC001/EXC002/EXC003** — 0 ERROR lines, 0 `Caused by:`, 0 throwables — the only log noise is
+  the two WARN bookkeeping lines.
 
 ## Honest caveats for rule tuning
 

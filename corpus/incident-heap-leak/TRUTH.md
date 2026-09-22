@@ -51,18 +51,53 @@ cache that stores both the serialized blob and its parsed form really retains.
 ## Rules that SHOULD fire
 
 - **GCA003 (heap-leak fingerprint)** — post-GC floor climbs to 99.6 % of `Heap Max Capacity: 256M`
-  and never drops after a collection.
+  and never drops after a collection. The raw lines are what make it unmissable:
+  `GC(28) Pause Full (G1 Compaction Pause) 252M->252M(256M)`, `GC(46) … 255M->255M(256M)`. The rule
+  reports the old-generation view of the same thing: `the old gen low-water mark is 217M, sits at 11
+  of 13 collections with 88% of the heap still live after a Full GC`.
 - **GCA001 (full-GC frequency)** — 13 Full GCs inside the first 4.7 s of uptime (GC(0)…GC(48)),
-  consecutive, reclaiming 0 M.
-- **HIS001 (top consumers)** — `[B` alone is 72 % of live heap; the app class
-  `dev.jingyu.jia.victim.LeakyCache$CachedRow` is 700 000 instances, i.e. the owner is nameable.
-- **HIS002 (shallow-size ranking)** — the ranking is `[B` > `java.lang.String` >
-  `LeakyCache$CachedRow`; `Total` is the last line.
+  consecutive, reclaiming 0 M. Verbatim: `13 Full GC collections inside 1.0 minute(s) (13.0/min,
+  threshold 1.0), stopping the world for 551 ms in total, worst pause 74 ms`.
+- **GCA004 (premature promotion)** — the copy-space failures are the leak pushing against the
+  young generation: `11 collection(s) ran out of copy space (to-space exhausted / evacuation
+  failure / promotion failed); 41 collection(s) triggered by humongous (direct-to-old) allocation;
+  23 young collections reclaimed under 5% of the heap`. It ranks below GCA003 on purpose: the same
+  evidence read without the live-set floor is the story of `corpus/incident-gc-storm`.
+- **HIS001 (top consumers)** — verbatim: `[B holds 165.2 MB of 229.2 MB (72.1% of all bytes
+  counted, 2,144,188 instances, 81 bytes each)`. Two million eight-byte payloads is the shape of a
+  cache keyed per request; the app class `dev.jingyu.jia.victim.LeakyCache$CachedRow` is 700,000
+  instances at rank 3, so the owner is nameable even if it is not yet provable.
 
 ## Rules that must NOT fire
 
-TDA001-005 (0 BLOCKED threads, no deadlock, no leaked pool), EXC001 (only **one** exception type
-appears, once — a single cluster is not ≥3), GCA005.
+- **TDA001/TDA002/TDA004** — 0 BLOCKED threads in either dump, and no `Java-level deadlock`
+  trailer; the JVM is dying of occupancy, not of a lock.
+- **TDA003/TDA005** — no name family with a counter grows between the dumps, and no pool is full of
+  occupied workers; the thread count is the Spring Boot baseline.
+- **TDA006 (thread burning CPU)** — nothing accumulates half a core between the two dumps; the Full
+  GCs burn CPU inside the VM, and those pseudo-threads are excluded by name.
+- **GCA002 (pause over SLA)** — worst pause 74 ms against a 200 ms SLA, on a heap small enough that
+  one full compaction is 42-63 ms.
+- **GCA005 (JVM configuration smell)** — `UseG1GC`, `Heap Region Size: 1M`, compressed oops on, no
+  metaspace cap, `-Xms` = `-Xmx` = 256M. Nothing to complain about.
+- **GCA006 (GC throughput below target)** — this is the one that could reasonably have fired:
+  551 ms of stop-the-world inside 4.73 s of log is roughly 12 % of wall time. The rule refuses any
+  window under 10 s, because a percentage over a flushed fragment of a startup says more about the
+  buffering than about the JVM. Capture the same leak over a longer session and GCA006 will appear;
+  `corpus/incident-gc-storm` is that capture.
+- **HIS002 (application class share)** — the leading non-JDK class is
+  `dev.jingyu.jia.victim.LeakyCache$CachedRow` at 22,400,000 bytes, which clears the 8 MB absolute
+  floor and misses the 10 % share floor at **9.32 %** of counted bytes. If you are reading this
+  because you want to lower `MIN_SHARE`, note what holds it down: the 173 MB `[B` bag around it is
+  72 % of the histogram, and a share is a ratio, not a measurement of the leak.
+- **HIS003 (container count)** — the bar here is `max(50,000, totalInstances/20)` = 222,744 against
+  `Total 4454886`, and the widest container row is `ConcurrentHashMap$Node` at 27,166. The
+  700,000 `CachedRow` objects are not map nodes, and no `[Ldev.jingyu…;` array row appears in the
+  histogram at all, which is the honest limit of this artifact: it names the victim, not the
+  retainer. That is why the recommendation on GCA003 is a MAT dominator tree.
+- **EXC001/EXC002/EXC003** — the log has exactly one throwable, an
+  `ERROR … Servlet.service() … java.lang.OutOfMemoryError: Java heap space`, and 0 `Caused by:`.
+  One occurrence cannot be a repeated cluster, a chain, or a burst.
 
 ## Honest caveats for rule tuning
 

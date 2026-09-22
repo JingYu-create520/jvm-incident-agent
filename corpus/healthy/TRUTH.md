@@ -1,7 +1,7 @@
 # corpus/healthy — ground truth: the analyzer must report ZERO findings here
 
 This is the negative control of the corpus. Real tool output from one JVM, nothing hand-edited.
-If any of the 14 rules fires on this folder, the rule is wrong, not this folder.
+If any of the 18 rules fires on this folder, the rule is wrong, not this folder.
 
 ## How it was produced
 
@@ -51,15 +51,19 @@ scanner, and they never multiply.
 | TDA003 | nothing | no name prefix with a counter exceeds 10 members, and the only ≥10 group is Tomcat's own `http-nio-*-exec-N` |
 | TDA004 | nothing | no blocked frames to fingerprint |
 | TDA005 | nothing | every pool thread is idle-parked on an empty queue; nothing is queued, nothing is starved |
+| TDA006 | nothing | no Java thread gains half a core between the two dumps. The largest lifetime `cpu=` figures belong to VM pseudo-threads (`DestroyJavaVM` at 328 ms), which carry no `java.lang.Thread.State:` line and are never parsed as Java threads |
 | GCA001 | nothing | 0 full collections |
 | GCA002 | nothing | max pause 8.4 ms; mean of the 5 young pauses is 5.28 ms |
 | GCA003 | nothing | post-GC occupancy oscillates 2M-13M, no monotone climb, and every collection reclaims ≥90 % of the delta |
 | GCA004 | nothing | `Humongous regions: 0->0` on every event, and `Old regions` ends at `0->3` over the whole session (class/static data, not churn) |
 | GCA005 | nothing | `Compressed Oops: Enabled (32-bit)`, `Heap Region Size: 1M`, no `-XX:MaxMetaspaceSize`, heap min = initial = max = 256M (a deliberately sane config) |
+| GCA006 | nothing | the flushed window is 8.12 s, under the 10 s the rule needs before it will quote a percentage; the arithmetic would be safe anyway — 5 young pauses, mean 5.28 ms, is about 0.3 % of wall time |
 | HIS001 | nothing | top consumer is `[B` at 3 MB — that is the normal state of *every* Java process; a byte-array-is-big finding here would also fire on all 5 incident folders |
 | HIS002 | nothing | same as above, ranked on shallow size |
+| HIS003 | nothing | the widest container row is `ConcurrentHashMap$Node` at 29,021 instances; the floor is `max(50,000, totalInstances/20)` = 50,000 on `Total 298054` |
 | EXC001 | nothing | no throwable in the log |
 | EXC002 | nothing | no `Caused by:` |
+| EXC003 | nothing | 0 throwables, so there is nothing to bucket into a minute |
 
 ## Traps this folder intentionally contains
 

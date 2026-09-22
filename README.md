@@ -291,14 +291,23 @@ Incidents: `deadlock`, `heap-leak`, `gc-storm`, `thread-leak`, `exceptions`,
 
 ```bash
 cd demo-victim && ../mvnw -q -DskipTests package && cd ..
-java -Xmx256m -Xms256m -jar demo-victim/target/demo-victim.jar &
-scripts/capture.sh -o /tmp/incident -d 6        # jstack -l, jmap -histo, gc.log, app.log
+mkdir -p live
+java -Xmx256m -Xms256m -XX:+UseG1GC \
+     -Xlog:gc*:file=live/gc.log:time,uptime,level,tags \
+     -jar demo-victim/target/demo-victim.jar > live/app.log 2>&1 &
+scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app.log
 ```
+
+`capture.sh` copies the JVM's own `-Xlog` output; it cannot invent a GC log, so that flag is what
+makes the fourth artifact exist. Then plant something while it is still running — the trigger
+endpoints are listed above — and analyze.
 
 Everything in [`corpus/`](corpus) is byte-for-byte real tool output from a live JVM — no
 hand-written dumps. Six scenarios, each with a `TRUTH.md` stating what was planted and which
-rules should fire. `CorpusTest` asserts exactly that, so a rule change that breaks the
-heap-leak-vs-allocation-storm distinction fails the build.
+rules should fire. `CorpusTest` asserts exactly that, and `TruthDocTest` asserts the markdown
+against the engine — every one of the 18 rules accounted for in every folder. So both a rule
+change that breaks the heap-leak-vs-allocation-storm distinction and a ground-truth file that
+drifts away from what the tool reports will fail the build.
 
 ## False positives are the real problem
 
