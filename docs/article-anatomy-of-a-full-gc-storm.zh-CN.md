@@ -144,8 +144,9 @@ java -jar target/jia.jar analyze /tmp/incident
 字节,第一名假设是 `H-ALLOCATION-STORM`。`-d 6` 是两次 `jstack` 之间的间隔;`--between-cmd` 可以在两次
 dump 中间再推一把(线程泄漏那个语料就是靠它拍出 80→140 的增长的)。
 
-`java -jar target/jia.jar analyze corpus/incident-gc-storm`(就是上面那条命令,简称 `jia`)和 `corpus/incident-heap-leak` 会分别把
-`H-ALLOCATION-STORM` 和 `H-HEAP-LEAK` 排在第一名,`corpus/healthy` 输出零结论。
+把最后那条命令的路径换成语料目录:`jia analyze corpus/incident-gc-storm` 和
+`corpus/incident-heap-leak` 会分别把 `H-ALLOCATION-STORM` 和 `H-HEAP-LEAK` 排在第一名,
+`corpus/healthy` 输出零结论。
 这些不是"我跑给你看",是 `CorpusTest` 的 15 个用例:5 个场景的第一名假设、每个场景**精确到触发了
 哪几条规则**、健康样本零结论,外加解析完整性和 5 秒耗时预算。
 
