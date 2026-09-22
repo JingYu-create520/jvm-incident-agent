@@ -340,6 +340,9 @@ by `RulesTest.catalogueIsComplete`.
   collection and `Allocation Stall` is its pressure signal (GCA007, and `corpus/incident-zgc-leak`
   is there to keep both honest); and Shenandoah, where cycles are mapped the ZGC way but no
   capture exists yet — so treat its `major` mapping as untested rather than as support.
+  The ZGC support is **verified on non-generational ZGC (JDK 17)**. Generational ZGC (21+) labels
+  its cycles `(Minor)`/`(Major)`, and this tool does not distinguish them yet — a minor cycle is
+  counted as major, which can only over-report, never under-report.
 - **Virtual threads are invisible.** A JDK 21 dump's `-- virtual thread … mounted on carrier`
   trailer carries real incident information (pinning being the interesting one) and this tool
   neither parses nor reasons about it. A Loom-heavy service will look like a JVM with a suspiciously

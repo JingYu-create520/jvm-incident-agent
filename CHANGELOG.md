@@ -24,6 +24,10 @@ Tooling and agent-facing docs; the analyzer itself is unchanged, so no new relea
   collector that prints no `Pause Full`. It now lists the ZGC folder, the gate, and the two reading
   rules that matter at 4 a.m.: "no Full GC" is not "no GC problem", and ZGC's `"ZWorker#N"` threads
   are not a thread pool.
+- Both READMEs now say what "ZGC is supported" was actually verified against: non-generational ZGC
+  on JDK 17. Generational ZGC (21+) tags its cycles `(Minor)`/`(Major)` and this release does not
+  distinguish them, so a minor cycle counts as major — over-reporting rather than silence, which is
+  the safer direction, but not the same thing as support.
 
 
 
