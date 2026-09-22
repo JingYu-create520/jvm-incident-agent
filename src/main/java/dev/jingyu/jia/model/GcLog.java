@@ -20,7 +20,10 @@ public final class GcLog {
                     || s.contains("pause relocate")) {
                 return ZGC;
             }
-            if (s.contains("shenandoah")) {
+            if (s.contains("shenandoah") || s.contains("pause init mark") || s.contains("pause final mark")) {
+                // Shenandoah's own banner is caught by the first test; the mark phases catch a
+                // rotated log that starts mid-heap. Its pauses are Init/Final marks around a
+                // concurrent cycle, and unlike ZGC it really does run and print Full GCs.
                 return SHENANDOAH;
             }
             if (s.contains("g1 ") || s.contains("using g1") || s.contains("g1 eviction")
@@ -93,9 +96,17 @@ public final class GcLog {
     }
 
     public boolean isMajor(GcEvent.Kind kind) {
+        if (kind == GcEvent.Kind.FULL) {
+            // Shenandoah really does run Full GCs (and prints their occupancy), so the collectors
+            // that have one must not lose it while gaining another way to see the live set.
+            return true;
+        }
         return switch (collector) {
+            // ZGC never emits FULL, so the cycle is its only window onto the live set. Shenandoah
+            // emits both; its cycles carry no before/after occupancy on JDK 17, which is why the
+            // FULL branch above is the one that does the work there.
             case ZGC, SHENANDOAH -> kind == GcEvent.Kind.CYCLE;
-            default -> kind == GcEvent.Kind.FULL;
+            default -> false;
         };
     }
 
@@ -118,18 +129,14 @@ public final class GcLog {
 
     /** How to call one of these in a sentence, plural: "8 Full GC collections", "12 whole-heap cycles". */
     public String majorNoun() {
-        return switch (collector) {
-            case ZGC, SHENANDOAH -> "whole-heap concurrent cycles";
-            default -> "Full GC collections";
-        };
+        // Only ZGC is the case where the cycle replaces a Full GC. Shenandoah prints and runs real
+        // Full GCs, so calling its majors "concurrent cycles" would name the wrong thing.
+        return collector == Collector.ZGC ? "whole-heap concurrent cycles" : "Full GC collections";
     }
 
     /** The same, for a line that names a single one: "Full GC at +4.1s" / "cycle at +4.1s". */
     public String majorLabel() {
-        return switch (collector) {
-            case ZGC, SHENANDOAH -> "cycle";
-            default -> "Full GC";
-        };
+        return collector == Collector.ZGC ? "cycle" : "Full GC";
     }
 
     /**

@@ -4,6 +4,59 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.2.2 — 2026-09-22
+
+Found the same way 0.2.0 was found: run the tool against a collector the corpus does not contain.
+This time Shenandoah on the local JDK 17 (`-XX:+UseShenandoahGC -Xmx1g`, the victim's leak endpoint
+driven to a 650 MB live set). It caught four things, one of which was a regression 0.2.0 introduced.
+
+### Fixed
+
+- **0.2.0's own `major` mapping discarded Shenandoah's Full GCs.** `isMajor` sent ZGC *and*
+  Shenandoah to `Kind.CYCLE`, but Shenandoah's cycles carry no occupancy at all while its
+  `Pause Full 649M->650M(1024M)` lines do — so a heap that reclaimed nothing across three Full GCs
+  produced no GCA003 and no GCA001, strictly worse than 0.1.2's naive `FULL`-only reading. `FULL`
+  is now major for every collector that prints it, and ZGC's cycle mapping became additive instead of
+  exclusive. The wording followed: `majorNoun()` no longer calls Shenandoah's majors "concurrent
+  cycles", and its cycles are still accepted as majors in case a build prints occupancy on them.
+- **`humongous` was matched anywhere in a record, and counted accounting as a cause.** G1 prints
+  `Humongous regions: 228->228` in the `[gc,heap]` block of nearly every collection, and Shenandoah
+  prints `Max: 512K regular, 902M humongous` in its `[gc,ergo]` free-space lines. GCA004's
+  "collections triggered by humongous allocation" was therefore counting almost every collection:
+  `corpus/incident-gc-storm` reported **1894** where the honest count of humongous-*caused*
+  collections is **495**, and a Shenandoah capture got a premature-promotion finding for a collector
+  with no young generation to promote into. The cause phrase (`G1 Humongous Allocation`) is what
+  counts now. Published number changes again, same direction as 0.2.0's: smaller and true.
+- **A leak could be outranked by its own symptom.** When GCA003 fired at HIGH rather than CRITICAL —
+  exactly what a stalled 63 % floor looks like — H-HEAP-SHAPE's 1.15 factor (added so "which class
+  holds it" would surface next to a leak) lifted the histogram finding above the diagnosis, and the
+  report's Verdict became "a specific class dominates the heap" instead of "nothing is being
+  reclaimed". The boost is gone; the shape still ranks second, because the findings that needed
+  demoting (storm, slowdown, pause tuning) already are demoted.
+- **A rotated Shenandoah log had no identifiable collector.** The banner is the only thing
+  `Using …` matched, so a `gc.log.0` slice parsed as UNKNOWN and lost its vocabulary. Init/Final
+  mark phases now identify Shenandoah the way ZGC's pause names do.
+
+### Added
+
+- **A third leak shape in GCA003: the stalled floor.** The live set at 63 % of a 1 GB heap, three
+  Full GCs each reclaiming under 2 % of what they were given, no dip anywhere — not pinned against
+  the ceiling, so neither existing trigger saw it, and the monotonic test never would. Zero dips is
+  the requirement that keeps `corpus/incident-gc-storm` out of this branch: its floor oscillates
+  with each batch, which is the whole difference between the two captures. GCA003's own
+  documentation states the limit that remains: one snapshot cannot tell "leaked to 650 MB" from
+  "this process genuinely holds 650 MB", which is why the recommendation is a heap-dump query.
+- `src/test/resources/fixtures/gc-jdk17-shenandoah.log`: a 351-line contiguous slice of that real
+  capture, taken from the middle of the file so it carries no banner, and asserted on three fronts —
+  the Full GC is major with its occupancy, Init/Final pauses sum to 38.574 ms, and the eleven
+  `humongous` words in it flag nothing.
+- The corpus stays at seven scenarios. The full Shenandoah log is 16 MB of `[gc,ergo]`
+  accounting for 50 seconds of a saturated heap; a fixture slice tests the parser without
+  tripling the repository, and `corpus/` is deliberately reserved for captures the ranking tests
+  assert end to end.
+
+
+
 ## 0.2.1 — 2026-09-22
 
 The first item below changes what the tool reports, so it ships rather than sitting on `main`

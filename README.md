@@ -338,8 +338,10 @@ by `RulesTest.catalogueIsComplete`.
 - **The GC rules read three vocabularies.** G1/Parallel/Serial/CMS, where a `Pause Full` is the
   collection that reveals the live set; ZGC, where the whole-heap concurrent cycle is that
   collection and `Allocation Stall` is its pressure signal (GCA007, and `corpus/incident-zgc-leak`
-  is there to keep both honest); and Shenandoah, where cycles are mapped the ZGC way but no
-  capture exists yet — so treat its `major` mapping as untested rather than as support.
+  is there to keep both honest); and Shenandoah, which stops the world in `Pause Init Mark` /
+  `Pause Final Mark` pairs and still runs real Full GCs — a slice of a real 1 GB Shenandoah capture
+  is in `src/test/resources/fixtures/gc-jdk17-shenandoah.log`, and it is what caught two of the
+  bugs below.
   The ZGC support is **verified on non-generational ZGC (JDK 17)**. Generational ZGC (21+) labels
   its cycles `(Minor)`/`(Major)`, and this tool does not distinguish them yet — a minor cycle is
   counted as major, which can only over-report, never under-report.

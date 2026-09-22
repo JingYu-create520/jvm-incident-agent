@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-19 rules ship in jvm-incident-agent 0.2.1.
+19 rules ship in jvm-incident-agent 0.2.2.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -155,12 +155,17 @@ is the reason the two look the same in every other tool: both produce a wall of 
 After a Full GC, garbage is gone. What remains is the live set. Sample that number at every major
 collection and watch its floor over time.
 
-Two shapes mean the same thing. A **climb** is the textbook case: the floor rises by at least 10%
+Three shapes mean the same thing. A **climb** is the textbook case: the floor rises by at least 10%
 (`--heap-leak-rise`) end to end without more than a quarter of the steps dipping. A **plateau** is
 the same leak after it has filled the heap — the floor sits at 85%+ of capacity for three or more
 collections and nothing is being reclaimed any more. A purely monotonic test misses the plateau
 entirely, and the plateau is what a snapshot taken during an actual outage looks like: by the time
-anyone captures anything, the leak has already saturated the heap.
+anyone captures anything, the leak has already saturated the heap. A **stalled floor** is the
+plateau's quieter cousin: the level is well below the ceiling, but every major collection gives
+back under 2% of what it was handed and the floor never once dips (Shenandoah on a 1 GB heap, at
+63%: 649M->649M, 650M->650M). Requiring zero dips is what keeps an allocation storm out of this
+branch — its floor oscillates with each batch, which is the entire difference between those two
+captures.
 
 Where the log exposes old-generation detail the rule uses it directly — G1 `Old regions:` scaled by
 the region size printed at init, or a JDK 8 `[ParOldGen: …]` figure. Otherwise it uses post-GC heap
@@ -171,7 +176,11 @@ ending with the last measurement. Severity follows how close to the ceiling the 
 
 Wrong when: a cache legitimately filling to its configured maximum. That produces a rise then a
 flat line; the dip tolerance rejects the flat part, but a capture taken entirely during fill-up will
-look exactly like this. Check `samples` and the capacity share before believing it.
+look exactly like this. Check `samples` and the capacity share before believing it. The stalled
+branch has a blunter limit: one snapshot cannot tell "leaked until the heap was 63 % full" from
+"this process genuinely keeps 650 MB alive" — a Full GC that reclaims nothing is also what a steady
+working set looks like. The recommendation is the same in both cases (find the holder), which is
+why this rule's action is a heap-dump query rather than a flag to tune.
 
 ---
 
@@ -184,8 +193,11 @@ landing in the old generation:
 
 - `to-space exhausted` / `Evacuation Failure` / `promotion failed` — the collector could
   not find room to copy survivors, so they were promoted in panic.
-- humongous allocation causes — an object larger than half a G1 region skips young space
-  entirely.
+- humongous allocation *causes* — an object larger than half a G1 region skips young space
+  entirely. Only the reason a collection happened counts: `Humongous regions: 228->228`
+  in a `[gc,heap]` block and Shenandoah's `… 902M humongous …` free-space lines are
+  occupancy accounting, and reading them as causes inflates the count by ~4x and once
+  made this rule fire on a collector that has no young generation to promote into.
 - young collections that reclaim under 5% of the heap repeatedly — the copy work happened
   but the objects did not die, which is promotion in all but name.
 
@@ -469,4 +481,4 @@ Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not gue
 
 ---
 
-_19 rules, rendered from `jvm-incident-agent 0.2.1 rules --format json` by scripts/render-rules.sh._
+_19 rules, rendered from `jvm-incident-agent 0.2.2 rules --format json` by scripts/render-rules.sh._

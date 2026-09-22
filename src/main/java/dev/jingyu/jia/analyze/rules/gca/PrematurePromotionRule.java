@@ -112,8 +112,11 @@ public final class PrematurePromotionRule implements Rule {
 
                 - `to-space exhausted` / `Evacuation Failure` / `promotion failed` — the collector could
                   not find room to copy survivors, so they were promoted in panic.
-                - humongous allocation causes — an object larger than half a G1 region skips young space
-                  entirely.
+                - humongous allocation *causes* — an object larger than half a G1 region skips young space
+                  entirely. Only the reason a collection happened counts: `Humongous regions: 228->228`
+                  in a `[gc,heap]` block and Shenandoah's `… 902M humongous …` free-space lines are
+                  occupancy accounting, and reading them as causes inflates the count by ~4x and once
+                  made this rule fire on a collector that has no young generation to promote into.
                 - young collections that reclaim under 5% of the heap repeatedly — the copy work happened
                   but the objects did not die, which is promotion in all but name.
 

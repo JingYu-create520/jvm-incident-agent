@@ -60,9 +60,9 @@ cache that stores both the serialized blob and its parsed form really retains.
   threshold 1.0), stopping the world for 551 ms in total, worst pause 74 ms`.
 - **GCA004 (premature promotion)** — the copy-space failures are the leak pushing against the
   young generation: `11 collection(s) ran out of copy space (to-space exhausted / evacuation
-  failure / promotion failed); 41 collection(s) triggered by humongous (direct-to-old) allocation;
-  23 young collections reclaimed under 5% of the heap`. It ranks below GCA003 on purpose: the same
-  evidence read without the live-set floor is the story of `corpus/incident-gc-storm`.
+  failure / promotion failed); 23 young collections reclaimed under 5% of the heap`. It ranks below
+  GCA003 on purpose: the same evidence read without the live-set floor is the story of
+  `corpus/incident-gc-storm`.
 - **HIS001 (top consumers)** — verbatim: `[B holds 165.2 MB of 229.2 MB (72.1% of all bytes
   counted, 2,144,188 instances, 81 bytes each)`. Two million eight-byte payloads is the shape of a
   cache keyed per request; the app class `dev.jingyu.jia.victim.LeakyCache$CachedRow` is 700,000

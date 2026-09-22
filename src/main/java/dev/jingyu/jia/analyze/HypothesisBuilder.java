@@ -81,7 +81,13 @@ public final class HypothesisBuilder {
                     || "H-PAUSE-TUNING".equals(h.id())
                     ? h.withPenalty(0.55)
                     : h);
-            out.replaceAll(h -> "H-HEAP-SHAPE".equals(h.id()) ? h.withPenalty(1.15) : h);
+            // H-HEAP-SHAPE deliberately gets no boost here. It used to carry a 1.15 factor so that
+            // "which class holds it" would surface next to the leak, and that was fine until the
+            // leak's own severity dropped below the ceiling case — a stalled floor at 63 % of a
+            // 1 GB heap (Shenandoah) scored the same HIGH as the histogram finding, and the boost
+            // then swapped the diagnosis for the symptom: the Verdict became "a class dominates the
+            // heap" instead of "nothing is being reclaimed". The mechanism outranks the shape, and
+            // the shape is already second without help, because the storm rules are the ones penalised.
         }
         out.removeIf(h -> h.ruleIds().isEmpty());
         out.sort(Comparator.comparingDouble(this::score).reversed());

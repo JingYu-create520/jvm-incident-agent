@@ -46,20 +46,23 @@ GCA001 CRITICAL  8 Full GC collections inside 1.0 minute(s) (8.0/min, threshold 
                  stopping the world for 99 ms in total, worst pause 17 ms.
 HIS001 HIGH      [B holds 173.0 MB of 180.8 MB (95.7% of all bytes counted,
                  43,794 instances, 4143 bytes each).
-GCA004 MEDIUM   1894 collection(s) triggered by humongous (direct-to-old) allocation;
+GCA004 MEDIUM   495 collection(s) triggered by humongous (direct-to-old) allocation;
                  1880 young collections reclaimed under 5% of the heap,
                  so most of what was copied was already old.
 ```
 
-三条信息合起来讲了一个完整的故事:
+三条信息合起来讲了一个完整的故事,但要注意它们说的是**两件不同的事**:
 
-1. `[B`(byte 数组)占了可统计字节的 **95.7%**,平均 **4143 字节**一个。
-2. 触发回收的原因里,**1894 次是 humongous 分配**。G1 下,超过 region 大小一半的对象直接进老年代,
-   不走 young。
-3. 1880 次 young GC 的回收量低于堆的 5%——因为要回收的东西根本不在 young 区。
+1. `[B`(byte 数组)占了可统计字节的 **95.7%**,平均 **4143 字节**一个 —— 这是直方图说的话:
+   海量、中大型、短命的 byte 数组。
+2. **495 次回收的原因是 humongous 分配** —— 这是 GC 日志说的话。G1 下超过 region 一半的对象直接
+   进老年代;日志里 `Humongous regions: 228->228` 整场风暴几乎不降,也就是常年有 ~228 MB 以巨型
+   区域的形式占着堆。(这个数以前印的是 1894,那是把 `[gc,heap]` 里的 `Humongous regions:` 记账行
+   当成"原因"数进去了 —— 记账不是原因,所以现在只剩 495。)
+3. 1880 次 young GC 的回收量低于堆的 5% —— 因为要回收的东西根本不在 young 区。
 
-也就是说:**有人在按请求造 ~4 KB 的大数组,每个都直接落到老年代。** 收集器的所有 young 回收几乎
-什么都做不了,压力一路堆到 Full GC。这是分配模式问题,不是堆大小问题。
+也就是说:**有人在按请求造大量短命的中号数组,同时有一批 1 MB 级的巨型数组常年占着老年代。**
+收集器的所有 young 回收几乎什么都做不了,压力一路堆到 Full GC。这是分配模式问题,不是堆大小问题。
 
 `4143` 这个数字很关键。它说明不是单个巨型对象(那会是几 MB),而是"中大型、海量、短命"——
 恰好是最伤 G1 的形状。

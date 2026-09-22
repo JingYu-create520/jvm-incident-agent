@@ -430,7 +430,7 @@ public final class GcLogParser {
         }
         boolean toSpace = lower.contains("to-space exhausted") || lower.contains("evacuation failure")
                 || lower.contains("promotion failed");
-        boolean humongous = lower.contains("humongous");
+        boolean humongous = lower.contains("humongous allocation");
 
         events.add(new GcEvent(seq, kind, cause, at, pause, before, after, cap, oldAfter, metaAfter,
                 toSpace, humongous, wall, lineNo));
@@ -504,7 +504,13 @@ public final class GcLogParser {
                     || lower.contains("promotion failed")) {
                 toSpaceExhausted = true;
             }
-            if (lower.contains("humongous")) {
+            if (lower.contains("humongous allocation")) {
+                // The *cause* phrase ("Pause Young (Normal) (G1 Humongous Allocation)"), never a bare
+                // "humongous": Shenandoah's [gc,ergo] free-space accounting prints
+                // "Max: 512K regular, 902M humongous" on nearly every cycle, and counting that as
+                // "1086 collections triggered by humongous allocation" told a Shenandoah user that
+                // their large objects were being promoted to old gen — which is not even a thing
+                // that collector does.
                 humongous = true;
             }
             Matcher p = PAUSE_MS.matcher(m);

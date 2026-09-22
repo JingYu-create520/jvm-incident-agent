@@ -76,11 +76,30 @@ public final class HeapLeakFingerprintRule implements Rule {
         long pinned = capacity == null ? 0 : points.stream()
                 .filter(p -> p.value() >= capacity * 0.85)
                 .count();
+        // A third shape, and the one Shenandoah on JDK 17 shows: the floor is not near the
+        // ceiling (63 % of a 1 GB heap), it simply does not move. Every major collection returns
+        // under 2 % of what it was given, and nothing ever dips. A collector given 650 MB of
+        // permanently live objects is not tuning its heap, it has been told the leak is the working
+        // set. Requiring zero dips is what keeps the allocation storm out of here: its floor
+        // oscillates with each batch, which is the whole difference between the two captures.
+        long stagnant = 0;
+        for (Point p : points) {
+            Long before = p.event.heapBeforeBytes();
+            if (before == null || before <= 0) {
+                continue;
+            }
+            if ((double) (before - p.value()) / before < 0.02) {
+                stagnant++;
+            }
+        }
         boolean climbing = rise >= config.heapLeakRiseRatio();
         boolean saturated = pinned >= Math.max(3, config.heapLeakMinFullGc());
-        if (!climbing && !saturated) {
+        boolean stalled = dips == 0 && capacity != null && stagnant >= Math.max(3, config.heapLeakMinFullGc())
+                && last >= capacity * 0.4;
+        if (!climbing && !saturated && !stalled) {
             return List.of();
         }
+        boolean plateau = saturated || stalled;
         Severity severity = ofCapacity > 0.85 ? Severity.CRITICAL : (ofCapacity > 0.6 ? Severity.HIGH : Severity.MEDIUM);
         String unit = points.get(0).event.oldAfterBytes() != null ? "old gen" : "heap";
 
@@ -98,19 +117,27 @@ public final class HeapLeakFingerprintRule implements Rule {
         String hint = histo == null ? "" : " The heap histogram in this same snapshot points at "
                 + histo.topByBytes(1).get(0).className() + " as the largest consumer.";
 
-        String shape = climbing && saturated
-                ? "climbed and is now pinned against the ceiling"
-                : saturated
-                ? "sits at " + pinned + " of " + points.size() + " collections with "
-                        + String.format(Locale.ROOT, "%.0f", ofCapacity * 100) + "% of the heap still live "
-                        + "after a Full GC — nothing is being reclaimed any more"
-                : "climbed steadily";
+        String shape;
+        if (climbing && plateau) {
+            shape = "climbed and is now pinned against the ceiling";
+        } else if (saturated) {
+            shape = "sits at " + pinned + " of " + points.size() + " collections with "
+                    + String.format(Locale.ROOT, "%.0f", ofCapacity * 100) + "% of the heap still live "
+                    + "after a Full GC — nothing is being reclaimed any more";
+        } else if (stalled) {
+            shape = "sits still: " + stagnant + " of " + points.size() + " collections reclaimed under 2% "
+                    + "of what they were given and the floor never dipped ("
+                    + String.format(Locale.ROOT, "%.0f", (double) last * 100 / capacity)
+                    + "% of the heap permanently live)";
+        } else {
+            shape = "climbed steadily";
+        }
 
         return List.of(Finding.builder(id())
                 .title(title())
                 .artifact(artifact())
                 .severity(severity)
-                .confidence(Math.min(0.95, saturated ? 0.9 : 0.6 + rise * 0.6))
+                .confidence(Math.min(0.95, plateau ? 0.9 : 0.6 + rise * 0.6))
                 .summary("Across " + points.size() + " major collections the " + unit + " low-water mark "
                         + (climbing ? "climbed from " + mb(first) + " to " + mb(last) + " (+"
                         + String.format(Locale.ROOT, "%.0f", rise * 100) + "%), " : "is " + mb(last) + ", ")
@@ -152,12 +179,17 @@ public final class HeapLeakFingerprintRule implements Rule {
                 After a Full GC, garbage is gone. What remains is the live set. Sample that number at every major
                 collection and watch its floor over time.
                 
-                Two shapes mean the same thing. A **climb** is the textbook case: the floor rises by at least 10%
+                Three shapes mean the same thing. A **climb** is the textbook case: the floor rises by at least 10%
                 (`--heap-leak-rise`) end to end without more than a quarter of the steps dipping. A **plateau** is
                 the same leak after it has filled the heap — the floor sits at 85%+ of capacity for three or more
                 collections and nothing is being reclaimed any more. A purely monotonic test misses the plateau
                 entirely, and the plateau is what a snapshot taken during an actual outage looks like: by the time
-                anyone captures anything, the leak has already saturated the heap.
+                anyone captures anything, the leak has already saturated the heap. A **stalled floor** is the
+                plateau's quieter cousin: the level is well below the ceiling, but every major collection gives
+                back under 2% of what it was handed and the floor never once dips (Shenandoah on a 1 GB heap, at
+                63%: 649M->649M, 650M->650M). Requiring zero dips is what keeps an allocation storm out of this
+                branch — its floor oscillates with each batch, which is the entire difference between those two
+                captures.
                 
                 Where the log exposes old-generation detail the rule uses it directly — G1 `Old regions:` scaled by
                 the region size printed at init, or a JDK 8 `[ParOldGen: …]` figure. Otherwise it uses post-GC heap
@@ -168,7 +200,11 @@ public final class HeapLeakFingerprintRule implements Rule {
                 
                 Wrong when: a cache legitimately filling to its configured maximum. That produces a rise then a
                 flat line; the dip tolerance rejects the flat part, but a capture taken entirely during fill-up will
-                look exactly like this. Check `samples` and the capacity share before believing it.
+                look exactly like this. Check `samples` and the capacity share before believing it. The stalled
+                branch has a blunter limit: one snapshot cannot tell "leaked until the heap was 63 % full" from
+                "this process genuinely keeps 650 MB alive" — a Full GC that reclaims nothing is also what a steady
+                working set looks like. The recommendation is the same in both cases (find the holder), which is
+                why this rule's action is a heap-dump query rather than a flag to tune.
                 """;
     }
 }

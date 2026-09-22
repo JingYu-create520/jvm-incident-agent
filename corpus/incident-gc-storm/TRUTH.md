@@ -60,8 +60,11 @@ the heap is not.
   175 MB never shows up as `Old regions` (that peaks at only `0->16`), because arrays larger than
   half a region are accounted as **`Humongous regions: 228->228`** (peak 230, stable all storm). A promotion rule that watches
   only `Old regions` will report nothing here; it has to count humongous regions too (or use the
-  `217M-236M of 256M` post-pause floor). Verbatim: `1894 collection(s) triggered by humongous
-  (direct-to-old) allocation; 1880 young collections reclaimed under 5% of the heap`.
+  `217M-236M of 256M` post-pause floor). Verbatim: `495 collection(s) triggered by humongous
+  (direct-to-old) allocation; 1880 young collections reclaimed under 5% of the heap`. The 495 counts
+  collections whose *cause* was a humongous allocation. It used to read 1894, because the matcher
+  accepted the word "humongous" anywhere in the record and G1 prints `Humongous regions: 228->228`
+  in the `[gc,heap]` block of nearly every collection — occupancy accounting, not a reason.
 - **GCA006 (GC throughput below target)** — `Over 22 s of log, 7.9% of wall time was spent in
   stop-the-world pauses (1737 ms across 2548 pauses)`. This is the finding that decides whether the
   Full GC count means anything at all. The `2548` is parsed events (a concurrent-mark cycle is one

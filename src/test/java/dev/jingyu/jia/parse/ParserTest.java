@@ -192,6 +192,40 @@ class ParserTest {
         }
 
         @Test
+        @DisplayName("Shenandoah: Init/Final marks are the pauses, its Full GC is major, ergo lines are not causes")
+        void shenandoahVocabulary() {
+            // A 351-line slice of a real Shenandoah capture (1 GB heap driven to a leak), taken from
+            // the middle of the log so it has no "Using Shenandoah" banner — which is precisely the
+            // case the collector has to be inferred from the pause vocabulary for.
+            GcLog log = GcLogParser.parse(Fixtures.source("gc-jdk17-shenandoah.log")).value();
+            assertEquals(GcLog.Collector.SHENANDOAH, log.collector());
+            assertEquals(3, log.events().size());
+            assertEquals("Full GC collections", log.majorNoun(),
+                    "Shenandoah runs and prints real Full GCs; calling its majors concurrent cycles"
+                            + " would name a thing this collector does differently");
+            assertEquals("Full GC", log.majorLabel());
+
+            List<GcEvent> majors = log.majorCollections();
+            assertEquals(1, majors.size(), "the Pause Full in this slice is a major collection");
+            GcEvent full = majors.get(0);
+            assertEquals(GcEvent.Kind.FULL, full.kind());
+            assertEquals(649L * 1048576, full.heapAfterBytes(), "649M->649M: it reclaimed nothing");
+            assertEquals(1024L * 1048576, full.capacityBytes());
+            assertEquals(13.014, full.pauseMs(), 0.001);
+
+            // The trap that made this fixture: Shenandoah's [gc,ergo] free-space accounting mentions
+            // "humongous" on almost every cycle ("Max: 512K regular, 902M humongous"), and a substring
+            // match there read 1,086 collections as "triggered by humongous allocation" — on a
+            // collector with no young generation to promote into.
+            assertTrue(log.events().stream().noneMatch(GcEvent::humongous),
+                    () -> "ergo accounting was counted as a GC cause: " + log.events().stream()
+                            .filter(GcEvent::humongous).map(GcEvent::line).toList());
+            // Init and Final marks are the stop-the-world part of each cycle; the concurrent phases
+            // around them are not. 38.574 ms is three collections' worth of real stops.
+            assertEquals(38.574, log.pauseSumMs(), 0.01);
+        }
+
+        @Test
         @DisplayName("JDK 8 traditional Parallel GC lines parse, including old gen and metaspace")
         void traditionalJdk8() {
             GcLog log = GcLogParser.parse(Fixtures.source("gc-jdk8-parallel.log")).value();

@@ -267,8 +267,10 @@ scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app
   格式会降级成一条 `INFO`,而不是报错。
 - **GC 规则读三种词汇。** G1/Parallel/Serial/CMS 里"能看清活集合"的那次回收叫 `Pause Full`;ZGC 里
   它换成整堆并发周期,压力信号换成 `Allocation Stall`(GCA007),`corpus/incident-zgc-leak` 就是为
-  这两条存在的;Shenandoah 按 ZGC 的方式映射了 major,但还没有真语料——所以请把那条映射当成"未验证"
-  而不是"已支持"。ZGC 这部分**只在非分代 ZGC(JDK 17)上验证过**:分代 ZGC(21+)会给周期打上
+  这两条存在的;Shenandoah 的停世界是 `Pause Init Mark` / `Pause Final Mark` 成对出现,而且它确实会跑
+  真正的 Full GC——一份真实 1 GB Shenandoah 现场的切片放在
+  `src/test/resources/fixtures/gc-jdk17-shenandoah.log`,下面两条 bug 就是它抓出来的。
+  ZGC 这部分**只在非分代 ZGC(JDK 17)上验证过**:分代 ZGC(21+)会给周期打上
   `(Minor)`/`(Major)`,目前工具不区分,把 minor 也算成 major——只会多报,不会漏报。
 - **虚拟线程看不见。** JDK 21 dump 里的 `-- virtual thread … mounted on carrier` 尾巴是有真实信息
   的(pinning 尤其),这个工具既不解析也不推理它。一个重度用 Loom 的服务,在这里只会表现成"线程数
