@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-19 rules ship in jvm-incident-agent 0.2.0.
+19 rules ship in jvm-incident-agent 0.2.1.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -469,4 +469,4 @@ Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not gue
 
 ---
 
-_19 rules, rendered from `jvm-incident-agent 0.2.0 rules --format json` by scripts/render-rules.sh._
+_19 rules, rendered from `jvm-incident-agent 0.2.1 rules --format json` by scripts/render-rules.sh._

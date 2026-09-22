@@ -4,9 +4,11 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.2.1 — 2026-09-22
 
-Tooling and agent-facing docs; the analyzer itself is unchanged, so no new release.
+The first item below changes what the tool reports, so it ships rather than sitting on `main`
+behind a released 0.2.0 jar: an allocation stall had been counted as stop-the-world time. The rest
+is capture tooling and the agent-facing docs catching up with 0.2.0.
 
 ### Added
 
