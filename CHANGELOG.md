@@ -4,7 +4,61 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.3.2 — 2026-09-22
+## 0.3.3 — 2026-09-22
+
+Every GC number this tool has ever been checked against came from JDK 9+ unified logging, except one
+JDK 8 Parallel fixture. Feeding it a JDK 7 **CMS** log — still the shape running under plenty of
+services — produced a CRITICAL memory-leak verdict built entirely out of PermGen numbers, and one
+terminal sequence turned out to be able to eat a throwable that colour could not.
+
+### Fixed
+
+- **The permanent generation was being read as the heap.** `[Metaspace: 3072K->3072K(1056768K)]` was
+  already excluded from heap accounting; its JDK 7 ancestors — `[CMS Perm: …]`, `[CMS Perm : …]` (some
+  builds print the space) and `[PSPermGen: …]` — were not, and they sit at the end of the line, which is
+  where "the outermost transition wins" looks. The result on a log whose heap held 31 M of 491 M after
+  every Full GC, with PermGen pinned at 21400K of 21504K:
+
+  ```
+  CRITICAL GCA003  "Across 5 major collections the heap low-water mark is 21M, sits at 5 of 5
+                    collections with 100% of the heap still live after a Full GC (capacity 21M)"  90%
+  ```
+
+  Every number in that sentence was the permanent generation. The exclusion now covers all four pool
+  spellings, and PermGen is *not* relabelled as metaspace: on those logs the metaspace figure stays
+  absent rather than carrying a number under the wrong name.
+- **CMS's own old generation was never recognised.** The pool pattern knew `ParOldGen`, `PSOldGen`,
+  `Tenured Generation` and `CMS Old Gen` — but a JDK 7/8 CMS Full GC prints its old generation as bare
+  `[CMS: …]`, so `oldAfterBytes` came back null and GCA003 sampled the heap total where it could have
+  used the generation. `[CMS:` is now matched without swallowing `[CMS Perm:` or `[CMS-concurrent-*:`;
+  the colon anchors it.
+- **A composite collection reported its first phase as its pause.** On a traditional line the total is
+  the *last* `N secs` before `[Times: …]`: a ParNew line prints the young phase and then the collection,
+  and a CMS Final Remark prints Rescan, weak-refs processing, class unloading and two scrubs before its
+  own duration. Measured: the remark's 13.345 ms was reported as 9.102 ms (Rescan), and ParNew's
+  33.906 ms as 33.667 ms. A line with no duration before `[Times:` used to fall back on `real=…`, which
+  is wall time to two significant digits; it now reports no pause, as it should.
+- **An OSC sequence could hide a throwable.** 0.3.2 stripped colour (CSI). A window-title update
+  (`ESC]0;…BEL`) or an OSC 8 hyperlink has only its first two characters escaped, so the rest of the
+  payload is glued onto whatever line follows: measured against the exception fixture with one title
+  sequence in front of a throwable, a twelve-stack cluster came back as eleven. OSC is now stripped
+  before CSI, and a stray BEL is dropped with it.
+
+### Added
+
+- `src/test/resources/fixtures/gc-jdk7-cms-healthy.log` — **a hand-written shape fixture, not a
+  capture**: this machine has no JDK 7, and saying otherwise would be the same kind of lie as an
+  unverified claim of support. It carries the CMS vocabulary the rules have to survive (ParNew, a
+  concurrent cycle whose phases print `0.301/0.500 secs`, initial mark, a five-phase final remark, old
+  gen as `[CMS:`, a pinned `[CMS Perm:` block) with a healthy heap, and asserts both directions: no
+  GCA003, no GCA001 — and GCA005 plus GCA002 do fire, so silence cannot be blamed on events being
+  dropped. Each of the four fixes is mutation-checked; severing any one of them fails a named
+  assertion with the old wrong number in the failure text (`expected: <31994880> but was: <21913600>`).
+- GCA002 and GCA003's rule documents now state which pool and which duration they read, because both
+  were silently assuming it before.
+
+The seven corpus scenarios, the 19 rules and every threshold default are unchanged; 103 tests.
+
 
 Two ways to hand out a confident answer about the wrong half of an incident, both found by pointing the
 tool at inputs it had never been pointed at: an application log a terminal had coloured, and a real

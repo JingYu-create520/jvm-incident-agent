@@ -127,7 +127,7 @@ open an issue about it.
 | Artifact | Format | How |
 |---|---|---|
 | Thread dump | `jstack -l <pid>`, `jcmd Thread.print`; several captures in one file | state machine, not one regex — JDK 8 → 21 drift (the `cpu=`/`elapsed=` columns, module-qualified frames, the deadlock trailer that repeats stanzas) is handled explicitly |
-| GC log | JDK 8 traditional `-XX:+PrintGCDetails`, and JDK 9+ unified `-Xlog:gc*` | per-line parse into one normalised event timeline; `GC(n)` records merged back into one collection |
+| GC log | JDK 7/8 traditional `-XX:+PrintGCDetails` (Parallel, Serial, CMS — `ParNew`, `[CMS: …]` old gen, and a permanent-generation block that is excluded from heap accounting), and JDK 9+ unified `-Xlog:gc*` | per-line parse into one normalised event timeline; `GC(n)` records merged back into one collection; each event keeps its own stop-the-world total, not its first phase |
 | Heap histogram | `jmap -histo[:live]`, `jcmd GC.class_histogram` | table parse, module suffix stripped, totals recovered when the `Total` row is missing |
 | Application log | any text with stack traces, including a log a terminal coloured (`logback`/`log4j` shapes) | throwable blocks lifted out with their `Caused by:` chains, fingerprinted by class + first 5 root frames |
 

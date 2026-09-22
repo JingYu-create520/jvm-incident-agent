@@ -359,6 +359,22 @@ class RulesTest {
         }
 
         @Test
+        @DisplayName("a healthy CMS heap with a full PermGen is not a leak")
+        void permGenIsNotTheLiveSet() {
+            // 31 M live out of 491 M after every Full GC, and PermGen pinned at 21400K of 21504K.
+            // The whole verdict before the pool was excluded from heap accounting:
+            //   CRITICAL GCA003 "21M, sits at 5 of 5 collections with 100% of the heap still live
+            //   after a Full GC (capacity 21M)" -- every number in that sentence was the permanent
+            //   generation, and the report was 90 % confident about it.
+            Snapshot cms = withGc(Fixtures.source("gc-jdk7-cms-healthy.log"));
+            assertIds(run(rule("GCA003"), cms), "a flat CMS live set is not a leak fingerprint");
+            assertIds(run(rule("GCA001"), cms), "and five Full GCs over 50 minutes are not a storm");
+            assertFalse(run(rule("GCA005"), cms).isEmpty(),
+                    "the log does say something true: concurrent mode failure. That is what should fire");
+            assertFalse(run(rule("GCA002"), cms).isEmpty(), "and the 251 ms pauses do breach the SLA");
+        }
+
+        @Test
         @DisplayName("GCA002 compares p99 with the stated SLA")
         void longPauses() {
             var log = withGc(Fixtures.source("gc-jdk17-storm.log"));

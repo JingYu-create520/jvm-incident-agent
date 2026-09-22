@@ -32,6 +32,15 @@ public final class TextFiles {
      */
     private static final java.util.regex.Pattern CSI =
             java.util.regex.Pattern.compile("\u001B\\[[0-9;:?<>]*[ -/]*[@-~]");
+    /**
+     * OSC — {@code ESC ] … } terminated by BEL or by ST ({@code ESC \}). Two things live here that end
+     * up in captured logs: the shell's window-title update, and an OSC 8 hyperlink. Only the first two
+     * characters are ESC-prefixed, so without this rule the payload is glued onto the line that
+     * follows — and measured on a capture shaped like the ANSI fixture, an {@code ESC]0;…BEL} in front
+     * of one throwable turned a twelve-stack cluster into an eleven-stack one.
+     */
+    private static final java.util.regex.Pattern OSC =
+            java.util.regex.Pattern.compile("\u001B\\][^\u0007\u001B]*(?:\u0007|\u001B\\\\)");
     private static final java.util.regex.Pattern OTHER_ESC =
             java.util.regex.Pattern.compile("\u001B[@-Z\\\\_]");
 
@@ -90,9 +99,11 @@ public final class TextFiles {
         if (line.indexOf('\u001B') < 0) {
             return line;
         }
-        String stripped = CSI.matcher(line).replaceAll("");
+        String stripped = OSC.matcher(line).replaceAll("");
+        stripped = CSI.matcher(stripped).replaceAll("");
         stripped = OTHER_ESC.matcher(stripped).replaceAll("");
-        return stripped;
+        // A BEL with no OSC in front of it is a terminal bell, never part of a stack trace.
+        return stripped.indexOf('\u0007') < 0 ? stripped : stripped.replace("\u0007", "");
     }
 
     private static byte[] stripBom(byte[] raw) {

@@ -100,6 +100,13 @@ public final class LongPauseRule implements Rule {
                 different questions: the maximum is what shows up in an incident review, p99 is what every tenth
                 request feels. Severity follows how far p99 sits over the line, not how bad the single worst pause
                 was.
+
+                Each duration is one collection's own stop-the-world time. On a JDK 7/8 traditional line that means
+                the *last* `N secs` before `[Times: …]`, not the first: a ParNew line prints the young phase and
+                then the collection, and a CMS Final Remark prints Rescan, reference processing and two scrubs
+                before its total — taking the first turn made a 13.345 ms remark into a 9.102 ms one. ZGC
+                `Allocation Stall` lines are not in this distribution either: one of those stops a thread, not the
+                world (GCA007 reads them).
                 
                 Evidence is the five worst pause lines with their kind and cause.
                 

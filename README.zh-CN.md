@@ -111,7 +111,7 @@ cd .. && jia analyze ./incident-2026-09-20 -o ./incident-2026-09-20/ --format bo
 | 输入 | 格式 | 解析方式 |
 |---|---|---|
 | 线程 dump | `jstack -l`、`jcmd Thread.print`,一个文件里多份 | 显式状态机而不是一个大正则——JDK 8→21 的漂移(`cpu=`/`elapsed=` 列、模块限定帧、死锁尾巴重复线程段)逐个处理 |
-| GC 日志 | JDK 8 传统 `-XX:+PrintGCDetails`,JDK 9+ 统一 `-Xlog:gc*` | 逐行归一成一条时间线;`GC(n)` 的多条记录合并回一次回收 |
+| GC 日志 | JDK 7/8 传统 `-XX:+PrintGCDetails`(Parallel、Serial、CMS——认 `ParNew`、`[CMS: …]` 老年代,以及会被排除在堆统计之外的永久代块),JDK 9+ 统一 `-Xlog:gc*` | 逐行归一成一条时间线;`GC(n)` 的多条记录合并回一次回收;每次回收只取它自己的停顿总时长,不取第一个阶段 |
 | 堆直方图 | `jmap -histo[:live]`、`jcmd GC.class_histogram` | 表格解析,剥掉模块后缀,`Total` 行缺失时用可见行求和兜底 |
 | 应用日志 | 任何含堆栈的文本,适配 logback/log4j 形态,终端着色过的日志也算 | 提取 throwable 块与 `Caused by:` 链,按"根因类 + 前 5 帧"做指纹 |
 

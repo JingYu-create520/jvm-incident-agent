@@ -40,8 +40,14 @@ public final class GcLogParser {
     private static final Pattern MAX_HEAP = Pattern.compile("Max Heap Size:\\s*(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)");
     private static final Pattern METASPACE = Pattern.compile(
             "Metaspace:\\s*(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)\\s*->\\s*(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)");
+    /**
+     * The old generation under each collector's own name. CMS prints its own as bare {@code [CMS:} in
+     * the Full GC line — {@code [CMS Old Gen:} is what the unified format's {@code [gc,heap]} tag uses
+     * — and the two must not be confused with {@code [CMS Perm:} or {@code [CMS-concurrent-mark:},
+     * which is why the alternation is anchored on the colon and {@code CMS Old Gen} is tried first.
+     */
     private static final Pattern OLD_GEN_K = Pattern.compile(
-            "\\[(?:ParOldGen|PSOldGen|Tenured Generation|CMS Old Gen):\\s*\\d+(?:\\.\\d+)?\\s*[KMGT]?B?\\s*->\\s*(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)");
+            "\\[(?:ParOldGen|PSOldGen|Tenured Generation|CMS Old Gen|CMS):\\s*\\d+(?:\\.\\d+)?\\s*[KMGT]?B?\\s*->\\s*(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)");
     private static final Pattern PAREN = Pattern.compile("\\(([^()]*)\\)");
     /**
      * A bracketed number that is a measurement rather than a reason: the {@code (256M)} capacity,
@@ -50,7 +56,24 @@ public final class GcLogParser {
      */
     private static final Pattern CAPACITY_PAREN = Pattern.compile("\\d+(?:\\.\\d+)?\\s*[KMGT]?B?%?",
             Pattern.CASE_INSENSITIVE);
-    private static final Pattern METASPACE_GROUP = Pattern.compile("\\[?Metaspace:.*?\\](?:,|\\s|$)");
+    /**
+     * A bracketed accounting block that names a pool which is not the heap. Metaspace on JDK 8+, and
+     * the permanent generation under its three real spellings on JDK 7 — {@code [CMS Perm: …]},
+     * {@code [CMS Perm : …]} (some builds print the space) and {@code [PSPermGen: …]}.
+     */
+    private static final Pattern NON_HEAP_POOL = Pattern.compile(
+            "\\[?\\s*(?:Metaspace|CMS Perm|PSPermGen|Perm)\\s*:.*?\\](?:,|\\s|$)");
+
+    /**
+     * {@code [Metaspace: 3072K->3072K(1056768K)]} and {@code [CMS Perm: 21402K->21400K(21504K)]} have
+     * exactly the shape of a heap transition, and they are the <em>last</em> one on the line — left in
+     * place, the permanent generation's commit becomes "heap capacity". Measured: a CMS log whose heap
+     * held 31 M of 491 M after every Full GC reported {@code GCA003 CRITICAL, "21M, 100% of the heap
+     * still live after a Full GC … (capacity 21M)"} — every number in that sentence was PermGen.
+     */
+    static String withoutNonHeapPool(String line) {
+        return NON_HEAP_POOL.matcher(line).replaceAll(" ");
+    }
 
     /**
      * ZGC prints occupancy as a share of the heap instead of a capacity in brackets:
@@ -69,14 +92,6 @@ public final class GcLogParser {
      */
     private static final Pattern STATS_ROW = Pattern.compile(
             "^[A-Za-z][A-Za-z ]{2,48}:.*\\d+(?:\\.\\d+)?\\s*/\\s*\\d+(?:\\.\\d+)?");
-
-    /**
-     * {@code [Metaspace: 3072K->3072K(1056768K)]} has exactly the shape of a heap transition, and it
-     * is the last one on the line — without this the metaspace commit becomes "heap capacity".
-     */
-    static String withoutMetaspace(String line) {
-        return METASPACE_GROUP.matcher(line).replaceAll(" ");
-    }
 
     // JDK 8 traditional opener: optional date stamp, uptime, then [GC / [Full GC.
     private static final Pattern TRAD_START = Pattern.compile(
@@ -386,8 +401,18 @@ public final class GcLogParser {
         }
 
         Double pause = null;
-        Matcher p = PAUSE_SECS.matcher(opener);
-        if (p.find()) {
+        // The collection's own stop-the-world time is the LAST "N secs" before the [Times: …] tail.
+        // Every earlier one is a phase: a ParNew line reports the young collection and then the whole
+        // collection, and a CMS Final Remark reports Rescan, weak refs, class unloading and two scrubs
+        // before its total. Taking the first turn made a 13.345 ms remark a 9.102 ms one, and made
+        // "real=0.03 secs" — wall time, two significant digits — a pause when a line had no other.
+        String measured = opener;
+        int timesAt = opener.indexOf("[Times:");
+        if (timesAt >= 0) {
+            measured = opener.substring(0, timesAt);
+        }
+        Matcher p = PAUSE_SECS.matcher(measured);
+        while (p.find()) {
             pause = Double.parseDouble(p.group(1)) * 1000.0;
         }
 
@@ -400,7 +425,7 @@ public final class GcLogParser {
             after = Sizes.parseBytes(hk.group(2));
             cap = Sizes.parseBytes(hk.group(3));
         } else {
-            Matcher ht = HEAP_TRANSITION.matcher(withoutMetaspace(opener));
+            Matcher ht = HEAP_TRANSITION.matcher(withoutNonHeapPool(opener));
             Long b = null;
             Long a = null;
             Long c = null;
@@ -547,13 +572,13 @@ public final class GcLogParser {
                 heapAfter = Sizes.parseBytes(hk.group(2));
                 capacity = Sizes.parseBytes(hk.group(3));
             } else {
-                Matcher ht = HEAP_TRANSITION.matcher(withoutMetaspace(m));
+                Matcher ht = HEAP_TRANSITION.matcher(withoutNonHeapPool(m));
                 if (ht.find()) {
                     heapBefore = Sizes.parseBytes(ht.group(1));
                     heapAfter = Sizes.parseBytes(ht.group(2));
                     capacity = Sizes.parseBytes(ht.group(3));
                 } else {
-                    Matcher pct = PCT_TRANSITION.matcher(withoutMetaspace(m));
+                    Matcher pct = PCT_TRANSITION.matcher(withoutNonHeapPool(m));
                     if (pct.find()) {
                         heapBefore = Sizes.parseBytes(pct.group(1));
                         heapAfter = Sizes.parseBytes(pct.group(2));

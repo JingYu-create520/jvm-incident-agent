@@ -193,8 +193,14 @@ public final class HeapLeakFingerprintRule implements Rule {
                 captures.
                 
                 Where the log exposes old-generation detail the rule uses it directly — G1 `Old regions:` scaled by
-                the region size printed at init, or a JDK 8 `[ParOldGen: …]` figure. Otherwise it uses post-GC heap
-                used, which for a Full GC is the same quantity.
+                the region size printed at init, or a JDK 7/8 `[ParOldGen: …]` / CMS `[CMS: …]` figure. Otherwise it
+                uses post-GC heap used, which for a Full GC is the same quantity. Only the heap is ever sampled:
+                `[Metaspace: …]` and the permanent generation's `[CMS Perm: …]` / `[PSPermGen: …]` blocks have
+                exactly the shape of a heap transition and are removed before it. That is not a hypothetical — the
+                last bracketed number on a JDK 7 CMS line is PermGen, and a healthy 31 M live in 491 M reported
+                "21M, 100 % of the heap still live after a Full GC (capacity 21M)" at CRITICAL until the pool was
+                excluded. PermGen is also not reported as metaspace: on those logs the metaspace figure stays
+                absent rather than carrying a number under the wrong name.
                 
                 Startup `Metadata GC Threshold` collections and inspection-forced Full GCs are excluded from the
                 series, for the reason GCA001 states: two of them during a Spring Boot start are not a rising floor.

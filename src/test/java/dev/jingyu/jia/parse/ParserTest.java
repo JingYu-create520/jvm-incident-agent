@@ -20,6 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("parsing layer")
@@ -226,6 +227,44 @@ class ParserTest {
         }
 
         @Test
+        @DisplayName("a JDK 7 CMS log: PermGen is not the heap, phases are not pauses")
+        void jdk7CmsPermGenIsNotHeap() {
+            // A hand-written shape fixture, not a capture — this machine has no JDK 7, and the CMS
+            // vocabulary it reproduces is the one every legacy service prints: ParNew young
+            // collections, a concurrent cycle whose phases report "0.301/0.500 secs", and Full GCs
+            // whose last bracketed transition is the permanent generation, not the heap.
+            //
+            // The heap in this log is healthy: 31 M live out of 491 M after every Full GC. Only
+            // PermGen is pinned (21400K of 21504K, 99.5 %). Before the pool was excluded, the tool
+            // read those two numbers as the heap and reported "GCA003 CRITICAL: 21M, 100 % of the
+            // heap still live after a Full GC (capacity 21M)".
+            GcLog log = GcLogParser.parse(Fixtures.source("gc-jdk7-cms-healthy.log")).value();
+            assertEquals(GcLog.Collector.CMS, log.collector());
+            assertFalse(log.unified());
+            assertEquals(8, log.events().size(), "young, two remarks and five Full GCs");
+            List<GcEvent> majors = log.majorCollections();
+            assertEquals(5, majors.size());
+            GcEvent full = majors.get(0);
+            assertEquals(31245L * 1024, full.heapAfterBytes(), "31 M of heap is live, from the outer transition");
+            assertEquals(502784L * 1024, full.capacityBytes(),
+                    "491 M, not the 21504K the [CMS Perm:] block would have made it");
+            assertEquals(31245L * 1024, full.oldAfterBytes(), "CMS prints its old generation as bare [CMS:]");
+            assertNull(full.metaspaceAfterBytes(),
+                    "PermGen is not Metaspace, and inventing a value under that name would be its own lie");
+            assertEquals(31265L * 1024, majors.get(4).heapAfterBytes(),
+                    "the whole log's live set moves by 20 K over five collections -- that is flat");
+
+            // Stop-the-world accounting: the young line's outer 0.033906 and the remark's outer
+            // 0.013345 are the pauses; Rescan's 0.009102 and the cycle's 0.301/0.500 and 0.402/0.501
+            // are not. Summing the phases instead would report 1350 ms rather than 1355 ms of stops.
+            assertEquals(33.906, log.events().get(0).pauseMs(), 0.001, "ParNew's own total, not its inner young time");
+            assertEquals(13.345, log.events().get(2).pauseMs(), 0.001, "Final Remark's total, not Rescan's phase");
+            assertEquals(1354.97, log.pauseSumMs(), 0.01);
+            assertTrue(log.events().stream().noneMatch(e -> "CMS-concurrent-mark".equals(e.cause())),
+                    "a concurrent phase line is not a collection");
+        }
+
+        @Test
         @DisplayName("JDK 8 traditional Parallel GC lines parse, including old gen and metaspace")
         void traditionalJdk8() {
             GcLog log = GcLogParser.parse(Fixtures.source("gc-jdk8-parallel.log")).value();
@@ -359,6 +398,34 @@ class ParserTest {
          *  left out on purpose: these two fixtures are the same incident under two names. */
         private static String shape(ExceptionOccurrence e) {
             return e.startLine() + "-" + e.endLine() + " " + e.chain();
+        }
+
+        @Test
+        @DisplayName("a window title or an OSC 8 hyperlink cannot eat a throwable")
+        void oscSequencesAreStrippedToo() {
+            // OSC is the other half of a terminal capture: ESC ] … terminated by BEL (a shell setting
+            // the window title) or by ST (an OSC 8 hyperlink, which Gradle and some CI wrappers print
+            // around URLs). Only its first two characters are escapes, so the payload is glued to the
+            // text that follows it. Measured on a copy of the fixture above with one title sequence in
+            // front of a throwable: the twelve-stack cluster came back as eleven, and nothing said so.
+            String title = "\u001B]0;dev@host: ~/app\u0007";
+            String link = "\u001B]8;;https://example.invalid/x\u001B\\";
+            String raw = title + "java.lang.IllegalStateException: payment gateway call failed\n"
+                    + "\tat dev.jingyu.victim.Pay.run(Pay.java:10)\n"
+                    + link + "Caused by: java.net.SocketTimeoutException: Read timed out\n"
+                    + "\tat java.net.SocketInputStream.socketRead0(Native Method)\n";
+            var rep = StackParser.parse(TextSource.of("app.log",
+                    TextFiles.splitLines(raw, java.nio.charset.StandardCharsets.UTF_8)));
+            assertEquals(1, rep.value().size(), "the title sequence must not hide the throwable");
+            ExceptionOccurrence found = rep.value().get(0);
+            assertEquals("java.lang.IllegalStateException", found.outermost().className());
+            assertEquals("java.net.SocketTimeoutException", found.rootCause().className(),
+                    "and neither may an hyperlink");
+            assertTrue(found.rootCause().frames().get(0).declaringClass().startsWith("java.net."),
+                    () -> "frame class was corrupted: " + found.rootCause().frames());
+            assertEquals(4, rep.value().get(0).source().lines().size(), "line numbers still count the same lines");
+            assertTrue(rep.value().get(0).source().lines().stream().allMatch(l -> l.indexOf(0x1B) < 0
+                    && l.indexOf(0x07) < 0), "no control character reaches the quoted text");
         }
 
         @Test

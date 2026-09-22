@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-19 rules ship in jvm-incident-agent 0.3.2.
+19 rules ship in jvm-incident-agent 0.3.3.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -145,6 +145,13 @@ different questions: the maximum is what shows up in an incident review, p99 is 
 request feels. Severity follows how far p99 sits over the line, not how bad the single worst pause
 was.
 
+Each duration is one collection's own stop-the-world time. On a JDK 7/8 traditional line that means
+the *last* `N secs` before `[Times: …]`, not the first: a ParNew line prints the young phase and
+then the collection, and a CMS Final Remark prints Rescan, reference processing and two scrubs
+before its total — taking the first turn made a 13.345 ms remark into a 9.102 ms one. ZGC
+`Allocation Stall` lines are not in this distribution either: one of those stops a thread, not the
+world (GCA007 reads them).
+
 Evidence is the five worst pause lines with their kind and cause.
 
 Wrong when: the log is dominated by startup or shutdown, where long pauses are not the
@@ -175,8 +182,14 @@ branch — its floor oscillates with each batch, which is the entire difference 
 captures.
 
 Where the log exposes old-generation detail the rule uses it directly — G1 `Old regions:` scaled by
-the region size printed at init, or a JDK 8 `[ParOldGen: …]` figure. Otherwise it uses post-GC heap
-used, which for a Full GC is the same quantity.
+the region size printed at init, or a JDK 7/8 `[ParOldGen: …]` / CMS `[CMS: …]` figure. Otherwise it
+uses post-GC heap used, which for a Full GC is the same quantity. Only the heap is ever sampled:
+`[Metaspace: …]` and the permanent generation's `[CMS Perm: …]` / `[PSPermGen: …]` blocks have
+exactly the shape of a heap transition and are removed before it. That is not a hypothetical — the
+last bracketed number on a JDK 7 CMS line is PermGen, and a healthy 31 M live in 491 M reported
+"21M, 100 % of the heap still live after a Full GC (capacity 21M)" at CRITICAL until the pool was
+excluded. PermGen is also not reported as metaspace: on those logs the metaspace figure stays
+absent rather than carrying a number under the wrong name.
 
 Startup `Metadata GC Threshold` collections and inspection-forced Full GCs are excluded from the
 series, for the reason GCA001 states: two of them during a Spring Boot start are not a rising floor.
@@ -491,4 +504,4 @@ Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not gue
 
 ---
 
-_19 rules, rendered from `jvm-incident-agent 0.3.2 rules --format json` by scripts/render-rules.sh._
+_19 rules, rendered from `jvm-incident-agent 0.3.3 rules --format json` by scripts/render-rules.sh._
