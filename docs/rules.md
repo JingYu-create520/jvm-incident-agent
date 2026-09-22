@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-19 rules ship in jvm-incident-agent 0.3.4.
+19 rules ship in jvm-incident-agent 0.4.0.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -160,6 +160,11 @@ Evidence is the five worst pause lines with their kind and cause.
 
 Wrong when: the log is dominated by startup or shutdown, where long pauses are not the
 application's fault — check the uptime printed next to each event before resizing anything.
+A window with one or two pauses is not a distribution: p50/p95/p99 collapse onto the
+maximum, so the finding says so and stays at MEDIUM however long the pause was. A log with
+no stop-the-world pause at all is reported as declined rather than clean, because
+"every rule ran clean" over a truncated capture would be a sentence about the file, not
+about the JVM.
 
 ---
 
@@ -508,4 +513,4 @@ Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not gue
 
 ---
 
-_19 rules, rendered from `jvm-incident-agent 0.3.4 rules --format json` by scripts/render-rules.sh._
+_19 rules, rendered from `jvm-incident-agent 0.4.0 rules --format json` by scripts/render-rules.sh._

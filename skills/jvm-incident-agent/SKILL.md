@@ -60,6 +60,12 @@ analyzed without writing it to disk first.
   resolves to an absolute instant, and a `HH:mm:ss.SSS` console pattern does not. `exceptionClock`
   (JSON) and the coverage bullet both report how many of the parsed stacks were datable — quote those
   numbers instead of concluding the errors were spread out.
+- **A rule that abstained is not a rule that found nothing.** `report.json`'s `ruleStatus` says
+  `declined: <reason>` for the rules that had the artifact but too little of it — a Full GC rate needs
+  two major collections, a live-set fingerprint needs `--heap-leak-min-full-gc`, a throughput percentage
+  needs ten events over ten seconds, thread *growth* needs a second dump. The same list is in the
+  Markdown's coverage section. Never summarise a declined rule as "no problem found"; ask for the missing
+  capture instead.
 - Rule IDs are stable. `jia explain <ID>` gives the mechanism and the known false positives;
   quote it rather than re-deriving why a rule fired.
 

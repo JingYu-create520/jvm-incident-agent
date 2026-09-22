@@ -4,6 +4,60 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.4.0 — 2026-09-22
+
+The report's most confident sentence was the one nobody checked. **"Every rule ran clean against this
+snapshot."** was printed whenever the findings table came out empty — including when six rules had returned
+nothing because the input was too thin to measure anything at all. A truncated GC log, a capture with one
+thread dump, a `head -20` of a busy service's minute: all of them could buy that sentence.
+
+### Changed
+
+- **A rule that abstained now says so.** `Rule.declined(snapshot, config)` is the third possible answer,
+  next to "found something" and "ran clean", and `ruleStatus` records `declined: <what it needed>`.
+  GCA001 (two majors for a rate), GCA003 (`--heap-leak-min-full-gc` samples for a fingerprint), GCA004
+  (three collections for a promotion comparison), GCA006 (ten events across ten seconds for a percentage)
+  and TDA003 (a second dump for growth) implement it; the Markdown lists each one under "Coverage and
+  limits", and the verdict reads
+
+  > **No high-confidence problem found in the supplied artifacts.** But that is not the same sentence as
+  > "nothing is wrong": 3 rules declined to answer because this snapshot is too thin for them to measure
+  > (see Coverage and limits).
+
+  Every reason quotes the counts the rule actually saw, from the same series it measures — `this log has
+  1 event over 0.0 s, and the rule asks for 10 events across 10 s` — because "insufficient data" that
+  doesn't say how insufficient is a shrug in a report font.
+- **`GCA002` stopped requiring three pauses to notice a slow one.** The floor was there to keep a
+  one-sample window from being called a distribution, and it was doing that by deleting the finding. A
+  305 ms stop against a 200 ms SLA is now reported, capped at `MEDIUM`, with the summary saying that
+  p50/p95/p99 in a one-pause window "are the maximum wearing a distribution's clothes". The pause was
+  never the problem; the claim was.
+
+### Fixed
+
+- **`report.json` was not reproducible.** `ruleStatus` was a `Map.copyOf(...)`, whose iteration order the
+  JDK explicitly documents as unpredictable and allowed to vary between runs. It did: the same input on the
+  published 0.3.3 jar produced **three different MD5s in three JVM launches**. The findings were identical
+  every time — the bytes around them were not, which breaks the one promise the README keeps repeating
+  ("identical input always produces identical findings") and makes two runs of this tool un-diffable in CI.
+  The map is sorted by rule id now, and the test asserts the order in the serialised document rather than
+  trusting the container, since the salt is drawn once per JVM and cannot be re-rolled inside one run.
+- Decline and cap prose reads like English: `1 event`, `10 events`, not `1 event(s)`; em dashes match the
+  rest of the report instead of `--` appearing mid-sentence.
+
+### Added
+
+- `Rule.count(long, String)`, and three tests: the thin log (one 305 ms pause) must both report the pause
+  and record four abstentions; a single thread dump must disclose that TDA003's growth half could not run;
+  the JSON key-order pin above. Mutation-checked — removing the sort, or turning a decline back into
+  `clean`, fails a named assertion.
+- `SKILL.md` gained the reading rule ("never summarise a declined rule as *no problem found*; ask for the
+  missing capture"), and both READMEs explain the third channel.
+
+109 tests, 19 rules, seven corpus scenarios: `corpus/healthy` still produces zero findings, and now also
+says which three rules its two-second capture was too thin for.
+
+
 ## 0.3.4 — 2026-09-22
 
 A rule that documents its own blind spot in `jia explain` still leaves the *report* silent, and the

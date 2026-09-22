@@ -38,7 +38,10 @@ public final class LongPauseRule implements Rule {
     @Override
     public List<Finding> evaluate(Snapshot snapshot, Config config) {
         GcLog log = snapshot.gcLog().orElse(null);
-        if (log == null || log.events().size() < 3) {
+        if (log == null || log.pauses().isEmpty()) {
+            // A floor of three events used to sit here, which threw away the most common thin capture of
+            // all: one or two pauses in a log someone truncated. A 305 ms stop against a 200 ms SLA is a
+            // finding; what it is not is a distribution, so the severity below says so.
             return List.of();
         }
         List<GcEvent> over = log.events().stream()
@@ -48,12 +51,14 @@ public final class LongPauseRule implements Rule {
         if (over.isEmpty()) {
             return List.of();
         }
+        boolean thin = log.pauses().size() < 3;
         double p50 = log.pausePercentile(50);
         double p95 = log.pausePercentile(95);
         double p99 = log.pausePercentile(99);
-        Severity severity = p99 > config.slaPauseMs() * 5 || over.get(0).pauseMs() > 2000
-                ? Severity.CRITICAL
-                : (p99 > config.slaPauseMs() * 2 ? Severity.HIGH : Severity.MEDIUM);
+        Severity severity = thin ? Severity.MEDIUM
+                : p99 > config.slaPauseMs() * 5 || over.get(0).pauseMs() > 2000
+                        ? Severity.CRITICAL
+                        : (p99 > config.slaPauseMs() * 2 ? Severity.HIGH : Severity.MEDIUM);
 
         List<String> offenders = new ArrayList<>();
         for (GcEvent e : over.subList(0, Math.min(over.size(), 5))) {
@@ -67,7 +72,11 @@ public final class LongPauseRule implements Rule {
                 .confidence(Math.min(0.95, 0.6 + over.size() * 0.03))
                 .summary(over.size() + " of " + log.pauses().size() + " pauses exceed the "
                         + config.slaPauseMs() + " ms SLA. p50 " + r(p50) + " ms, p95 " + r(p95)
-                        + " ms, p99 " + r(p99) + " ms, worst " + r(over.get(0).pauseMs()) + " ms.")
+                        + " ms, p99 " + r(p99) + " ms, worst " + r(over.get(0).pauseMs()) + " ms."
+                        + (thin ? " With " + Rule.count(log.pauses().size(), "pause") + " in this window the "
+                                + "percentiles are the maximum wearing a distribution's clothes, so the "
+                                + "severity is capped at MEDIUM and the number to trust is the worst one."
+                                : ""))
                 .evidence(over.subList(0, Math.min(over.size(), config.maxEvidencePerFinding())).stream()
                         .map(e -> Evidence.of(log.source(), e.line(),
                                 e.kind() + (e.cause() == null ? "" : " (" + e.cause() + ")")))
@@ -84,6 +93,15 @@ public final class LongPauseRule implements Rule {
                 .metric("maxMs", r(over.get(0).pauseMs()))
                 .metric("offenders", List.copyOf(offenders))
                 .build());
+    }
+
+    @Override
+    public String declined(Snapshot snapshot, Config config) {
+        return snapshot.gcLog().filter(l -> l.pauses().isEmpty()).isPresent()
+                ? "this GC log contains no stop-the-world pause at all, so there is nothing to compare "
+                        + "against the SLA (a concurrent-only window, or a log cut before the first "
+                        + "collection)"
+                : "";
     }
 
     private static String r(double v) {
@@ -112,6 +130,11 @@ public final class LongPauseRule implements Rule {
                 
                 Wrong when: the log is dominated by startup or shutdown, where long pauses are not the
                 application's fault — check the uptime printed next to each event before resizing anything.
+                A window with one or two pauses is not a distribution: p50/p95/p99 collapse onto the
+                maximum, so the finding says so and stays at MEDIUM however long the pause was. A log with
+                no stop-the-world pause at all is reported as declined rather than clean, because
+                "every rule ran clean" over a truncated capture would be a sentence about the file, not
+                about the JVM.
                 """;
     }
 }

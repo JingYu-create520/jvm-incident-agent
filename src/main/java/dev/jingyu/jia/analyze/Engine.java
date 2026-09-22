@@ -68,7 +68,14 @@ public final class Engine {
             try {
                 List<Finding> produced = rule.evaluate(snapshot, config);
                 findings.addAll(produced);
-                status.put(rule.id(), produced.isEmpty() ? "clean" : produced.size() + " finding(s)");
+                if (!produced.isEmpty()) {
+                    status.put(rule.id(), produced.size() + " finding(s)");
+                    continue;
+                }
+                // Empty is not one thing: it can mean "I measured and nothing is wrong" or "I could not
+                // measure". Only the first is allowed to be read as an all-clear.
+                String why = rule.declined(snapshot, config);
+                status.put(rule.id(), why == null || why.isBlank() ? "clean" : "declined: " + why);
             } catch (RuntimeException | Error e) {
                 // A broken rule must never cost the reader the rest of the report.
                 status.put(rule.id(), "error");
@@ -88,7 +95,12 @@ public final class Engine {
         }
         long elapsed = (System.nanoTime() - start) / 1_000_000L;
         return new AnalysisResult(snapshot, config, List.copyOf(merged), hypotheses, timeline,
-                List.copyOf(concat(notes, errors)), Map.copyOf(status), Instant.now(), elapsed, VERSION);
+                List.copyOf(concat(notes, errors)),
+                // Sorted, not Map.copyOf: the immutable-map copy iterates in an order the JDK documents
+                // as unpredictable and allowed to vary between runs, and this tool promises the same
+                // input renders the same bytes. Rule ids sorted is both stable and nicer to diff.
+                java.util.Collections.unmodifiableSortedMap(new java.util.TreeMap<>(status)),
+                Instant.now(), elapsed, VERSION);
     }
 
     private static final java.util.regex.Pattern FILE_TOKEN =

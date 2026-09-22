@@ -35,6 +35,28 @@ public interface Rule {
 
     List<Finding> evaluate(Snapshot snapshot, Config config);
 
+    /**
+     * Why this rule declined to answer even though its artifact was present; empty means it ran, and
+     * its silence is a result worth reporting as one.
+     *
+     * <p>Most rules need a minimum of data before a number means anything — a rate needs two
+     * collections, a distribution three pauses, a throughput figure a window. Returning nothing in
+     * that situation is correct; recording it as {@code clean} is not, because "every rule ran clean
+     * against this snapshot" is exactly the sentence a reader carries away from a report with no
+     * findings, and a truncated log would make it a lie.
+     */
+    default String declined(Snapshot snapshot, Config config) {
+        return "";
+    }
+
+    /**
+     * "1 event", "10 events" — the decline and cap sentences quote real counts, and {@code "1 event(s)"}
+     * in a report a human reads is the kind of careless detail this project gets judged on.
+     */
+    static String count(long n, String unit) {
+        return n + " " + unit + (n == 1 ? "" : "s");
+    }
+
     /** Markdown explanation served by {@code jia explain} and the MCP {@code explain_finding} tool. */
     String doc();
 }

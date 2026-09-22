@@ -146,6 +146,16 @@ of it. The same rule applies to fields, not just files: if your application log 
 the parsed stacks had no absolute timestamp (`exceptionClock` in JSON) rather than leaving "no burst" to
 read as an all-clear.
 
+And the third case is a rule that could not measure at all. A Full GC rate needs two major collections, a
+live-set fingerprint needs a few, a throughput percentage needs ten events across ten seconds, thread
+*growth* needs a second dump — and a rule that had the artifact but not enough of it used to return
+nothing and be recorded as `clean`, which let a truncated log print *"Every rule ran clean against this
+snapshot."* Now it says what it did: `ruleStatus` reports `declined: <what it needed>`, the same lines
+appear under "Coverage and limits", and the verdict only claims everything ran clean when nothing
+abstained. One rule got stricter in the same pass — `GCA002` ignored any log with fewer than three pauses,
+so a lone 305 ms stop against a 200 ms SLA went unreported; it reports that now, capped at `MEDIUM` and
+labelled as the single-data-point measurement it is.
+
 ## The 19 rules
 
 `jia rules` prints this list; `jia explain <ID>` prints how it works **and where it can be

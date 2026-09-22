@@ -40,11 +40,7 @@ public final class FullGcFrequencyRule implements Rule {
         if (log == null) {
             return List.of();
         }
-        // A startup metaspace collection and a jmap-forced inspection are not heap pressure; a
-        // rate rule cannot tell them from a storm, so the causes are filtered before the counting.
-        List<GcEvent> full = log.majorCollections().stream()
-                .filter(e -> !GcNoise.notHeapPressure(e, config.gcSettleSec()))
-                .toList();
+        List<GcEvent> full = heapPressureMajors(snapshot, config);
         if (full.size() < 2) {
             return List.of();
         }
@@ -107,6 +103,29 @@ public final class FullGcFrequencyRule implements Rule {
                 .metric("collector", log.collector().name())
                 .build());
         return out;
+    }
+
+    /**
+     * The majors this rule is willing to count: a startup metaspace collection and a jmap-forced
+     * inspection are real collections but not heap pressure, and a rate rule cannot tell them from a
+     * storm -- so the causes are filtered before the counting. Shared with {@link #declined} so the
+     * reason a rule stayed quiet quotes the same series it measured.
+     */
+    private static List<GcEvent> heapPressureMajors(Snapshot snapshot, Config config) {
+        return snapshot.gcLog().map(log -> log.majorCollections().stream()
+                .filter(e -> !GcNoise.notHeapPressure(e, config.gcSettleSec()))
+                .toList()).orElse(List.of());
+    }
+
+    @Override
+    public String declined(Snapshot snapshot, Config config) {
+        int majors = heapPressureMajors(snapshot, config).size();
+        if (majors >= 2) {
+            return "";
+        }
+        return "a Full GC rate needs two or more major collections that are evidence of heap pressure; "
+                + "this log has " + Rule.count(majors, "major collection")
+                + (majors == 0 ? " at all" : " — one collection tells you nothing about frequency");
     }
 
     private static String fmt(double v) {

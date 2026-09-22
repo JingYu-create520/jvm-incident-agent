@@ -76,6 +76,22 @@ public final class GcThroughputRule implements Rule {
     }
 
     @Override
+    public String declined(Snapshot snapshot, Config config) {
+        return snapshot.gcLog().map(l -> {
+            int events = l.events().size();
+            double span = l.durationSec();
+            if (events >= 10 && span >= 10) {
+                return "";
+            }
+            return "a cost-of-GC percentage needs a window to divide by: this log has "
+                    + Rule.count(events, "event") + " over "
+                    + String.format(java.util.Locale.ROOT, "%.1f", span)
+                    + " s, and the rule asks for 10 events across 10 s — under that, the number to quote "
+                    + "is the individual pause (GCA002), not a percentage";
+        }).orElse("");
+    }
+
+    @Override
     public String doc() {
         return """
                 # GCA006 — GC throughput

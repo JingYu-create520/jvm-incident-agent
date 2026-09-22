@@ -180,6 +180,19 @@ public final class ThreadLeakRule implements Rule {
     }
 
     @Override
+    public String declined(Snapshot snapshot, Config config) {
+        int dumps = snapshot.threadDumps().size();
+        if (dumps >= 2) {
+            return "";
+        }
+        return dumps == 1
+                ? "one thread dump cannot show growth — a leak is a change over time. The pool-size half "
+                        + "of this rule did run; capture a second dump 5-10 s apart (--dump-interval) to "
+                        + "unlock the rest"
+                : "";
+    }
+
+    @Override
     public String doc() {
         return """
                 # TDA003 — Thread leak

@@ -103,6 +103,18 @@ public final class PrematurePromotionRule implements Rule {
     }
 
     @Override
+    public String declined(Snapshot snapshot, Config config) {
+        int events = snapshot.gcLog().map(l -> l.events().size()).orElse(-1);
+        if (events < 0) {
+            return "";
+        }
+        return events < 3
+                ? "this GC log has " + Rule.count(events, "collection") + "; promotion pressure is a "
+                        + "comparison between young yields and old-gen growth, which needs three or more"
+                : "";
+    }
+
+    @Override
     public String doc() {
         return """
                 # GCA004 — Premature promotion

@@ -56,9 +56,16 @@ public final class MarkdownReport {
     private void verdict(StringBuilder sb, AnalysisResult r, String narrative) {
         sb.append("## Verdict\n\n");
         if (r.hypotheses().isEmpty()) {
+            long declined = declines(r).size();
             sb.append("**No high-confidence problem found in the supplied artifacts.** ")
                     .append(r.findings().isEmpty()
-                            ? "Every rule ran clean against this snapshot.\n\n"
+                            ? (declined == 0
+                                    ? "Every rule ran clean against this snapshot.\n\n"
+                                    : "But that is not the same sentence as \"nothing is wrong\": "
+                                            + declined + " rule" + (declined == 1 ? "" : "s")
+                                            + " declined to answer because this snapshot is too thin for "
+                                            + (declined == 1 ? "it" : "them") + " to measure (see Coverage "
+                                            + "and limits).\n\n")
                             : "Only informational notes were produced; see Coverage and limits.\n\n");
         } else {
             Hypothesis top = r.hypotheses().get(0);
@@ -223,6 +230,13 @@ public final class MarkdownReport {
         }
     }
 
+    /** The rules that had the artifact but not enough of it to measure anything. */
+    private static List<Map.Entry<String, String>> declines(AnalysisResult r) {
+        return r.ruleStatus().entrySet().stream()
+                .filter(e -> e.getValue().startsWith("declined: "))
+                .toList();
+    }
+
     private void coverage(StringBuilder sb, AnalysisResult r) {
         sb.append("## Coverage and limits\n\n");
         Snapshot s = r.snapshot();
@@ -271,6 +285,12 @@ public final class MarkdownReport {
                     .append("errors were spread");
         }
         sb.append('\n');
+        // A rule that abstained is a hole in the report's coverage, and a hole the reader can only
+        // close by supplying more data -- so it belongs here, not buried in `ruleStatus`.
+        for (Map.Entry<String, String> d : declines(r)) {
+            sb.append("- `").append(d.getKey()).append("` did not answer: ")
+                    .append(md(d.getValue().substring("declined: ".length()))).append('\n');
+        }
         for (var u : s.unparsed()) {
             sb.append("- `").append(u.file()).append("` was not understood: ").append(u.reason()).append('\n');
         }

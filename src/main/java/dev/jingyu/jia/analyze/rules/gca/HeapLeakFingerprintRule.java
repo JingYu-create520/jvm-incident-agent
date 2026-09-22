@@ -36,12 +36,12 @@ public final class HeapLeakFingerprintRule implements Rule {
         return ArtifactKind.GC_LOG;
     }
 
-    @Override
-    public List<Finding> evaluate(Snapshot snapshot, Config config) {
-        GcLog log = snapshot.gcLog().orElse(null);
-        if (log == null) {
-            return List.of();
-        }
+    /**
+     * The live-set series: one sample per major (or mixed) collection that left a measurable heap
+     * behind, minus the causes that are not heap pressure. Shared with {@link #declined} so the reason
+     * the rule stayed quiet counts exactly what the rule would have measured.
+     */
+    private static List<Point> samples(GcLog log, Config config) {
         List<Point> points = new ArrayList<>();
         for (GcEvent e : log.events()) {
             Long v = e.oldAfterBytes() != null ? e.oldAfterBytes() : e.heapAfterBytes();
@@ -50,6 +50,30 @@ public final class HeapLeakFingerprintRule implements Rule {
                 points.add(new Point(e, v));
             }
         }
+        return points;
+    }
+
+    @Override
+    public String declined(Snapshot snapshot, Config config) {
+        int need = Math.max(3, config.heapLeakMinFullGc());
+        long samples = snapshot.gcLog().map(l -> samples(l, config).size()).orElse(-1);
+        if (samples < 0) {
+            return "";
+        }
+        return samples < need
+                ? "the live-set series has " + Rule.count(samples, "sample") + " and a fingerprint needs "
+                        + need + " (`--heap-leak-min-full-gc`) — a floor needs two measurements before "
+                        + "anyone can say it is rising"
+                : "";
+    }
+
+    @Override
+    public List<Finding> evaluate(Snapshot snapshot, Config config) {
+        GcLog log = snapshot.gcLog().orElse(null);
+        if (log == null) {
+            return List.of();
+        }
+        List<Point> points = samples(log, config);
         if (points.size() < Math.max(3, config.heapLeakMinFullGc())) {
             return List.of();
         }
