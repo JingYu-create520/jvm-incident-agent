@@ -334,6 +334,34 @@ class ParserTest {
         }
 
         @Test
+        @DisplayName("a terminal-coloured app.log parses exactly like the plain one")
+        void ansiColouredLog() {
+            // The fixture in the test above, with the CSI colour sequences Spring Boot writes to a
+            // terminal — and therefore into any file a redirected, `script`-wrapped or CI-captured
+            // process leaves behind. Measured against this exact file with the strip removed: zero
+            // stacks, and the CLI exits 2 with "Nothing recognised in […]: no exception stacks found".
+            // A twenty-stack incident reporting as no incident at all is the failure mode here.
+            List<ExceptionOccurrence> plain = StackParser.parse(Fixtures.source("app-exceptions.log")).value();
+            List<ExceptionOccurrence> coloured = StackParser.parse(Fixtures.source("app-exceptions-ansi.log")).value();
+            assertFalse(coloured.isEmpty(), "ANSI colour swallowed the log");
+            assertEquals(20, coloured.size(), "twelve wrapped gateway failures, six JSON truncations, two timeouts");
+            assertEquals(12, coloured.stream()
+                    .filter(e -> e.rootCause().className().endsWith("SocketTimeoutException")).count(),
+                    "and the twelve-stack cluster the report quotes has to survive the escape codes");
+            assertEquals(plain.stream().map(Stacks::shape).toList(),
+                    coloured.stream().map(Stacks::shape).toList(),
+                    "colour must not move a class, a message, a frame or a line number");
+            assertTrue((plain.toString() + coloured).indexOf(0x1B) < 0,
+                    "a control character leaked out of the reader and into the model");
+        }
+
+        /** Everything a finding could quote about one stack, as a comparable string. The file name is
+         *  left out on purpose: these two fixtures are the same incident under two names. */
+        private static String shape(ExceptionOccurrence e) {
+            return e.startLine() + "-" + e.endLine() + " " + e.chain();
+        }
+
+        @Test
         @DisplayName("a one-line warning that merely names an exception is not a stack")
         void noFalseStacks() {
             var rep = StackParser.parse(TextSource.of("app.log", List.of(

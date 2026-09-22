@@ -1,0 +1,186 @@
+2026-09-20 21:04:01.120  INFO 21488 --- [main] d.j.v.VictimApplication   : Started VictimApplication in 3.412 seconds
+[1;31m2026-09-20 21:04:02.073 ERROR 21488 --- [http-nio-8080-exec-2] d.j.v.FlakyOrderService : order 410 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:03.146 ERROR 21488 --- [http-nio-8080-exec-3] d.j.v.FlakyOrderService : order 420 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:04.219 ERROR 21488 --- [http-nio-8080-exec-4] d.j.v.FlakyOrderService : order 430 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:05.292 ERROR 21488 --- [http-nio-8080-exec-5] d.j.v.FlakyOrderService : order 440 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:06.365 ERROR 21488 --- [http-nio-8080-exec-6] d.j.v.FlakyOrderService : order 450 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:07.438 ERROR 21488 --- [http-nio-8080-exec-7] d.j.v.FlakyOrderService : order 460 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:08.511 ERROR 21488 --- [http-nio-8080-exec-8] d.j.v.FlakyOrderService : order 470 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:09.584 ERROR 21488 --- [http-nio-8080-exec-1] d.j.v.FlakyOrderService : order 480 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:10.657 ERROR 21488 --- [http-nio-8080-exec-2] d.j.v.FlakyOrderService : order 490 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:11.730 ERROR 21488 --- [http-nio-8080-exec-3] d.j.v.FlakyOrderService : order 4100 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:12.803 ERROR 21488 --- [http-nio-8080-exec-4] d.j.v.FlakyOrderService : order 4110 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:13.876 ERROR 21488 --- [http-nio-8080-exec-5] d.j.v.FlakyOrderService : order 4120 could not be paid[0m
+
+[35mjava.lang.IllegalStateException: payment gateway call failed[39m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.pay(FlakyOrderService.java:71) ~[!/:1.0.0][22m
+[2m	at dev.jingyu.jia.victim.VictimController.errors(VictimController.java:107) ~[!/:1.0.0][22m
+[2m	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883) ~[spring-webmvc-6.2.8.jar:6.2.8][22m
+[35mCaused by: java.net.SocketTimeoutException: Read timed out[39m
+[2m	at java.base/java.net.SocketInputStream.socketRead0(Native Method) ~[na:na][22m
+[2m	at dev.jingyu.jia.victim.FlakyOrderService.openPaymentSocket(FlakyOrderService.java:88) ~[!/:1.0.0][22m
+	... 27 common frames omitted
+
+[1;31m2026-09-20 21:04:23.500 ERROR 21488 --- [http-nio-8080-exec-2] d.j.v.JsonIngestService : payload rejected[0m
+
+[35mcom.fasterxml.jackson.core.io.JsonEOFException: Unexpected end-of-input: expected close marker for Object[39m
+[2m	at com.fasterxml.jackson.core.base.ParserMinimalBase._reportInvalidEOF(ParserMinimalBase.java:616) ~[jackson-core-2.19.4.jar:2.19.4][22m
+[2m	at dev.jingyu.jia.victim.JsonIngestService.consume(JsonIngestService.java:52) ~[!/:1.0.0][22m
+[2m	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na][22m
+
+[1;31m2026-09-20 21:04:26.500 ERROR 21488 --- [http-nio-8080-exec-3] d.j.v.JsonIngestService : payload rejected[0m
+
+[35mcom.fasterxml.jackson.core.io.JsonEOFException: Unexpected end-of-input: expected close marker for Object[39m
+[2m	at com.fasterxml.jackson.core.base.ParserMinimalBase._reportInvalidEOF(ParserMinimalBase.java:616) ~[jackson-core-2.19.4.jar:2.19.4][22m
+[2m	at dev.jingyu.jia.victim.JsonIngestService.consume(JsonIngestService.java:52) ~[!/:1.0.0][22m
+[2m	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na][22m
+
+[1;31m2026-09-20 21:04:29.500 ERROR 21488 --- [http-nio-8080-exec-4] d.j.v.JsonIngestService : payload rejected[0m
+
+[35mcom.fasterxml.jackson.core.io.JsonEOFException: Unexpected end-of-input: expected close marker for Object[39m
+[2m	at com.fasterxml.jackson.core.base.ParserMinimalBase._reportInvalidEOF(ParserMinimalBase.java:616) ~[jackson-core-2.19.4.jar:2.19.4][22m
+[2m	at dev.jingyu.jia.victim.JsonIngestService.consume(JsonIngestService.java:52) ~[!/:1.0.0][22m
+[2m	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na][22m
+
+[1;31m2026-09-20 21:04:32.500 ERROR 21488 --- [http-nio-8080-exec-5] d.j.v.JsonIngestService : payload rejected[0m
+
+[35mcom.fasterxml.jackson.core.io.JsonEOFException: Unexpected end-of-input: expected close marker for Object[39m
+[2m	at com.fasterxml.jackson.core.base.ParserMinimalBase._reportInvalidEOF(ParserMinimalBase.java:616) ~[jackson-core-2.19.4.jar:2.19.4][22m
+[2m	at dev.jingyu.jia.victim.JsonIngestService.consume(JsonIngestService.java:52) ~[!/:1.0.0][22m
+[2m	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na][22m
+
+[1;31m2026-09-20 21:04:35.500 ERROR 21488 --- [http-nio-8080-exec-6] d.j.v.JsonIngestService : payload rejected[0m
+
+[35mcom.fasterxml.jackson.core.io.JsonEOFException: Unexpected end-of-input: expected close marker for Object[39m
+[2m	at com.fasterxml.jackson.core.base.ParserMinimalBase._reportInvalidEOF(ParserMinimalBase.java:616) ~[jackson-core-2.19.4.jar:2.19.4][22m
+[2m	at dev.jingyu.jia.victim.JsonIngestService.consume(JsonIngestService.java:52) ~[!/:1.0.0][22m
+[2m	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na][22m
+
+[1;31m2026-09-20 21:04:38.500 ERROR 21488 --- [http-nio-8080-exec-7] d.j.v.JsonIngestService : payload rejected[0m
+
+[35mcom.fasterxml.jackson.core.io.JsonEOFException: Unexpected end-of-input: expected close marker for Object[39m
+[2m	at com.fasterxml.jackson.core.base.ParserMinimalBase._reportInvalidEOF(ParserMinimalBase.java:616) ~[jackson-core-2.19.4.jar:2.19.4][22m
+[2m	at dev.jingyu.jia.victim.JsonIngestService.consume(JsonIngestService.java:52) ~[!/:1.0.0][22m
+[2m	at java.base/java.lang.Thread.run(Thread.java:833) ~[na:na][22m
+
+[1;31m2026-09-20 21:04:41.100 ERROR 21488 --- [http-nio-8080-exec-9] d.j.v.StockService : stock lookup degraded[0m
+
+[35mjava.util.concurrent.TimeoutException: stock-service lookup for SKU-701 exceeded 250ms[39m
+[2m	at dev.jingyu.jia.victim.StockService.lookup(StockService.java:44) ~[!/:1.0.0][22m
+
+[1;31m2026-09-20 21:04:42.100 ERROR 21488 --- [http-nio-8080-exec-9] d.j.v.StockService : stock lookup degraded[0m
+
+[35mjava.util.concurrent.TimeoutException: stock-service lookup for SKU-701 exceeded 250ms[39m
+[2m	at dev.jingyu.jia.victim.StockService.lookup(StockService.java:44) ~[!/:1.0.0][22m
+
+[35m2026-09-20 21:05:00.000  WARN 21488 --- [victim-report-exporter] d.j.v.ResidentWorkers : exporter retried after java.io.IOException: temp file busy[39m

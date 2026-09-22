@@ -19,6 +19,22 @@ public final class TextFiles {
     /** Windows Java services and older Chinese teams frequently emit GBK logs. */
     private static final Charset GBK = Charset.forName("GBK");
 
+    /**
+     * Terminal control sequences: {@code ESC [ … final-byte} (CSI, which is how colour gets into a
+     * log) and a bare {@code ESC X}. A Spring Boot process writing to a terminal — or anything run
+     * under {@code script}, a CI runner or {@code watch} — puts these in the file, and they broke
+     * exception parsing completely until they were stripped: the twenty-stack fixture
+     * {@code fixtures/app-exceptions-ansi.log} came back with zero stacks and the CLI exited 2 on
+     * "Nothing recognised … no exception stacks found" — a full incident reported as no incident.
+     *
+     * <p>Stripped at read time, so every rule and every evidence quote sees the text a human would
+     * read. The bytes on disk are untouched, and a line number still points at the same line.
+     */
+    private static final java.util.regex.Pattern CSI =
+            java.util.regex.Pattern.compile("\u001B\\[[0-9;:?<>]*[ -/]*[@-~]");
+    private static final java.util.regex.Pattern OTHER_ESC =
+            java.util.regex.Pattern.compile("\u001B[@-Z\\\\_]");
+
     private TextFiles() {
     }
 
@@ -56,17 +72,27 @@ public final class TextFiles {
         int start = 0;
         for (int i = 0; i < normalized.length(); i++) {
             if (normalized.charAt(i) == '\n') {
-                out.add(normalized.substring(start, i));
+                out.add(clean(normalized.substring(start, i)));
                 start = i + 1;
             }
         }
         if (start < normalized.length()) {
-            out.add(normalized.substring(start));
+            out.add(clean(normalized.substring(start)));
         }
         while (!out.isEmpty() && out.get(out.size() - 1).isEmpty()) {
             out.remove(out.size() - 1);
         }
         return out;
+    }
+
+    /** Terminal escapes are the one thing in a log file that no rule should ever have to see. */
+    private static String clean(String line) {
+        if (line.indexOf('\u001B') < 0) {
+            return line;
+        }
+        String stripped = CSI.matcher(line).replaceAll("");
+        stripped = OTHER_ESC.matcher(stripped).replaceAll("");
+        return stripped;
     }
 
     private static byte[] stripBom(byte[] raw) {
