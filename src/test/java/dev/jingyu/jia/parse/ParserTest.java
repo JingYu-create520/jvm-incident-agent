@@ -176,6 +176,12 @@ class ParserTest {
             assertTrue(stalls.get(0).cause().contains("http-nio-18081-exec-8"),
                     () -> "the thread ZGC stopped is the useful part of the line, was: " + stalls.get(0).cause());
             assertEquals(31.866, stalls.get(0).pauseMs(), 0.001);
+            // A stall stops the thread that asked for memory, not the world. It belongs to GCA007;
+            // letting it into the pause distribution would hand GCA002 a 32 ms "pause" and GCA006 a
+            // throughput deficit this JVM never had.
+            assertTrue(log.pauseMax() < 1.0,
+                    () -> "a per-thread stall leaked into the pause statistics: max " + log.pauseMax() + " ms");
+            assertEquals(61.93, log.stallSumMs(), 0.01);
 
             // The regression these two assertions exist for: [gc,stats] prints a rolling-averages
             // table inside every cycle, and a cell like "30.142 / 613.231 … ms" used to be read as

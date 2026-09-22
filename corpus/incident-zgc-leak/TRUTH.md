@@ -87,7 +87,10 @@ three errors are the kind that make a report untrustworthy rather than merely in
   collections is ZGC doing its job; doing it 278 times a minute is the heap having no room left.
 - **GCA007 (allocation stalls)** — `9 allocation stall(s), longest 39 ms, affecting:
   http-nio-18081-exec-8, http-nio-18081-exec-4, http-nio-18081-exec-10`. The thread names are in
-  the log, and they are the request threads: it is latency that is being paid here.
+  the log, and they are the request threads: it is latency that is being paid here. Its
+  `stallMsTotal` is 272 ms, and none of that is in GCA006's pause arithmetic — a stall stops the
+  one thread that asked for memory while the rest keep running, and 272 ms of nine threads is not
+  272 ms of application downtime.
 - **HIS001 (top consumers)** — `[B holds 928.7 MB of 939.7 MB (98.8% of all bytes counted, 46,267
   instances, 21048 bytes each)`. The histogram was taken with `jmap -histo:live`, which under ZGC
   triggers a cycle rather than a Full GC, so the leak survives it.
@@ -110,7 +113,9 @@ three errors are the kind that make a report untrustworthy rather than merely in
   with `-Xms` = `-Xmx`, and no metaspace cap, and no `GCLocker Initiated GC` appears anywhere.
 - **GCA006 (GC throughput below target)** — about 10 ms of stop-the-world across 48.8 s of log is
   0.02 %. This is the number the statistics-table bug inflated to 63.4 %, so it is recorded here
-  on purpose: the correct answer for a ZGC heap in trouble is not a throughput finding.
+  on purpose: the correct answer for a ZGC heap in trouble is not a throughput finding. Adding the
+  272 ms of allocation stalls would make it 0.58 % and still not fire — but the reason they are not
+  added is not that the threshold is unreachable, it is that they were never the world stopping.
 - **HIS002 (application class share)** — the leading non-JDK class is `LeakyCache$Entry` at
   51,856 bytes, 0.005 % of counted bytes: the leak's *handles* are tiny and its payload is
   `byte[]`, so HIS001 fires and this one cannot.

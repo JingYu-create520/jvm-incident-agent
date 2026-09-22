@@ -224,7 +224,9 @@ its own; reporting those is the fastest way to teach a team to ignore this tool.
 
 Sum of stop-the-world pauses divided by the wall-clock span of the log. Fires below 97%
 (`--throughput`) and needs at least ten collections over ten seconds, so a short excerpt stays
-quiet.
+quiet. Only the time when no application thread ran counts: a record's summary line or the sum
+of its `Pause …` phases, never its `Concurrent …` durations, never a `[gc,stats]` cell, and
+never an allocation stall — that last one stops a single thread and is GCA007's to report.
 
 Throughput is arithmetic over the same pause numbers GCA002 reports; both the sum and the span are
 printed in the finding. Evidence is the biggest contributing pauses with their share of the total.

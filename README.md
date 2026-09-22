@@ -349,7 +349,8 @@ by `RulesTest.catalogueIsComplete`.
   small thread count.
 - **One JVM per snapshot.** No cross-service or distributed correlation.
 - GC throughput counts the pauses `-Xlog:gc*` prints; safepoint work that is not a GC pause is
-  invisible, so the real figure can be worse than reported, never better.
+  invisible, so the real figure can be worse than reported, never better. A ZGC allocation stall
+  stops one thread rather than the world, so it is excluded here and reported by GCA007 instead.
 - A wall-clock ↔ uptime axis needs a log carrying both decorators; without it, the timeline
   says so in the report.
 

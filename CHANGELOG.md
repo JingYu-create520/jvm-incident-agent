@@ -28,6 +28,13 @@ Tooling and agent-facing docs; the analyzer itself is unchanged, so no new relea
   on JDK 17. Generational ZGC (21+) tags its cycles `(Minor)`/`(Major)` and this release does not
   distinguish them, so a minor cycle counts as major — over-reporting rather than silence, which is
   the safer direction, but not the same thing as support.
+- An allocation stall was being counted as a stop-the-world pause. It stops the one thread that
+  asked for memory while every other thread keeps running, so its milliseconds belong to GCA007 and
+  not to the pause distribution GCA002 and GCA006 read. On `corpus/incident-zgc-leak` the
+  difference is 10 ms of real downtime against 272 ms of thread-stall time (0.02 % vs 0.58 % of the
+  window); under generational ZGC, where many threads can stall at once, summing them against the
+  wall clock could report a throughput of zero for a JVM that kept serving requests. `GCA007` now
+  carries `stallMsTotal` so the stall time is still on the record.
 
 
 

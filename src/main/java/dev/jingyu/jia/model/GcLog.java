@@ -141,9 +141,22 @@ public final class GcLog {
         return eventsOfKind(GcEvent.Kind.ALLOCATION_STALL);
     }
 
+    /**
+     * The stop-the-world pauses: durations during which no application thread ran.
+     *
+     * <p>An allocation stall is deliberately not one of them. It stops the one thread that asked
+     * for memory while every other thread keeps going, so adding its milliseconds to a pause total
+     * invents application downtime — the same category of error as counting a concurrent cycle's
+     * duration as a pause, only smaller. Twenty threads stalling at once under generational ZGC
+     * would otherwise add up to more than the wall clock and report a throughput of zero. Stalls
+     * belong to GCA007, which says who waited and for how long.
+     */
     public List<Double> pauses() {
         List<Double> out = new ArrayList<>();
         for (GcEvent e : events) {
+            if (e.kind() == GcEvent.Kind.ALLOCATION_STALL) {
+                continue;
+            }
             if (e.pauseMs() != null && e.pauseMs() > 0) {
                 out.add(e.pauseMs());
             }
@@ -182,7 +195,15 @@ public final class GcLog {
     public double pauseSumMs() {
         return events.stream()
                 .filter(e -> e.pauseMs() != null)
+                .filter(e -> e.kind() != GcEvent.Kind.ALLOCATION_STALL)
                 .mapToDouble(GcEvent::pauseMs)
+                .sum();
+    }
+
+    /** Total time threads spent waiting for memory under ZGC. Not pause time: see {@link #pauses()}. */
+    public double stallSumMs() {
+        return allocationStalls().stream()
+                .mapToDouble(e -> e.pauseMs() == null ? 0.0 : e.pauseMs())
                 .sum();
     }
 

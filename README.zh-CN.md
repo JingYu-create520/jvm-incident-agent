@@ -275,7 +275,7 @@ scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app
   少得可疑"。
 - **一次快照只看一个 JVM。** 不做跨服务、跨进程的关联。
 - GC 吞吐只统计 `-Xlog:gc*` 打出来的停顿;不是 GC 停顿的 safepoint 停顿看不见,所以真实值只会
-  比报告更差,不会更好。
+  比报告更差,不会更好。ZGC 的分配停顿只停住一个线程而不是整个世界,所以不计在这里,由 GCA007 单独报。
 - 墙钟与 uptime 对齐需要日志同时带两种装饰器;不带时,报告里会明说。
 
 ## 开发

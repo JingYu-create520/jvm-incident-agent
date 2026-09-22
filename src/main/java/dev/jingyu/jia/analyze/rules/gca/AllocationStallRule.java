@@ -88,6 +88,7 @@ public final class AllocationStallRule implements Rule {
                 .metric("file", log.source().name())
                 .metric("stalls", stalls.size())
                 .metric("longestMs", String.format(Locale.ROOT, "%.0f", longest))
+                .metric("stallMsTotal", String.format(Locale.ROOT, "%.0f", log.stallSumMs()))
                 .metric("collector", String.valueOf(log.collector()))
                 .build());
     }
