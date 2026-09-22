@@ -62,10 +62,12 @@ the heap is not.
   only `Old regions` will report nothing here; it has to count humongous regions too (or use the
   `217M-236M of 256M` post-pause floor). Verbatim: `1894 collection(s) triggered by humongous
   (direct-to-old) allocation; 1880 young collections reclaimed under 5% of the heap`.
-- **GCA006 (GC throughput below target)** — `Over 22 s of log, 48.6% of wall time was spent in
-  stop-the-world pauses (10694 ms across 2555 pauses)`. This is the finding that decides whether
-  the Full GC count means anything; the `2555` is parsed events (concurrent phases included) while
-  the pause sum counts stop-the-world lines only.
+- **GCA006 (GC throughput below target)** — `Over 22 s of log, 7.9% of wall time was spent in
+  stop-the-world pauses (1737 ms across 2548 pauses)`. This is the finding that decides whether the
+  Full GC count means anything at all. The `2548` is parsed events (a concurrent-mark cycle is one
+  event each); the pause sum counts only lines that stopped the application — under 0.1.2 this
+  reading was `48.6% … (10694 ms across 2555 pauses)`, because a cycle's concurrent duration was
+  being added to the total. See `corpus/incident-zgc-leak` for how that was found.
 - **HIS001 (top consumers)** — `[B` holds 173.0 MB of 180.8 MB counted, 43,794 instances averaging
   4143 bytes (95.7 % of counted bytes). This histogram was taken mid-batch, so the batch is
   visible; if you re-capture after the batch ends, it disappears.
@@ -89,6 +91,7 @@ the heap is not.
   exist instead of relying on one.
 - **GCA003 (heap-leak fingerprint)** — the discrimination test of this folder, see the caveats
   below. Post-GC occupancy oscillates in a 217M-236M band instead of climbing and staying there.
+- **GCA007 (allocation stalls)** — no `Allocation Stall` line appears in this log at all. That vocabulary belongs to ZGC: under G1 the same pressure is a copy-space failure, which is what GCA004 reads, and this rule would be reporting a collector that is not running here.
 - **HIS002 (application class share)** — the largest non-JDK row in this histogram is
   `ch.qos.logback.classic.Logger` at 15,792 bytes. Nothing comes near the 8 MB absolute floor,
   because the bytes are in `[B`, and that is HIS001's sentence to say.

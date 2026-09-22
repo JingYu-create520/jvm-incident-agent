@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-18 rules ship in jvm-incident-agent 0.1.2.
+19 rules ship in jvm-incident-agent 0.2.0.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -25,6 +25,7 @@ jia rules              # the short form of the index below
 | [GCA004](#gca004) | GC log | Premature promotion / allocation pressure |
 | [GCA005](#gca005) | GC log | JVM configuration smell |
 | [GCA006](#gca006) | GC log | GC throughput below target |
+| [GCA007](#gca007) | GC log | Allocation stalled waiting for memory |
 | [HIS001](#his001) | heap histogram | Heap dominated by one class |
 | [HIS002](#his002) | heap histogram | Application class holds a large share of the heap |
 | [HIS003](#his003) | heap histogram | Implausible number of collection instances |
@@ -234,6 +235,32 @@ safepoint work that is not a GC pause, so the real figure can be worse than this
 
 ---
 
+## GCA007
+
+**Allocation stalled waiting for memory** · GC log · `jia explain GCA007`
+
+ZGC has no Full GC to give you. When it cannot hand out memory fast enough it stops the
+one thread that asked for it and prints `Allocation Stall (http-nio-8080-exec-8)
+31.866ms` against that thread's name. Counting those lines is the only way this tool
+can see a ZGC heap in trouble, because every other GC rule here is reading a pause
+vocabulary ZGC does not use.
+
+Fires at three or more stalls, or at a single stall longer than the pause SLA. The
+thread names come out of the log, so "who is being starved" is part of the finding —
+if it is your request threads and not a batch job, you are deciding about latency, not
+about throughput.
+
+Evidence: the stall lines themselves, longest first, each quoting the thread the JVM
+named and the milliseconds it waited. One quotation per occurrence, never a count on
+its own.
+
+Wrong when: a stall is a moment, not a trend. One stall in a log covering an hour means
+a hiccup; ten in a minute is the shape of an undersized heap. And ZGC is not the only
+collector that stalls — under G1 the same pressure surfaces as to-space exhausted and
+shows up as GCA004, not here.
+
+---
+
 ## HIS001
 
 **Heap dominated by one class** · heap histogram · `jia explain HIS001`
@@ -440,4 +467,4 @@ Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not gue
 
 ---
 
-_18 rules, rendered from `jvm-incident-agent 0.1.2 rules --format json` by scripts/render-rules.sh._
+_19 rules, rendered from `jvm-incident-agent 0.2.0 rules --format json` by scripts/render-rules.sh._

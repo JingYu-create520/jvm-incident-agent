@@ -148,12 +148,50 @@ class ParserTest {
         }
 
         @Test
+        @DisplayName("ZGC: statistics are not pauses, the cycle is the major collection, stalls are events")
+        void zgcUnifiedVocabulary() {
+            // A 125-line slice of a real ZGC capture (corpus/incident-zgc-leak), deliberately taken
+            // from the middle of the file so it carries no "Using …" banner either.
+            GcLog log = GcLogParser.parse(Fixtures.source("gc-jdk17-zgc.log")).value();
+            assertEquals(GcLog.Collector.ZGC, log.collector(),
+                    "the collector has to come from the pause vocabulary when the banner is rotated away");
+            assertTrue(log.unified());
+            assertTrue(log.events().stream().noneMatch(e -> e.kind() == GcEvent.Kind.FULL),
+                    "ZGC never prints Pause Full");
+
+            List<GcEvent> majors = log.majorCollections();
+            assertEquals(3, majors.size());
+            GcEvent cycle = majors.get(1);
+            assertEquals("Allocation Stall", cycle.cause(), "a percentage is not a cause");
+            assertEquals(1014L * 1048576, cycle.heapAfterBytes());
+            assertEquals(1024L * 1048576, cycle.capacityBytes(), "Max Capacity: 1024M(100%) is the denominator");
+            for (GcEvent e : majors) {
+                assertTrue(e.pauseMs() < 1.0,
+                        () -> "a ZGC cycle stops the world for microseconds, saw " + e.pauseMs() + " ms on line "
+                                + e.line());
+            }
+
+            List<GcEvent> stalls = log.allocationStalls();
+            assertEquals(2, stalls.size());
+            assertTrue(stalls.get(0).cause().contains("http-nio-18081-exec-8"),
+                    () -> "the thread ZGC stopped is the useful part of the line, was: " + stalls.get(0).cause());
+            assertEquals(31.866, stalls.get(0).pauseMs(), 0.001);
+
+            // The regression these two assertions exist for: [gc,stats] prints a rolling-averages
+            // table inside every cycle, and a cell like "30.142 / 613.231 … ms" used to be read as
+            // that collection's stop-the-world time — which turned a 0.02 % JVM into a reported
+            // 63.4 %. Everything counted here is either a real phase or a real stall.
+            assertTrue(log.pauseSumMs() < 100.0,
+                    () -> "pause total inflated to " + log.pauseSumMs() + " ms — statistics rows are being counted");
+        }
+
+        @Test
         @DisplayName("JDK 8 traditional Parallel GC lines parse, including old gen and metaspace")
         void traditionalJdk8() {
             GcLog log = GcLogParser.parse(Fixtures.source("gc-jdk8-parallel.log")).value();
             assertFalse(log.unified());
             assertEquals(GcLog.Collector.PARALLEL, log.collector());
-            List<GcEvent> full = log.fullGcs();
+            List<GcEvent> full = log.majorCollections();
             assertEquals(5, full.size());
             GcEvent f = full.get(0);
             assertEquals(12345.678, f.pauseMs(), 0.01);

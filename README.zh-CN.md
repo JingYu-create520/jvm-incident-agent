@@ -110,13 +110,13 @@ cd .. && jia analyze ./incident-2026-09-20 -o ./incident-2026-09-20/ --format bo
 
 字符集会探测(UTF-8 → GBK → Latin-1),因为这些文件来自别人的机器。
 
-## 18 条规则
+## 19 条规则
 
 `jia rules` 列出清单,`jia explain <ID>` 给出它**怎么工作**以及**会在哪里出错**——每条规则都必须写清自己的误报边界。
 
 **线程 dump**:TDA001 死锁(wait-for 图 + Tarjan SCC,监视器和 `ReentrantLock` 都算,JVM 自带检测器看不见后者)· TDA002 锁竞争热点(含持有者是谁)· TDA003 线程泄漏(同名族过大,或多份 dump 间只增不减)· TDA004 阻塞栈热点(以及 RUNNABLE 其实卡在 socket 上的那类)· TDA005 线程池饥饿 · TDA006 CPU 热点线程(用 `cpu`/`elapsed` 算核数,单 dump 是生命周期均值,两份 dump 取增量)
 
-**GC 日志**:GCA001 最密窗口内的 Full GC 风暴 · GCA002 超过 SLA 的停顿(报 p50/p95/p99/max)· GCA003 GC 后活集合上升,以及堆满之后的"高位平台"形态 · GCA004 过早晋升(复制空间耗尽、humongous、低收益 young GC)· GCA005 配置异味(metaspace 压力、`System.gc()`、JVM 自己的提示语)· GCA006 GC 吞吐过低
+**GC 日志**:GCA001 最密窗口内的 Full GC 风暴 · GCA002 超过 SLA 的停顿(报 p50/p95/p99/max)· GCA003 GC 后活集合上升,以及堆满之后的"高位平台"形态 · GCA004 过早晋升(复制空间耗尽、humongous、低收益 young GC)· GCA005 配置异味(metaspace 压力、`System.gc()`、JVM 自己的提示语)· GCA006 GC 吞吐过低 · GCA007 分配停顿(ZGC 把索要内存的那个线程停下来,日志里连线程名都带着)
 
 **堆直方图**:HIS001 单类占比压制,以及只有 `byte[]/char[]/String` 可言的情形 · HIS002 值得拿去 MAT 打开的业务类 · HIS003 容器/节点实例数不合理
 
@@ -142,7 +142,7 @@ threads.dump:498  - waiting to lock <0x00000000ff6309b0> (a java.lang.Object)
 threads.dump:511  - locked <0x00000000ff6309b0>   ← 监视器实际在另一个线程这里被持有
 ```
 
-退出码是接口的一部分:`0` 无高危,`1` 至少一条 HIGH/CRITICAL,`2` 输入无法理解。
+退出码是接口的一部分:`0` 没有达到门禁线的结论,`1` 有,`2` 输入看不懂。门禁线由 `--fail-on` 决定:默认 `high`,CI 里建议 `--fail-on critical`(别让一条 MEDIUM 建议挂掉构建),只想看报告就 `--fail-on never`。
 
 ## LLM 只负责叙述
 
@@ -193,7 +193,7 @@ jia mcp        # stdio,换行分帧的 JSON-RPC 2.0
 - name: JVM incident triage
   run: |
     java -jar jia.jar analyze ./dist/tomcat/logs/incident --format json -o /tmp/jia/ || rc=$?
-    # 0 = 干净,1 = 有高危,2 = 没解析动
+    # 0 = 干净,1 = 达到门禁线,2 = 没解析动;门禁线用 --fail-on 调
     test "${rc:-0}" -lt 2
 ```
 
@@ -240,9 +240,9 @@ scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app
 `capture.sh` 是去抄 JVM 自己的 `-Xlog` 输出,它变不出一份 GC 日志,所以那个参数才是第四件产物存在的前提。
 趁 JVM 还在跑,用上面那张表里的触发接口埋个事故,再 analyze。
 
-[`corpus/`](corpus) 里的每个字节都是活 JVM 的真产物,没有一份是手写的。六个场景,每个配一份
+[`corpus/`](corpus) 里的每个字节都是活 JVM 的真产物,没有一份是手写的。七个场景,每个配一份
 `TRUTH.md` 写清埋了什么、应该触发哪些规则。`CorpusTest` 断言的就是这些;`TruthDocTest` 再把
-那份 markdown 本身对着引擎核一遍——18 条规则在每个场景里都必须被点名。所以不管是"改了一条规则,
+那份 markdown 本身对着引擎核一遍——19 条规则在每个场景里都必须被点名。所以不管是"改了一条规则,
 结果分不清堆泄漏和分配风暴",还是"文档说的和工具报的对不上",构建都会直接红。
 
 ## 误报才是真问题
@@ -265,6 +265,13 @@ scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app
 - **不支持 `.hprof`。** 堆转储解析是另一个工程;报告只会告诉你该在 MAT 里看什么。
 - **按 JDK 8 → 21 的形态测过**,但产物是在 JDK 17 上抓的。老格式由手写 fixture 覆盖;真正古怪的
   格式会降级成一条 `INFO`,而不是报错。
+- **GC 规则读三种词汇。** G1/Parallel/Serial/CMS 里"能看清活集合"的那次回收叫 `Pause Full`;ZGC 里
+  它换成整堆并发周期,压力信号换成 `Allocation Stall`(GCA007),`corpus/incident-zgc-leak` 就是为
+  这两条存在的;Shenandoah 按 ZGC 的方式映射了 major,但还没有真语料——所以请把那条映射当成"未验证"
+  而不是"已支持"。
+- **虚拟线程看不见。** JDK 21 dump 里的 `-- virtual thread … mounted on carrier` 尾巴是有真实信息
+  的(pinning 尤其),这个工具既不解析也不推理它。一个重度用 Loom 的服务,在这里只会表现成"线程数
+  少得可疑"。
 - **一次快照只看一个 JVM。** 不做跨服务、跨进程的关联。
 - GC 吞吐只统计 `-Xlog:gc*` 打出来的停顿;不是 GC 停顿的 safepoint 停顿看不见,所以真实值只会
   比报告更差,不会更好。
@@ -278,7 +285,7 @@ scripts/capture.sh -o /tmp/incident -d 6 --gc-log live/gc.log --app-log live/app
 jia rules --format json           # 机器可读的规则目录
 ```
 
-结构:`parse/`(四个解析器 + 类型嗅探)、`analyze/`(图、Tarjan、18 条规则、假设排序)、
+结构:`parse/`(四个解析器 + 类型嗅探)、`analyze/`(图、Tarjan、19 条规则、假设排序)、
 `llm/`、`report/`、`mcp/`、`Cli.java`。`docs/PLAN.md` 是本次施工遵循的设计原件。
 
 新增规则的贡献必须同时带上它的反例——这是真正的硬性要求。

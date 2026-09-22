@@ -14,7 +14,27 @@ import java.util.Map;
 /** Runs the registered rules over a snapshot and assembles the result. */
 public final class Engine {
 
-    public static final String VERSION = "0.1.2";
+    /**
+     * The version this build was made from. It comes out of {@code jia.properties}, which Maven
+     * filters from the pom, so the number in a report and the number on the release page cannot be
+     * two different hand edits. {@code dev} means the classes were compiled without a pom-driven
+     * build (an IDE run configuration), which is the only case the fallback is for.
+     */
+    public static final String VERSION = readVersion();
+
+    private static String readVersion() {
+        try (var in = Engine.class.getResourceAsStream("/jia.properties")) {
+            if (in == null) {
+                return "dev";
+            }
+            java.util.Properties p = new java.util.Properties();
+            p.load(in);
+            String v = p.getProperty("version", "").trim();
+            return v.isEmpty() || v.startsWith("${") ? "dev" : v;
+        } catch (java.io.IOException e) {
+            return "dev";
+        }
+    }
 
     /** Ceiling on the evidence lines of a merged finding; two dumps prove the same fact once. */
     private static final int MAX_MERGED_EVIDENCE = 8;

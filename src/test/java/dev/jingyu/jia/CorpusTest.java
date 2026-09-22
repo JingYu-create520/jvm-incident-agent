@@ -44,7 +44,8 @@ class CorpusTest {
             "incident-heap-leak, H-HEAP-LEAK",
             "incident-gc-storm, H-ALLOCATION-STORM",
             "incident-thread-leak, H-THREAD-LEAK",
-            "incident-exceptions, H-ERROR-DRIVER"})
+            "incident-exceptions, H-ERROR-DRIVER",
+            "incident-zgc-leak, H-HEAP-LEAK"})
     void topHypothesisNamesTheTruth(String scenario, String expected) {
         AnalysisResult r = analyze(scenario);
         assertFalse(r.hypotheses().isEmpty(), () -> scenario + " produced no hypothesis; findings were "
@@ -71,6 +72,7 @@ class CorpusTest {
             "incident-thread-leak, 'TDA003 TDA005'",
             "incident-exceptions,  'EXC001 EXC002 EXC003'",
             "healthy,              ' '",
+            "incident-zgc-leak,    'GCA001 GCA003 GCA007 HIS001'",
     })
     void firesExactlyTheDocumentedRules(String scenario, String expected) {
         List<String> fired = analyze(scenario).findings().stream()
@@ -95,7 +97,7 @@ class CorpusTest {
     @DisplayName("every incident snapshot is parsed as all four artifacts")
     void inputsAreAllRecognised() {
         for (String scenario : List.of("incident-deadlock", "incident-heap-leak", "incident-gc-storm",
-                "incident-thread-leak", "incident-exceptions", "healthy")) {
+                "incident-thread-leak", "incident-exceptions", "incident-zgc-leak", "healthy")) {
             Snapshot s = load(scenario);
             assertEquals(2, s.threadDumps().size(), scenario + " should hold two dumps");
             assertTrue(s.gcLog().isPresent(), scenario + " has no GC log");
@@ -113,9 +115,9 @@ class CorpusTest {
     void leakAndStormAreNotTheSameStory() {
         var leak = load("incident-heap-leak").gcLog().orElseThrow();
         var storm = load("incident-gc-storm").gcLog().orElseThrow();
-        double leakFloor = leak.fullGcs().stream()
+        double leakFloor = leak.majorCollections().stream()
                 .mapToDouble(e -> e.heapAfterMb() == null ? 0 : e.heapAfterMb()).average().orElse(0);
-        double stormFloor = storm.fullGcs().stream()
+        double stormFloor = storm.majorCollections().stream()
                 .mapToDouble(e -> e.heapAfterMb() == null ? 0 : e.heapAfterMb()).average().orElse(0);
         assertTrue(leakFloor > stormFloor,
                 "the corpus should demonstrate the difference: post-GC live bytes " + leakFloor

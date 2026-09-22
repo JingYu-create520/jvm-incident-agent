@@ -22,9 +22,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -76,7 +79,7 @@ class OutputTest {
     @DisplayName("the rule catalogue is valid JSON and complete")
     void rulesJson() {
         JsonNode n = readJson(new JsonReport().rulesJson());
-        assertEquals(18, n.size());
+        assertEquals(19, n.size());
         for (JsonNode rule : n) {
             assertTrue(rule.has("id") && rule.has("title") && rule.has("doc"));
         }
@@ -159,6 +162,18 @@ class OutputTest {
                 tmp.resolve("report.md").toString()}), "a deadlock must exit non-zero");
         assertTrue(Files.isRegularFile(tmp.resolve("report.md")));
 
+        // The gate an operator configures. `never` turns the same snapshot into a pure report, and a
+        // bad value is a usage error rather than a silent default back to "high".
+        assertEquals(0, Cli.run(new String[]{"analyze", dir.toString(), "--no-narrative", "--fail-on",
+                "never", "-f", "json", "-o", tmp.resolve("gate.json").toString()}),
+                "--fail-on never must report without failing");
+        assertEquals(1, Cli.run(new String[]{"analyze", dir.toString(), "--no-narrative", "--fail-on",
+                "critical"}));
+        assertEquals(1, Cli.run(new String[]{"analyze", dir.toString(), "--no-narrative", "--fail-on",
+                "medium"}));
+        assertEquals(2, Cli.run(new String[]{"analyze", dir.toString(), "--no-narrative", "--fail-on",
+                "sometimes"}));
+
         Path clean = Files.createDirectories(tmp.resolve("clean"));
         Files.writeString(clean.resolve("threads.dump"), String.join("\n",
                 Fixtures.source("jdk17-healthy.jstack").lines()), StandardCharsets.UTF_8);
@@ -174,6 +189,17 @@ class OutputTest {
         assertEquals(0, Cli.run(new String[]{"explain", "GCA003"}));
         assertEquals(2, Cli.run(new String[]{"explain", "NOPE"}));
         assertEquals(0, Cli.run(new String[]{"doctor"}));
+    }
+
+    @Test
+    @DisplayName("the version the tool prints is the version the pom builds")
+    void versionHasOneSource() throws Exception {
+        String pom = Files.readString(Path.of("pom.xml"), StandardCharsets.UTF_8);
+        Matcher m = Pattern.compile("<version>\\s*(\\d[^<\\s]*)\\s*</version>").matcher(pom);
+        assertTrue(m.find(), "no project <version> in pom.xml");
+        assertNotEquals("dev", Engine.VERSION, "filtered jia.properties never reached the classpath");
+        assertEquals(m.group(1), Engine.VERSION,
+                "the tool introduces itself as " + Engine.VERSION + " while the pom builds " + m.group(1));
     }
 
     @Test

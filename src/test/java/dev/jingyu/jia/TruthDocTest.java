@@ -70,7 +70,7 @@ class TruthDocTest {
 
     @ParameterizedTest(name = "{0}")
     @ValueSource(strings = {"healthy", "incident-deadlock", "incident-heap-leak", "incident-gc-storm",
-            "incident-thread-leak", "incident-exceptions"})
+            "incident-thread-leak", "incident-exceptions", "incident-zgc-leak"})
     void groundTruthMatchesTheEngine(String scenario) {
         AnalysisResult result = new Engine().analyze(load(scenario), Config.defaults());
         List<String> fired = result.findings().stream().map(f -> f.ruleId()).distinct().sorted().toList();

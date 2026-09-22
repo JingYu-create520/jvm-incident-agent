@@ -126,7 +126,7 @@ You get `report.md` for a human and `report.json` for a program, each finding ca
 Charsets are detected (UTF-8, else GBK, else Latin-1) because these files come from other
 people's machines.
 
-## The 18 rules
+## The 19 rules
 
 `jia rules` prints this list; `jia explain <ID>` prints how it works **and where it can be
 wrong** — every rule documents its own false-positive limits.
@@ -152,6 +152,7 @@ wrong** — every rule documents its own false-positive limits.
 | GCA004 | Premature promotion: to-space exhausted, humongous allocation, low-yield young GC |
 | GCA005 | Config smells: metaspace pressure, `System.gc()`, and the JVM's own hint strings |
 | GCA006 | GC throughput below target |
+| GCA007 | Allocation stalls — ZGC stopping the thread that needed memory, and the name of that thread |
 
 **Heap histogram**
 
@@ -191,8 +192,9 @@ threads.dump:498  - waiting to lock <0x00000000ff6309b0> (a java.lang.Object)
 threads.dump:511  - locked <0x00000000ff6309b0>   ← monitor held here by the other thread
 ```
 
-The exit code is part of the interface: `0` nothing high-severity, `1` at least one
-HIGH/CRITICAL finding, `2` the input could not be understood.
+The exit code is part of the interface: `0` nothing at or above the gate, `1` something is, `2` the
+input could not be understood. The gate is `--fail-on`: default `high`, `--fail-on critical` in CI
+so an advisory MEDIUM cannot break a build, `--fail-on never` when you only want the report.
 
 ## LLM: narration only
 
@@ -303,9 +305,9 @@ makes the fourth artifact exist. Then plant something while it is still running 
 endpoints are listed above — and analyze.
 
 Everything in [`corpus/`](corpus) is byte-for-byte real tool output from a live JVM — no
-hand-written dumps. Six scenarios, each with a `TRUTH.md` stating what was planted and which
+hand-written dumps. Seven scenarios, each with a `TRUTH.md` stating what was planted and which
 rules should fire. `CorpusTest` asserts exactly that, and `TruthDocTest` asserts the markdown
-against the engine — every one of the 18 rules accounted for in every folder. So both a rule
+against the engine — every one of the 19 rules accounted for in every folder. So both a rule
 change that breaks the heap-leak-vs-allocation-storm distinction and a ground-truth file that
 drifts away from what the tool reports will fail the build.
 
@@ -333,6 +335,15 @@ by `RulesTest.catalogueIsComplete`.
 - **Tested on JDK 8 → 21 shapes**, but captured on JDK 17. Older formats are covered by
   hand-written fixtures; a genuinely exotic format degrades to an `INFO` finding rather than an
   error.
+- **The GC rules read three vocabularies.** G1/Parallel/Serial/CMS, where a `Pause Full` is the
+  collection that reveals the live set; ZGC, where the whole-heap concurrent cycle is that
+  collection and `Allocation Stall` is its pressure signal (GCA007, and `corpus/incident-zgc-leak`
+  is there to keep both honest); and Shenandoah, where cycles are mapped the ZGC way but no
+  capture exists yet — so treat its `major` mapping as untested rather than as support.
+- **Virtual threads are invisible.** A JDK 21 dump's `-- virtual thread … mounted on carrier`
+  trailer carries real incident information (pinning being the interesting one) and this tool
+  neither parses nor reasons about it. A Loom-heavy service will look like a JVM with a suspiciously
+  small thread count.
 - **One JVM per snapshot.** No cross-service or distributed correlation.
 - GC throughput counts the pauses `-Xlog:gc*` prints; safepoint work that is not a GC pause is
   invisible, so the real figure can be worse than reported, never better.
@@ -347,7 +358,7 @@ by `RulesTest.catalogueIsComplete`.
 jia rules --format json           # the machine-readable catalogue
 ```
 
-Layout: `parse/` (four parsers + sniffing), `analyze/` (graph, Tarjan, 18 rules, hypothesis
+Layout: `parse/` (four parsers + sniffing), `analyze/` (graph, Tarjan, 19 rules, hypothesis
 ranking), `llm/`, `report/`, `mcp/`, `Cli.java`. `docs/PLAN.md` is the original design document
 the build follows.
 

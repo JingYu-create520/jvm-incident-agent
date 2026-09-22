@@ -21,6 +21,21 @@ public record JThread(String name,
                       int startLine,
                       int endLine) {
 
+    /**
+     * A header line quoted like a thread, with no frames, no monitors and no ownable synchronizers
+     * behind it, is a VM worker rather than a Java thread. ZGC prints {@code "ZWorker#0" … runnable}
+     * and {@code "RuntimeWorker#3" … runnable} exactly this way, and how many of them exist tracks
+     * cores and heap size, not anything the application does — so no rule that groups by name
+     * family or claims "these all sit in the same frame" may include them.
+     *
+     * <p>Their trailing {@code runnable} is HotSpot's OS-level status word, which the parser reads
+     * into {@code RUNNABLE} like any other thread's; that is why the absence of a stack, and not
+     * the state, is what separates them.
+     */
+    public boolean isVmWorker() {
+        return stack.isEmpty() && locks.isEmpty() && ownableSynchronizers.isEmpty();
+    }
+
     public enum ThreadState {
         RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, NEW, TERMINATED, UNKNOWN;
 

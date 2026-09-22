@@ -73,6 +73,7 @@ apart from the message text — that is what a fingerprinting rule must cluster 
 - **GCA001-006** — 0 Full GC in this window; the exception traffic costs strings, not the
   collector. GCA006 additionally abstains because the flushed log covers 2.62 s and the rule needs
   10 s before it will quote a throughput percentage.
+- **GCA007 (allocation stalls)** — no `Allocation Stall` line appears in this log at all. That vocabulary belongs to ZGC; under G1 the same pressure is a copy-space failure, which is what GCA004 reads, and this rule would be reporting a collector that is not running here.
 - **HIS001/HIS002** — 13 MB live total, the same baseline as `corpus/healthy`: the failures do not
   retain anything, they just allocate.
 - **HIS003 (container count)** — the widest container row is `ConcurrentHashMap$Node` at 29,608

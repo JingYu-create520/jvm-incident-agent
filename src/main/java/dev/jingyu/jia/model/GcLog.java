@@ -16,7 +16,8 @@ public final class GcLog {
                 return UNKNOWN;
             }
             String s = haystack.toLowerCase(Locale.ROOT);
-            if (s.contains("zgc") || s.contains("pause mark") || s.contains("pause relocate")) {
+            if (s.contains("zgc") || s.contains("z garbage collector") || s.contains("pause mark")
+                    || s.contains("pause relocate")) {
                 return ZGC;
             }
             if (s.contains("shenandoah")) {
@@ -91,8 +92,53 @@ public final class GcLog {
         return events.stream().filter(e -> e.kind() == kind).toList();
     }
 
-    public List<GcEvent> fullGcs() {
-        return eventsOfKind(GcEvent.Kind.FULL);
+    public boolean isMajor(GcEvent.Kind kind) {
+        return switch (collector) {
+            case ZGC, SHENANDOAH -> kind == GcEvent.Kind.CYCLE;
+            default -> kind == GcEvent.Kind.FULL;
+        };
+    }
+
+    /**
+     * The collections whose "after" number is the live set.
+     *
+     * <p>Under G1, Parallel, Serial and CMS that is the Full GC. ZGC and Shenandoah never print
+     * {@code Pause Full}: their whole-heap work is the concurrent cycle, whose summary line carries
+     * the before/after occupancy ({@code GC(99) Garbage Collection (Allocation Rate)
+     * 1014M(99%)->1012M(99%)}). Reading only {@link GcEvent.Kind#FULL} there would mean reporting
+     * "no Full GC, nothing to see" about a JVM whose heap is pinned at 99 % — the single most
+     * misleading silence this tool could produce, so the mapping lives here, where the collector is
+     * known.
+     */
+    public List<GcEvent> majorCollections() {
+        return events.stream()
+                .filter(e -> isMajor(e.kind()) && e.heapAfterBytes() != null)
+                .toList();
+    }
+
+    /** How to call one of these in a sentence, plural: "8 Full GC collections", "12 whole-heap cycles". */
+    public String majorNoun() {
+        return switch (collector) {
+            case ZGC, SHENANDOAH -> "whole-heap concurrent cycles";
+            default -> "Full GC collections";
+        };
+    }
+
+    /** The same, for a line that names a single one: "Full GC at +4.1s" / "cycle at +4.1s". */
+    public String majorLabel() {
+        return switch (collector) {
+            case ZGC, SHENANDOAH -> "cycle";
+            default -> "Full GC";
+        };
+    }
+
+    /**
+     * ZGC stops the allocating thread itself when the heap cannot keep up — its substitute for a
+     * Full GC storm, and it prints the victim's name
+     * ({@code Allocation Stall (http-nio-8080-exec-8) 31.866ms}).
+     */
+    public List<GcEvent> allocationStalls() {
+        return eventsOfKind(GcEvent.Kind.ALLOCATION_STALL);
     }
 
     public List<Double> pauses() {

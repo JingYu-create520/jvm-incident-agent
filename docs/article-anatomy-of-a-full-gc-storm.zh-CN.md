@@ -17,7 +17,7 @@ $ head -1 corpus/incident-gc-storm/gc.log
 
 (注意用汇总行来数:`grep -c 'Pause Full'` 会给你 16,因为每次 Full GC 有 `gc,start` 和汇总两行。)
 
-22 秒的日志里 2555 次回收、8 次 Full GC。第一反应,也是绝大多数人的反应,是"堆给小了,加
+22 秒的日志里 2548 次回收、8 次 Full GC。第一反应,也是绝大多数人的反应,是"堆给小了,加
 `-Xmx`"。这个反应在这起事故里是错的,而且错得很典型——**它把症状当成了原因**。
 
 ## 第 1 步:先算代价,而不是先看次数
@@ -25,14 +25,19 @@ $ head -1 corpus/incident-gc-storm/gc.log
 `Full GC 8 次` 这句话本身没有信息量。有意义的问法是:这段时间里,应用有多少比例根本没在跑?
 
 ```
-GCA006 CRITICAL  Over 22 s of log, 48.6% of wall time was spent in stop-the-world pauses
-                 (10694 ms across 2555 pauses). Target is 3% or less.
+GCA006 MEDIUM  Over 22 s of log, 7.9% of wall time was spent in stop-the-world pauses
+               (1737 ms across 2548 pauses). Target is 3% or less.
 ```
 
-48.6%。这台机器有一半时间在回收,不是在处理请求。所以真正的问题不是"Full GC 太多",
-而是"分配速率高到收集器一半的精力都在搬运"。
+7.9% 听起来不算重。可它是 3% 目标的 2.6 倍,而这台机器满打满算只有 8 次 Full GC——真正在吃时间的
+不是那 8 次,是那 1886 次 young 回收。次数少、占比高,和次数多、占比低,是两种完全不同的病;
+先把分母算出来,再决定要不要动堆大小。
 
-次数少、占比高,和次数多、占比低,是两种完全不同的病。先把分母找出来。
+(这一段必须交代一句更正。它最早写的是 48.6%、"这台机器一半时间在回收",那是**工具的错**:统计
+停顿的时候把并发标记阶段的耗时也算进去了。后来我拿一份 ZGC 现场(仓库里的 `corpus/incident-zgc-leak`)去喂它,同一个读数口把
+`[gc,stats]` 表格里 `30.142 / 613.231 ms` 这种"过去 10 小时最大值"当成了某一次回收的停顿,给出一份
+63.4% 的报告——而那个 JVM 真正的停顿总共 10 ms。修完之后 G1 这边从 10694 ms 掉到 1737 ms,严重度
+从 CRITICAL 掉到 MEDIUM。数字变难看了,但它现在量的确实是"应用没在跑"的那段时间。)
 
 ## 第 2 步:谁在被回收
 
@@ -101,7 +106,7 @@ GCA005 MEDIUM  The log itself says: "GCLocker Initiated GC" — JNI critical sec
 
 这条是 JVM 自己在日志里抱怨的,不是任何启发式猜的:某处进入 JNI 临界区(`GetPrimitiveArrayCritical`
 一类调用),临界区里的 GC 请求会被推迟并累集成一次 `GCLocker Initiated GC`。它是真实存在的行为,
-值得知道,但**不是** 48.6% 停顿时间的原因——所以它的严重度是 MEDIUM,并且没有成为第一名假设。
+值得知道,但**不是** 那 7.9% 停顿的原因——所以它的严重度是 MEDIUM,并且没有成为第一名假设。
 
 (想确认到底谁在 JNI 临界区里,需要 `-Xcheck:jni` 或 async-profiler;`jia` 只报"日志里说了这件事",
 不做超出证据的推断。)
@@ -147,13 +152,13 @@ dump 中间再推一把(线程泄漏那个语料就是靠它拍出 80→140 的�
 把最后那条命令的路径换成语料目录:`jia analyze corpus/incident-gc-storm` 和
 `corpus/incident-heap-leak` 会分别把 `H-ALLOCATION-STORM` 和 `H-HEAP-LEAK` 排在第一名,
 `corpus/healthy` 输出零结论。
-这些不是"我跑给你看",是 `CorpusTest` 的 15 个用例:5 个场景的第一名假设、每个场景**精确到触发了
+这些不是"我跑给你看",是 `CorpusTest` 的 17 个用例:6 个场景的第一名假设、每个场景**精确到触发了
 哪几条规则**、健康样本零结论,外加解析完整性和 5 秒耗时预算。
 
-写这篇的时候又给 `corpus/*/TRUTH.md` 补了一道断言(`TruthDocTest`,7 个用例):每个语料的
-"应该触发 / 不该触发"两张清单必须和引擎实际输出逐条对齐,而且 18 条规则得全部被点名。它第一次跑就
+写这篇的时候又给 `corpus/*/TRUTH.md` 补了一道断言(`TruthDocTest`,7 个场景各一条):每个语料的
+"应该触发 / 不该触发"两张清单必须和引擎实际输出逐条对齐,而且 19 条规则得全部被点名。它第一次跑就
 抓到了东西——gc-storm 的 TRUTH.md 把 GCA005 写在"不该触发"那一栏,而日志里明明白白有
-`GCLocker Initiated GC`;另外三个语料的清单各漏了几条规则,健康样本那份还在说"14 条规则"(早就是 18 条了)。
+`GCLocker Initiated GC`;另外三个语料的清单各漏了几条规则,健康样本那份还在说"14 条规则"(当时已经 18 条,现在 19 条)。
 文档和引擎分家,就是这么发生的:测试只盯第一名,下面的清单就没人看着了。
 
 > 本文所有结论由确定性规则产生,语言模型只参与把结论写成段落——它没有能力新增、删除或改写任何

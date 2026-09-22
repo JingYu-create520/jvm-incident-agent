@@ -63,7 +63,7 @@ public final class ThreadNoise {
     }
 
     public static boolean jvmInternal(JThread t) {
-        return jvmInternalName(t.name());
+        return t.isVmWorker() || jvmInternalName(t.name());
     }
 
     public static boolean jvmInternalName(String name) {

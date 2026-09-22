@@ -24,9 +24,14 @@ public record GcEvent(int index,
                       int line) {
 
     public enum Kind {
-        YOUNG, MIXED, FULL, REMARK, CLEANUP, CYCLE, OTHER;
+        YOUNG, MIXED, FULL, REMARK, CLEANUP, CYCLE, ALLOCATION_STALL, OTHER;
 
-        /** Major collections are the ones that stop the world and reveal the live set. */
+        /**
+         * Major collections are the ones that stop the world and reveal the live set — for the
+         * collectors that work that way. ZGC has no Full GC in its vocabulary at all; its
+         * equivalent is the concurrent cycle, and that mapping lives in
+         * {@link GcLog#majorCollections()} rather than here, because it needs the collector.
+         */
         public boolean major() {
             return this == FULL;
         }

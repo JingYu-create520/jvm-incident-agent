@@ -72,6 +72,7 @@ The two bursts are 80 and 60, and they are the *only* `victim-worker-` threads i
   half-a-core of CPU the rule wants.
 - **GCA001-006** — 0 Full GC, 4 young pauses, max pause 6.1 ms, and the flushed window is 2.80 s
   of uptime, below the 10 s GCA006 needs before it will quote a throughput percentage at all.
+- **GCA007 (allocation stalls)** — no `Allocation Stall` line appears in this log at all. That vocabulary belongs to ZGC; under G1 the same pressure is a copy-space failure, which is what GCA004 reads, and this rule would be reporting a collector that is not running here.
 - **HIS001/HIS002** — 12.5 MB live total, same as `corpus/healthy`; the leak is threads, not bytes.
 - **HIS003 (container count)** — the widest container row is `ConcurrentHashMap$Node` at 28,339
   instances against the rule's `max(50,000, totalInstances/20)` = 50,000 floor.

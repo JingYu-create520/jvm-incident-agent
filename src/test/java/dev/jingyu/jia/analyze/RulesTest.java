@@ -514,7 +514,7 @@ class RulesTest {
     @Test
     @DisplayName("every rule documents itself and declares an artifact")
     void catalogueIsComplete() {
-        assertEquals(18, Rules.all().size());
+        assertEquals(19, Rules.all().size());
         java.util.regex.Pattern limits = java.util.regex.Pattern.compile(
                 "(?i)(false positive|wrong when|can be wrong|quiet on|stays silent|does not fire)");
         java.util.regex.Pattern quotes = java.util.regex.Pattern.compile(

@@ -39,7 +39,7 @@ import java.util.concurrent.Callable;
 @Command(
         name = "jia",
         mixinStandardHelpOptions = true,
-        version = "jvm-incident-agent " + Engine.VERSION,
+        version = "jvm-incident-agent",
         description = "Analyze JVM incident artifacts offline and produce a report with an evidence chain.",
         subcommands = {Analyze.class, RulesCommand.class, Explain.class, Doctor.class, McpCommand.class})
 public final class Cli {
@@ -50,8 +50,12 @@ public final class Cli {
     }
 
     public static int run(String[] args) {
-        return new CommandLine(new Cli())
-                .setCaseInsensitiveEnumValuesAllowed(true)
+        CommandLine cli = new CommandLine(new Cli());
+        // The version is read from a Maven-filtered resource so it cannot drift from the pom, which
+        // makes it not a compile-time constant — and an annotation's `version` has to be one. So the
+        // annotation carries the name and this line the number. Picocli exposes it as a spec setter.
+        cli.getCommandSpec().version("jvm-incident-agent " + Engine.VERSION);
+        return cli.setCaseInsensitiveEnumValuesAllowed(true)
                 .setExecutionExceptionHandler((ex, cmd, spec) -> {
                     cmd.getErr().println(cmd.getColorScheme().errorText(String.valueOf(ex)));
                     return 2;
@@ -111,8 +115,25 @@ final class Analyze implements Callable<Integer> {
     @Option(names = "--throughput", description = "Minimum acceptable GC throughput (default 0.97).")
     private Double throughput;
 
+    @Option(names = "--fail-on", paramLabel = "SEVERITY",
+            description = "Lowest severity that makes the process exit 1: never, info, low, medium, "
+                    + "high (default, the historical behaviour) or critical. Use critical in a CI gate "
+                    + "so an advisory finding cannot break a build.")
+    private String failOn = "high";
+
     @Override
     public Integer call() throws IOException {
+        Severity gate;
+        if (failOn.equalsIgnoreCase("never")) {
+            gate = null;
+        } else {
+            try {
+                gate = Severity.valueOf(failOn.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException badChoice) {
+                Cli.ERR.println("--fail-on expects never|info|low|medium|high|critical, was: " + failOn);
+                return 2;
+            }
+        }
         if (paths.isEmpty()) {
             // `docker run -v ./incident:/input jia` should need no argument: WORKDIR is /input.
             paths = List.of(Path.of("."));
@@ -146,7 +167,7 @@ final class Analyze implements Callable<Integer> {
         String js = new JsonReport().render(result, noNarrative ? null : narrative);
         emit(md, js);
         report(result, provider);
-        return result.hasHighRisk() ? 1 : 0;
+        return gate != null && result.countAtLeast(gate) > 0 ? 1 : 0;
     }
 
     /** A remote provider must never be able to fail an analysis run. */

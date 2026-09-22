@@ -3,6 +3,7 @@ package dev.jingyu.jia.analyze;
 import dev.jingyu.jia.analyze.rules.exc.CausalChainRule;
 import dev.jingyu.jia.analyze.rules.exc.ExceptionBurstRule;
 import dev.jingyu.jia.analyze.rules.exc.ExceptionClusterRule;
+import dev.jingyu.jia.analyze.rules.gca.AllocationStallRule;
 import dev.jingyu.jia.analyze.rules.gca.FullGcFrequencyRule;
 import dev.jingyu.jia.analyze.rules.gca.GcThroughputRule;
 import dev.jingyu.jia.analyze.rules.gca.HeapLeakFingerprintRule;
@@ -38,6 +39,7 @@ public final class Rules {
             new PrematurePromotionRule(),
             new VmConfigSmellRule(),
             new GcThroughputRule(),
+            new AllocationStallRule(),
             new TopConsumerRule(),
             new MatWorthyRule(),
             new ContainerCountRule(),

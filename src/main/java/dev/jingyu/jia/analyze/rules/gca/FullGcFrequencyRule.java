@@ -40,7 +40,7 @@ public final class FullGcFrequencyRule implements Rule {
         if (log == null) {
             return List.of();
         }
-        List<GcEvent> full = log.fullGcs();
+        List<GcEvent> full = log.majorCollections();
         if (full.size() < 2) {
             return List.of();
         }
@@ -80,14 +80,14 @@ public final class FullGcFrequencyRule implements Rule {
                 .artifact(artifact())
                 .severity(perMinute >= config.fullGcPerMinute() * 3 ? Severity.CRITICAL : Severity.HIGH)
                 .confidence(Math.min(0.95, 0.7 + bestCount * 0.02))
-                .summary(bestCount + " Full GC collections inside " + String.format(Locale.ROOT, "%.1f", minutes)
+                .summary(bestCount + " " + log.majorNoun() + " inside " + String.format(Locale.ROOT, "%.1f", minutes)
                         + " minute(s) (" + String.format(Locale.ROOT, "%.1f", perMinute)
                         + "/min, threshold " + config.fullGcPerMinute()
                         + "), stopping the world for " + stopMs + " ms in total, worst pause "
                         + String.format(Locale.ROOT, "%.0f", worstPause) + " ms.")
                 .evidence(burst.stream().limit(config.maxEvidencePerFinding())
                         .map(e -> Evidence.of(log.source(), e.line(),
-                                "Full GC at +" + fmt(e.atSec()) + "s"
+                                log.majorLabel() + " at +" + fmt(e.atSec()) + "s"
                                         + (e.cause() == null ? "" : ", cause " + e.cause())))
                         .toList())
                 .recommend("A Full GC storm is always downstream of something: either the live set does not "
@@ -96,7 +96,7 @@ public final class FullGcFrequencyRule implements Rule {
                 .recommend("Short term: raise the heap or shed load. Do not add `-XX:+DisableExplicitGC` "
                         + "before checking whether something calls System.gc() on purpose.")
                 .metric("file", log.source().name())
-                .metric("fullGcs", full.size())
+                .metric("majorCollections", full.size())
                 .metric("burstCount", bestCount)
                 .metric("perMinute", String.format(Locale.ROOT, "%.2f", perMinute))
                 .metric("stopTheWorldMs", stopMs)

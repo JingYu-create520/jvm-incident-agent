@@ -79,7 +79,7 @@ public final class JsonReport {
             t.put("collector", g.collector().name());
             t.put("format", g.unified() ? "unified" : "jdk8-traditional");
             t.put("events", g.events().size());
-            t.put("fullGcs", g.fullGcs().size());
+            t.put("majorCollections", g.majorCollections().size());
             t.put("spanSeconds", round(g.durationSec()));
             t.put("p50PauseMs", round(g.pausePercentile(50)));
             t.put("p95PauseMs", round(g.pausePercentile(95)));

@@ -36,9 +36,19 @@ public record ThreadDump(TextSource source,
         return s.isBlank() ? name : s;
     }
 
+    /**
+     * Threads grouped by the prefix their name shares — the shape every pool rule reads.
+     *
+     * <p>VM workers are excluded here rather than in each rule: they are quoted like threads, they
+     * are counted in {@code threads()}, and their number tracks cores and heap size, so a rule
+     * that saw "ZWorker#0..15" as a 16-member pool would report starvation on every healthy ZGC
+     * process. See {@link JThread#isVmWorker()}.
+     */
     public Map<String, List<JThread>> byNameFamily() {
-        return threads.stream().collect(Collectors.groupingBy(
-                t -> nameFamily(t.name()), java.util.LinkedHashMap::new, Collectors.toList()));
+        return threads.stream()
+                .filter(t -> !t.isVmWorker())
+                .collect(Collectors.groupingBy(
+                        t -> nameFamily(t.name()), java.util.LinkedHashMap::new, Collectors.toList()));
     }
 
     /**

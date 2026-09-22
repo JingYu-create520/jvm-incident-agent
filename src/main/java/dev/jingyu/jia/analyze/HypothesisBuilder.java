@@ -54,7 +54,10 @@ public final class HypothesisBuilder {
                 byRules("EXC001", "EXC002", "EXC003"));
         add(out, "H-ALLOCATION-STORM", "Allocation pressure rather than a leak: short-lived large "
                 + "objects promote early and force full collections while the post-GC live set stays flat.",
-                f -> f.ruleId().equals("GCA001") || f.ruleId().equals("GCA004"));
+                f -> f.ruleId().equals("GCA001") || f.ruleId().equals("GCA004")
+                        // An allocation stall is the same statement in ZGC's vocabulary: the collector
+                        // kept running, and the thread that needed memory was the one that waited.
+                        || f.ruleId().equals("GCA007"));
         add(out, "H-HEAP-SHAPE", "A specific class or container dominates the heap, which is where the "
                 + "memory question should be answered.",
                 byRules("HIS001", "HIS002", "HIS003"));

@@ -43,10 +43,32 @@ public final class GcLogParser {
     private static final Pattern OLD_GEN_K = Pattern.compile(
             "\\[(?:ParOldGen|PSOldGen|Tenured Generation|CMS Old Gen):\\s*\\d+(?:\\.\\d+)?\\s*[KMGT]?B?\\s*->\\s*(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)");
     private static final Pattern PAREN = Pattern.compile("\\(([^()]*)\\)");
-    /** A bracketed size, e.g. the {@code (256M)} capacity or {@code (1056768K)} metaspace commit. */
-    private static final Pattern CAPACITY_PAREN = Pattern.compile("\\d+(?:\\.\\d+)?\\s*[KMGT]?B?",
+    /**
+     * A bracketed number that is a measurement rather than a reason: the {@code (256M)} capacity,
+     * the {@code (1056768K)} metaspace commit, and ZGC's {@code (99%)} occupancy shares. Left in
+     * place, "cause 2%" is what the report says instead of the real cause on the same line.
+     */
+    private static final Pattern CAPACITY_PAREN = Pattern.compile("\\d+(?:\\.\\d+)?\\s*[KMGT]?B?%?",
             Pattern.CASE_INSENSITIVE);
     private static final Pattern METASPACE_GROUP = Pattern.compile("\\[?Metaspace:.*?\\](?:,|\\s|$)");
+
+    /**
+     * ZGC prints occupancy as a share of the heap instead of a capacity in brackets:
+     * {@code 1014M(99%)->1012M(99%)}. The percentage is the only thing that turns that into a
+     * usable ceiling, and the capacity itself arrives on a separate line (see MAX_CAPACITY).
+     */
+    private static final Pattern PCT_TRANSITION = Pattern.compile(
+            "(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)\\(\\s*\\d+(?:\\.\\d+)?%\\s*\\)\\s*->\\s*"
+                    + "(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)\\(\\s*\\d+(?:\\.\\d+)?%\\s*\\)");
+    /** {@code GC(88) Max Capacity: 1024M(100%)} — what ZGC's percentages are percentages of. */
+    private static final Pattern MAX_CAPACITY = Pattern.compile(
+            "\\bMax Capacity(?: \\((?:small|medium|large)\\))?:\\s*(\\d+(?:\\.\\d+)?\\s*[KMGT]?B?)");
+    /**
+     * A {@code [gc,stats]} table row: {@code Collector: Garbage Collection Cycle  30.142 / 613.231
+     * … ms}. Rolling averages over a window, printed per collection, and none of them is a pause.
+     */
+    private static final Pattern STATS_ROW = Pattern.compile(
+            "^[A-Za-z][A-Za-z ]{2,48}:.*\\d+(?:\\.\\d+)?\\s*/\\s*\\d+(?:\\.\\d+)?");
 
     /**
      * {@code [Metaspace: 3072K->3072K(1056768K)]} has exactly the shape of a heap transition, and it
@@ -119,6 +141,8 @@ public final class GcLogParser {
 
     private static GcLog parseUnified(TextSource src, List<String> lines, List<String> notes) {
         Map<Integer, Ev> pending = new LinkedHashMap<>();
+        /** The first few hundred messages, kept only to identify the collector when no banner is present. */
+        List<String> vocabulary = new ArrayList<>();
         List<Integer> order = new ArrayList<>();
         GcLog.Collector collector = GcLog.Collector.UNKNOWN;
         Long regionSize = null;
@@ -200,6 +224,9 @@ public final class GcLogParser {
                 order.add(id);
             }
             ev.absorbUnified(inner, atSec, wall, i + 1);
+            if (vocabulary.size() < 300) {
+                vocabulary.add(inner);
+            }
             ev.applyRegionSizes(regionSize);
         }
 
@@ -207,10 +234,17 @@ public final class GcLogParser {
         int seq = 0;
         for (Integer id : order) {
             Ev ev = pending.get(id);
-            if (ev.pauseMs == null && ev.heapAfter == null) {
+            if (ev.stopTheWorldMs() == null && ev.heapAfter == null) {
                 continue;
             }
             events.add(ev.toEvent(seq++));
+        }
+        if (collector == GcLog.Collector.UNKNOWN) {
+            // A rotated or truncated log routinely starts after its own "Using …" line, and the
+            // collector is not a detail to leave unknown: which collection counts as "major" — i.e.
+            // whether the live-set rules have anything to read at all — is decided from it. The
+            // pause vocabulary identifies the collector as reliably as the banner does.
+            collector = GcLog.Collector.guess(String.join("\n", vocabulary));
         }
         if (collector == GcLog.Collector.UNKNOWN) {
             notes.add("collector not identified from GC log; rules fall back to format-agnostic reasoning");
@@ -412,7 +446,11 @@ public final class GcLogParser {
         private int lastLine;
         private GcEvent.Kind kind = GcEvent.Kind.OTHER;
         private String cause;
-        private Double pauseMs;
+        /** The stop-the-world number, split three ways — see {@link #stopTheWorldMs()}. */
+        private Double summaryPauseMs;
+        private double phasePauseSum;
+        private boolean sawPhasePause;
+        private Double otherPauseMs;
         private Long heapBefore;
         private Long heapAfter;
         private Long capacity;
@@ -436,7 +474,16 @@ public final class GcLogParser {
             this.lastLine = lineNo;
             String m = msg.strip();
             String lower = m.toLowerCase(Locale.ROOT);
-            if (lower.startsWith("pause full")) {
+            if (STATS_ROW.matcher(m).find()) {
+                // [gc,stats] prints a rolling-averages table per collection. Its "30.142 / 613.231
+                // … ms" cells are not pauses and not events, and the largest of them (a max over the
+                // last 10 hours!) was being read as this collection's stop-the-world time.
+                return;
+            }
+            if (lower.startsWith("allocation stall")) {
+                // ZGC's substitute for "the heap could not keep up": it stopped the allocating thread.
+                kind = GcEvent.Kind.ALLOCATION_STALL;
+            } else if (lower.startsWith("pause full")) {
                 kind = GcEvent.Kind.FULL;
             } else if (lower.contains("pause young (mixed)") || lower.startsWith("pause mixed")) {
                 kind = GcEvent.Kind.MIXED;
@@ -446,7 +493,11 @@ public final class GcLogParser {
                 kind = GcEvent.Kind.REMARK;
             } else if (lower.contains("pause cleanup")) {
                 kind = GcEvent.Kind.CLEANUP;
-            } else if (lower.contains("concurrent mark cycle") || lower.contains("conc-mark")) {
+            } else if (lower.contains("concurrent mark cycle") || lower.contains("conc-mark")
+                    || lower.startsWith("garbage collection")) {
+                // ZGC names its whole-heap cycle "Garbage Collection (<cause>)" and prints the
+                // occupancy on that same line; it is the cycle, not a pause, and under ZGC it is the
+                // event whose "after" number is the live set.
                 kind = GcEvent.Kind.CYCLE;
             }
             if (lower.contains("to-space exhausted") || lower.contains("evacuation failure")
@@ -462,7 +513,27 @@ public final class GcLogParser {
                 last = Double.parseDouble(p.group(1));
             }
             if (last != null) {
-                pauseMs = last;
+                if (lower.startsWith("pause ") && m.contains("->")) {
+                    // The record's own summary — G1 writes "Pause Young (Normal) (G1 Evacuation
+                    // Pause) 150M->30M(256M) 5.123ms". One number for the whole stop, so it wins.
+                    summaryPauseMs = last;
+                } else if (lower.startsWith("pause ")) {
+                    // A phase of a stop. ZGC splits one into "Pause Mark Start 0.007ms",
+                    // "Pause Mark End 0.018ms" and "Pause Relocate Start 0.009ms"; the mutator lost
+                    // the sum of them, so that is what this record's pause is.
+                    phasePauseSum += last;
+                    sawPhasePause = true;
+                } else if (kind == GcEvent.Kind.ALLOCATION_STALL) {
+                    otherPauseMs = last;
+                }
+                // Everything else that ends in milliseconds is the collector working while the
+                // application kept running — "Concurrent Mark Cycle 512.123ms" included. Adding
+                // those to the pause total is how a ZGC heap whose real stop-the-world time was
+                // under one second got reported as 63.4% of wall time spent in pauses.
+            }
+            Matcher mc = MAX_CAPACITY.matcher(m);
+            if (mc.find() && capacity == null) {
+                capacity = Sizes.parseBytes(mc.group(1));
             }
             Matcher hk = HEAP_KW.matcher(m);
             if (hk.find()) {
@@ -475,6 +546,12 @@ public final class GcLogParser {
                     heapBefore = Sizes.parseBytes(ht.group(1));
                     heapAfter = Sizes.parseBytes(ht.group(2));
                     capacity = Sizes.parseBytes(ht.group(3));
+                } else {
+                    Matcher pct = PCT_TRANSITION.matcher(withoutMetaspace(m));
+                    if (pct.find()) {
+                        heapBefore = Sizes.parseBytes(pct.group(1));
+                        heapAfter = Sizes.parseBytes(pct.group(2));
+                    }
                 }
             }
             Matcher meta = METASPACE.matcher(m);
@@ -510,8 +587,23 @@ public final class GcLogParser {
             }
         }
 
+        /**
+         * What this record took away from the application, in milliseconds. A summary line wins,
+         * then the sum of the record's own {@code Pause …} phases, then anything else that was
+         * measured in milliseconds against a stopped thread.
+         */
+        Double stopTheWorldMs() {
+            if (summaryPauseMs != null) {
+                return summaryPauseMs;
+            }
+            if (sawPhasePause) {
+                return phasePauseSum;
+            }
+            return otherPauseMs;
+        }
+
         GcEvent toEvent(int seq) {
-            return new GcEvent(seq, kind, cause, atSec, pauseMs, heapBefore, heapAfter, capacity,
+            return new GcEvent(seq, kind, cause, atSec, stopTheWorldMs(), heapBefore, heapAfter, capacity,
                     oldAfter, metaspaceAfter, toSpaceExhausted, humongous, wall, firstLine);
         }
     }

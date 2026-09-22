@@ -58,6 +58,7 @@ scanner, and they never multiply.
 | GCA004 | nothing | `Humongous regions: 0->0` on every event, and `Old regions` ends at `0->3` over the whole session (class/static data, not churn) |
 | GCA005 | nothing | `Compressed Oops: Enabled (32-bit)`, `Heap Region Size: 1M`, no `-XX:MaxMetaspaceSize`, heap min = initial = max = 256M (a deliberately sane config) |
 | GCA006 | nothing | the flushed window is 8.12 s, under the 10 s the rule needs before it will quote a percentage; the arithmetic would be safe anyway — 5 young pauses, mean 5.28 ms, is about 0.3 % of wall time |
+| GCA007 | nothing | `Allocation Stall` is ZGC vocabulary and never appears in this log; under G1 the same pressure surfaces as to-space exhausted |
 | HIS001 | nothing | top consumer is `[B` at 3 MB — that is the normal state of *every* Java process; a byte-array-is-big finding here would also fire on all 5 incident folders |
 | HIS002 | nothing | same as above, ranked on shallow size |
 | HIS003 | nothing | the widest container row is `ConcurrentHashMap$Node` at 29,021 instances; the floor is `max(50,000, totalInstances/20)` = 50,000 on `Total 298054` |

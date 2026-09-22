@@ -85,6 +85,7 @@ cache that stores both the serialized blob and its parsed form really retains.
   window under 10 s, because a percentage over a flushed fragment of a startup says more about the
   buffering than about the JVM. Capture the same leak over a longer session and GCA006 will appear;
   `corpus/incident-gc-storm` is that capture.
+- **GCA007 (allocation stalls)** — no `Allocation Stall` line appears in this log at all. That vocabulary belongs to ZGC: under G1 the same pressure is a copy-space failure, which is what GCA004 reads, and this rule would be reporting a collector that is not running here.
 - **HIS002 (application class share)** — the leading non-JDK class is
   `dev.jingyu.jia.victim.LeakyCache$CachedRow` at 22,400,000 bytes, which clears the 8 MB absolute
   floor and misses the 10 % share floor at **9.32 %** of counted bytes. If you are reading this

@@ -4,37 +4,78 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.2.0 — 2026-09-22
 
-Documentation and tests only — no change to the analyzer's behaviour, so no new release.
-
-### Added
-
-- `TruthDocTest` asserts each `corpus/*/TRUTH.md` against the engine: its SHOULD-fire list must
-  equal the rules that actually fire, its must-NOT-fire list must be disjoint from them, and
-  together the two must account for all 18 rules — so a rule can no longer be added without
-  somebody deciding, in prose, what it says about each capture. Both markdown shapes the corpus
-  grew up with are parsed (id-prefixed bullets, and the healthy folder's rule-by-rule table),
-  including ranges like `GCA001-006`. Mutation-checked: moving a fired rule into the must-NOT
-  list, deleting a row, and naming a rule that does not exist each fail the build.
+Found by capturing something the corpus did not contain: a heap leak under ZGC. Until now every GC
+log in `corpus/` came from a G1 JVM, so nothing in the build ever asked what "major collection"
+means to a collector that has no Full GC. It turned out that three behaviours were written against
+G1's vocabulary while being presented as general ones, and two of the three produced **confident
+false conclusions** rather than silence.
 
 ### Fixed
 
-- Five of the six ground-truth files disagreed with the tool they document. Two had a fired rule
-  in the "must NOT fire" list (`incident-gc-storm` → GCA005, which the log itself justifies with
-  `GCLocker Initiated GC`; `incident-thread-leak` → TDA005, which fires because all 80 leaked
-  workers are occupied in one frame); `incident-heap-leak` claimed HIS002 fires when it does not,
-  and omitted GCA004, which does; `incident-exceptions` omitted EXC003; `corpus/healthy` still
-  said "14 rules" and accounted for 14 of 18. Each list is now complete, with the measurement
-  that decides each call, including the two boundary cases worth knowing about: HIS002 misses the
-  leak by 0.7 points of share (9.32 % against a 10 % floor) because the `[B` bag around it is 72 %
-  of the histogram, and GCA006 stays quiet on four folders because the rule refuses to divide
-  pause time by a flushed window under 10 s.
+- **A ZGC JVM was reported as a starved thread pool.** jstack quotes ZGC's workers like threads
+  (`"ZWorker#0" … runnable`, `"RuntimeWorker#3" … runnable`) with no `java.lang.Thread.State:` line
+  and no frames; TDA005 grouped them into a name family, found them all "occupied", and printed
+  `All 4 workers of "ZWorker" are occupied and 4 of them sit in the same frame (<empty stack>)` —
+  as the top hypothesis. `JThread.isVmWorker()` (no frames, no monitors, no ownable synchronizers)
+  now keeps them out of every name-family grouping, which also covers TDA003 and, through
+  `ThreadNoise.jvmInternal`, TDA004 and TDA006.
+- **Stop-the-world time included work that was never a stop.** A `[gc,stats]` table prints rolling
+  averages per collection (`Collector: Garbage Collection Cycle  30.142 / 613.231 … ms`), and the
+  record merge took the last millisecond figure it saw. On the ZGC capture that turned a real
+  stop-the-world total of ~10 ms out of 48.8 s into a reported **63.4 % of wall time in pauses**,
+  with GCA002 firing off the same line. Statistics rows are now skipped by shape, a record's
+  summary duration is separated from its phase durations, and phase durations are summed rather
+  than sampled.
+- **The same inflation existed in the G1 corpus, and the published numbers move.**
+  `corpus/incident-gc-storm`'s GCA006 was `48.6% of wall time … (10694 ms across 2555 pauses)`;
+  it is now `7.9% … (1737 ms across 2548 pauses)`, which drops that finding from CRITICAL to
+  MEDIUM. The removed 8.9 s was 660 concurrent-mark cycles counted as application downtime. The
+  storm itself is unchanged — GCA001, GCA004, GCA005 and HIS001 read what they always read, and
+  `H-ALLOCATION-STORM` is still the top hypothesis — but anything this project has said about the
+  cost of that storm was overstated, including the article in `docs/`.
+- `corpus/incident-gc-storm` and `corpus/incident-thread-leak` each listed a fired rule under
+  "must NOT fire" (GCA005, justified by `GCLocker Initiated GC` in the log; TDA005, which fires
+  because all 80 leaked workers are occupied in one frame); `incident-heap-leak` claimed HIS002
+  fires when it misses its 10 % share floor at 9.32 %, and omitted GCA004; `incident-exceptions`
+  omitted EXC003; `corpus/healthy` still said "14 rules" and accounted for 14 of 18.
 - Both READMEs' no-Docker capture snippet started the victim without `-Xlog:gc*`, so the fourth
-  artifact it claims to collect could not exist. The snippet now passes the flag and the
-  `--gc-log` / `--app-log` paths, verified end to end against a fresh 256 MB G1 storm.
-- Both READMEs quoted the suite as 74 tests; it is 87. Nothing reads that number, which is the
-  same failure mode as the ground-truth lists above, one floor lower down.
+  artifact it claims to collect could not exist. It now passes the flag and the `--gc-log` /
+  `--app-log` paths, verified end to end against a fresh 256 MB G1 storm.
+
+### Added
+
+- **ZGC is a collector this tool reads, not a format it abstains on.** `GcLog.isMajor(kind)` maps
+  a whole-heap concurrent cycle to "major" for ZGC and Shenandoah, so GCA001 and GCA003 have
+  something to look at: the new `corpus/incident-zgc-leak` capture is reported as
+  `Across 278 major collections the heap low-water mark climbed from 20M to 1012M (+4960%) …
+  (capacity 1024M)` and ranks the leak first — the same planted bug as `incident-heap-leak`, on a
+  collector with no Full GC. ZGC's occupancy is read from its percentage form
+  (`1014M(99%)->1012M(99%)`) with `Max Capacity:` as the denominator.
+- **GCA007 — allocation stalls.** `Allocation Stall (http-nio-18081-exec-8) 31.866ms` is what a
+  ZGC heap that cannot keep up actually prints, and the thread named in the line is the useful
+  part: it says whether latency or throughput is being paid. Fires at three stalls or one over the
+  pause SLA. 19 rules now.
+- `--fail-on never|info|low|medium|high|critical` (default `high`, the historical behaviour), so a
+  CI gate can require CRITICAL instead of being broken by an advisory MEDIUM. A bad value is exit 2.
+- `TruthDocTest` asserts each `corpus/*/TRUTH.md` against the engine: its SHOULD-fire list must
+  equal the rules that actually fire, its must-NOT-fire list must be disjoint from them, and the
+  two together must account for all 19 rules. Both markdown shapes the corpus grew up with are
+  parsed (id-prefixed bullets, and the healthy folder's rule-by-rule table), including ranges like
+  `GCA001-006`. Mutation-checked: moving a fired rule into the must-NOT list, deleting a row, and
+  naming a rule that was never registered each fail the build.
+- The collector is now identified from the pause vocabulary when the log has no `Using …` banner,
+  which is the normal shape of a rotated `gc.log.0`.
+- `corpus/incident-zgc-leak`: real ZGC output from this JDK (17.0.5, `-XX:+UseZGC -Xmx1g`), with a
+  `TRUTH.md` that records the three defects above as the reason the folder exists.
+- A ZGC parser fixture cut from that capture's own log, byte for byte, deliberately from the middle
+  of the file so it carries no banner either.
+
+### Changed
+
+- `jia analyze --format json` renamed the `fullGcs` input summary to `majorCollections`, because
+  under ZGC it counts cycles. `GCA001`'s `fullGcs` metric followed the same name.
 
 ## 0.1.2 — 2026-09-21
 

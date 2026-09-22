@@ -6,7 +6,7 @@
 
   <groupId>dev.jingyu</groupId>
   <artifactId>jia</artifactId>
-  <version>0.1.2</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
 
   <name>jvm-incident-agent</name>
@@ -52,6 +52,14 @@
 
   <build>
     <finalName>jia</finalName>
+    <resources>
+      <!-- The only file in src/main/resources, and it is filtered so the version the tool prints
+           cannot disagree with the version this pom builds. -->
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -79,6 +79,7 @@ a live service rather than an empty VM.
   families exist.
 - **GCA001-006** — no Full GC in this log. GCA006 also abstains on window: the flushed part covers
   2.78 s of uptime and the rule refuses to divide pause time by anything under 10 s.
+- **GCA007 (allocation stalls)** — no `Allocation Stall` line appears in this log at all. That vocabulary belongs to ZGC; under G1 the same pressure is a copy-space failure, which is what GCA004 reads, and this rule would be reporting a collector that is not running here.
 - **HIS001/HIS002** — 13.1 MB live total, the same shape as `corpus/healthy`. Two threads holding
   two locks do not show up in a histogram.
 - **HIS003 (container count)** — the widest container row is `ConcurrentHashMap$Node` at 28,410

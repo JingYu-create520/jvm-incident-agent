@@ -45,7 +45,7 @@ public final class HeapLeakFingerprintRule implements Rule {
         List<Point> points = new ArrayList<>();
         for (GcEvent e : log.events()) {
             Long v = e.oldAfterBytes() != null ? e.oldAfterBytes() : e.heapAfterBytes();
-            if (v != null && v > 0 && (e.kind() == GcEvent.Kind.FULL || e.kind() == GcEvent.Kind.MIXED)) {
+            if (v != null && v > 0 && (log.isMajor(e.kind()) || e.kind() == GcEvent.Kind.MIXED)) {
                 points.add(new Point(e, v));
             }
         }
