@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+Documentation only, in text written today.
+
+### Fixed
+
+- `corpus/incident-gc-storm/TRUTH.md` quoted `Humongous regions: 228->228` and "peak 230, stable all
+  storm". Neither number was measured: the value that recurs most is `200->200` (516 collections),
+  and after the batch loads the level runs between 197 and 234 without draining. It now states the
+  distribution instead of a single line, and notes the arithmetic behind 0.2.2's other fix — the old
+  GCA004 figure 1894 is exactly how many lines of this log contain `Humongous regions:`.
+- `docs/article-anatomy-of-a-full-gc-storm.zh-CN.md` step 2 claimed the ~4 KB arrays were what got
+  allocated straight into old gen. 4 KB is far below the 512 KB humongous threshold on this heap, so
+  that sentence joined two different pieces of evidence into one false one. The section now keeps
+  them apart: the histogram's 43,794 × 4,143-byte arrays are the churn, and the humongous evidence
+  is the 495 caused collections plus ~200 MB held in humongous regions throughout the storm.
+
 ## 0.2.2 — 2026-09-22
 
 Found the same way 0.2.0 was found: run the tool against a collector the corpus does not contain.

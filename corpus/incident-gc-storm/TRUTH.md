@@ -58,13 +58,18 @@ the heap is not.
   99 ms in total, worst pause 17 ms`.
 - **GCA004 (premature promotion)** — read it from `[gc,heap]`, and note the trap: the batch's
   175 MB never shows up as `Old regions` (that peaks at only `0->16`), because arrays larger than
-  half a region are accounted as **`Humongous regions: 228->228`** (peak 230, stable all storm). A promotion rule that watches
+  half a region are accounted as **`Humongous regions: 200->200`**. Once the batch has loaded, the
+  level stays between 197 and 234 for the rest of the storm and never drains; `200->200` is the value
+  that appears most often (516 collections). Quoting one line as "228" would have been a made-up
+  constant, so the distribution is what is written here. A promotion rule that watches
   only `Old regions` will report nothing here; it has to count humongous regions too (or use the
   `217M-236M of 256M` post-pause floor). Verbatim: `495 collection(s) triggered by humongous
   (direct-to-old) allocation; 1880 young collections reclaimed under 5% of the heap`. The 495 counts
   collections whose *cause* was a humongous allocation. It used to read 1894, because the matcher
-  accepted the word "humongous" anywhere in the record and G1 prints `Humongous regions: 228->228`
-  in the `[gc,heap]` block of nearly every collection — occupancy accounting, not a reason.
+  accepted the word "humongous" anywhere in the record and G1 prints `Humongous regions: 200->200`
+  in the `[gc,heap]` block of nearly every collection — occupancy accounting, not a reason. That
+  1894 is exactly the number of lines in this file containing `Humongous regions:`, which is the
+  whole arithmetic of the mistake in one coincidence.
 - **GCA006 (GC throughput below target)** — `Over 22 s of log, 7.9% of wall time was spent in
   stop-the-world pauses (1737 ms across 2548 pauses)`. This is the finding that decides whether the
   Full GC count means anything at all. The `2548` is parsed events (a concurrent-mark cycle is one
