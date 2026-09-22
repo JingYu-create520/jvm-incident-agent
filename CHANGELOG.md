@@ -4,6 +4,29 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+Tooling and agent-facing docs; the analyzer itself is unchanged, so no new release.
+
+### Added
+
+- `generate-corpus.sh incident-zgc-leak`, so the seventh folder is reproducible by one command
+  rather than by a recipe in its `TRUTH.md`. `start_jvm` now takes its memory and collector per mode
+  (`incident-zgc-leak` uses `-Xms1g -Xmx1g -XX:+UseZGC` — ZGC on JDK 17 needs the room), and the
+  loop's per-mode defaults keep the other six exactly as they were.
+- `CORPUS_DIR`, because every mode writes into a tracked directory by default: reproducing a claim
+  should not have to risk re-recording a folder whose `TRUTH.md` quotes its own numbers.
+
+### Fixed
+
+- `skills/jvm-incident-agent/SKILL.md` — the file an agent reads before calling the tool — still
+  described six corpus folders, an exit code with no `--fail-on` behind it, and nothing about a
+  collector that prints no `Pause Full`. It now lists the ZGC folder, the gate, and the two reading
+  rules that matter at 4 a.m.: "no Full GC" is not "no GC problem", and ZGC's `"ZWorker#N"` threads
+  are not a thread pool.
+
+
+
 ## 0.2.0 — 2026-09-22
 
 Found by capturing something the corpus did not contain: a heap leak under ZGC. Until now every GC

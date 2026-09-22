@@ -20,6 +20,10 @@ with Git Bash, and `scripts/generate-corpus.sh` reproduces it end to end.
 
 * 256 MB is what makes GCA001/GCA003/GCA004 reachable on a laptop — the heap leak and the GC storm
   do not bite on a default 8 GB heap.
+* One mode deliberately deviates: `incident-zgc-leak` runs `-Xms1g -Xmx1g -XX:+UseZGC`. ZGC on
+  JDK 17 wants that much room before its behaviour is interesting, and the reason the folder exists
+  is that its GC log contains no `Pause Full` line at all — every G1-shaped assumption in the GC
+  rules had to be re-checked against it.
 * `-Xlog:gc*` is the JDK 9+ unified format; there is **no** `-XX:+PrintGCDetails` here, and no JDK 8
   output exists anywhere in this corpus.
 * `file=` accepts a relative or an absolute path; JDK 17 tolerates the drive-letter colon in a
@@ -39,7 +43,7 @@ sh "/d/daily-files/Qoder CN/project-3/.tools/apache-maven-3.9.9/bin/mvn" -B -q \
    -f ../demo-victim/pom.xml package
 ```
 
-Then, per incident, three commands: start, trigger, capture. All six in one line at the end.
+Then, per incident, three commands: start, trigger, capture. All seven in one line at the end.
 
 ### 1. deadlock → `corpus/incident-deadlock`
 
@@ -101,12 +105,31 @@ for i in 1 2 3 4; do curl -s "localhost:8080/victim/healthy?iterations=2500&payl
 Check: 0 BLOCKED, 0 `victim-worker-`, 0 `Pause Full`, max pause 8.4 ms, 12.3 MB live in the
 histogram. `corpus/healthy/TRUTH.md` is the zero-findings contract for the analyzer.
 
-### All six, from a clean checkout
+### 7. the same leak under ZGC → `corpus/incident-zgc-leak`
 
 ```bash
-bash scripts/generate-corpus.sh                 # builds demo-victim.jar first, then 6 captures (~4 min)
-bash scripts/generate-corpus.sh --skip-build healthy incident-deadlock
+mkdir -p w/zgc && cd w/zgc
+java -Xms1g -Xmx1g -XX:+UseZGC -Xlog:gc*:file=gc.log:time,uptime,level,tags \
+     -Dfile.encoding=UTF-8 -jar ../../demo-victim/target/demo-victim.jar --server.port=8080 > app.log 2>&1 &
+for i in $(seq 1 14); do curl -s "localhost:8080/victim/leak?mb=96" >/dev/null; sleep 2; done
+../../scripts/capture.sh -o ../../corpus/incident-zgc-leak -d 6
 ```
+Check: `grep -c 'Allocation Stall (' gc.log` ≥ 1, `grep -c 'Pause Full' gc.log` == 0 (that zero is
+the entire point of the folder), occupancy lines like `1014M(99%)->1012M(99%)`, and
+`jia analyze corpus/incident-zgc-leak` ranking the leak first. ZGC on JDK 17 wants 1 GB before it
+is interesting; 256 MB is what makes the G1 modes bite.
+
+### All seven, from a clean checkout
+
+```bash
+bash scripts/generate-corpus.sh                 # builds demo-victim.jar first, then 7 captures (~5 min)
+bash scripts/generate-corpus.sh --skip-build healthy incident-deadlock
+CORPUS_DIR=/tmp/corpus bash scripts/generate-corpus.sh --skip-build incident-zgc-leak
+```
+`CORPUS_DIR` exists because the default output directory is `corpus/` — a run **replaces tracked
+artifacts**, and one mode also needs ~1 GB of free heap. Reproduce into scratch, compare the
+conclusions, and only write into `corpus/` when you mean to re-record the folder (its `TRUTH.md`
+quotes the committed capture's own numbers).
 
 ## capture.sh / capture.ps1 options
 
@@ -135,7 +158,7 @@ must not be touched at all.
 ```
 `capture.ps1` writes UTF-8 without BOM and LF line endings so its files are byte-comparable with
 `capture.sh` output. `generate-corpus.sh` is bash-only (Git Bash is fine); on PowerShell drive the
-incidents by hand with the six blocks above.
+incidents by hand with the seven blocks above.
 
 ## Troubleshooting
 

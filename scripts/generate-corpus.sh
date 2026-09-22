@@ -7,12 +7,18 @@
 # else, and every byte in it is real jstack / jmap / -Xlog / application output.
 #
 # Usage:
-#   scripts/generate-corpus.sh                  # all six captures
+#   scripts/generate-corpus.sh                  # all seven captures
 #   scripts/generate-corpus.sh healthy          # only one (or several) modes
 #   scripts/generate-corpus.sh --skip-build incident-deadlock incident-gc-storm
+#   CORPUS_DIR=/tmp/corpus scripts/generate-corpus.sh incident-zgc-leak
 #
 # Modes: incident-deadlock incident-heap-leak incident-gc-storm incident-thread-leak
-#        incident-exceptions healthy
+#        incident-exceptions incident-zgc-leak healthy
+#
+# Set CORPUS_DIR to capture somewhere other than ./corpus. It defaults there because that is
+# what the corpus test needs, but note what that means: every mode writes into a tracked
+# directory, so one run replaces committed artifacts. Reproducing a claim is easier to defend
+# than re-capturing a folder, so point CORPUS_DIR at scratch unless you mean to replace.
 #
 # Scratch (the JVM's own gc.log/app.log before they are copied into corpus/) lives under
 # demo-victim/target/corpus-work/, i.e. inside Maven's target/ directory, and is deleted on exit.
@@ -23,7 +29,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 JAR="$ROOT/demo-victim/target/demo-victim.jar"
 WORK="$ROOT/demo-victim/target/corpus-work"
-CORPUS="$ROOT/corpus"
+CORPUS="${CORPUS_DIR:-$ROOT/corpus}"
 CAPTURE="$SCRIPT_DIR/capture.sh"
 MVN="${MVN:-}"
 IS_WINDOWS=0
@@ -35,12 +41,12 @@ MODES=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --skip-build) SKIP_BUILD=1; shift ;;
-    -h|--help)    sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)    sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *)            MODES+=("$1"); shift ;;
   esac
 done
 [ ${#MODES[@]} -gt 0 ] || MODES=(incident-deadlock incident-heap-leak incident-gc-storm \
-                               incident-thread-leak incident-exceptions healthy)
+                               incident-thread-leak incident-exceptions incident-zgc-leak healthy)
 
 # ---------------------------------------------------------------- toolchain
 if [ -z "${JAVA_HOME:-}" ] || [ ! -d "${JAVA_HOME:-}/bin" ]; then
@@ -107,6 +113,9 @@ used_ratio() { # heap used / max as a float, from /victim/health
 
 pause_full_count() { local n; n="$(grep -c 'Pause Full' "$WD/gc.log" 2>/dev/null)"; echo "${n:-0}"; }
 
+# ZGC never prints Pause Full; what it prints when the heap cannot keep up is this.
+stall_count() { local n; n="$(grep -c 'Allocation Stall (' "$WD/gc.log" 2>/dev/null)"; echo "${n:-0}"; }
+
 start_jvm() {
   MODE_NUM=$((MODE_NUM + 1))
   PORT=$((PORT_BASE + MODE_NUM))
@@ -117,8 +126,10 @@ start_jvm() {
   # gc.log goes to a path relative to the JVM's own cwd. JDK 17 also accepts an absolute Windows
   # path here (the drive-letter colon survives -Xlog's ':' splitting), but the JVM refuses to
   # start at all if the directory does not exist, so cwd-relative is the safe form.
+  # Memory and collector are per-mode because 256 MB is what makes G1's rules bite, while ZGC on
+  # JDK 17 wants a gigabyte before it is interesting at all.
   ( cd "$WD" && "$JAVA" \
-      -Xms256m -Xmx256m -XX:+UseG1GC \
+      $JVM_MEMORY $JVM_COLLECTOR \
       "-Xlog:gc*:file=gc.log:time,uptime,level,tags" \
       -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 \
       -jar "$JAR" --server.port="$PORT" > "$WD/app.log" 2>&1 & )
@@ -147,6 +158,7 @@ finish() { # finish <mode> : capture the four artifacts of the running JVM into 
 # ---------------------------------------------------------------- the six captures
 for MODE in "${MODES[@]}"; do
   DELAY=6; BETWEEN=""
+  JVM_MEMORY="-Xms256m -Xmx256m"; JVM_COLLECTOR="-XX:+UseG1GC"
   case "$MODE" in
   incident-deadlock)
     start_jvm "$MODE"
@@ -218,6 +230,26 @@ for MODE in "${MODES[@]}"; do
       api "/victim/health" >/dev/null
     done
     sleep 3
+    finish "$MODE"
+    ;;
+
+  incident-zgc-leak)
+    # The same planted bug as incident-heap-leak, on a collector with no Full GC. This mode is why
+    # 0.2.0 exists: it caught three wrong answers that six G1 captures could not. ZGC on JDK 17
+    # needs room to lay out its stripes, so 1 GB instead of the 256 MB the G1 modes use.
+    JVM_MEMORY="-Xms1g -Xmx1g"; JVM_COLLECTOR="-XX:+UseZGC"
+    start_jvm "$MODE"
+    api "/victim/health" >/dev/null
+    echo "    ramping the unbounded cache under ZGC until the mutator starts waiting"
+    for i in $(seq 1 16); do
+      r="$(used_ratio)"
+      echo "    used/max=$r stalls=$(stall_count)"
+      awk -v r="$r" 'BEGIN{ exit (r >= 0.95) ? 0 : 1 }' && break
+      [ "$(stall_count)" -ge 3 ] && break
+      api "/victim/leak?mb=96" >/dev/null
+      sleep 2
+    done
+    echo "    stalls so far=$(stall_count), Pause Full count=$(pause_full_count) (0 is the point)"
     finish "$MODE"
     ;;
 

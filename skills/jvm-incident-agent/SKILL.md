@@ -40,8 +40,14 @@ analyzed without writing it to disk first.
 
 ## Reading the result
 
-- **Exit code is load-bearing.** `0` nothing high-severity, `1` at least one HIGH/CRITICAL
-  finding, `2` the input was not understood.
+- **Exit code is load-bearing.** `0` nothing at or above the gate, `1` something is, `2` the input
+  was not understood. The gate is `--fail-on` (`never|info|low|medium|high|critical`, default
+  `high`): in CI prefer `--fail-on critical` so an advisory `MEDIUM` cannot break a build, and
+  `--fail-on never` when the report is what you are after.
+- **"No Full GC" is not "no GC problem".** Under ZGC the collection that reveals the live set is the
+  whole-heap concurrent cycle, and the pressure signal is `Allocation Stall (<thread>) 31.866ms`
+  (GCA007). If the log has no `Pause Full`, read GCA001/GCA003/GCA007 before concluding the
+  collector is fine — and remember ZGC's own `"ZWorker#N"` threads are not a thread pool.
 - The first hypothesis is the answer to give. Lower-ranked ones are correlated observations,
   not independent incidents.
 - Every finding carries `file:line` evidence. If a claim matters, open that line and check it
@@ -74,4 +80,5 @@ rather than asserting:
 | `corpus/incident-gc-storm` | thousands of short-lived large arrays |
 | `corpus/incident-thread-leak` | threads created per request, never closed |
 | `corpus/incident-exceptions` | wrapped `SocketTimeoutException` clusters in one burst |
+| `corpus/incident-zgc-leak` | the same unbounded cache, on ZGC — no `Pause Full` exists in the log |
 | `corpus/healthy` | a working service — must produce **zero** findings |

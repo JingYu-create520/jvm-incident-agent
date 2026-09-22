@@ -21,6 +21,12 @@ JDK: the same JBR 17.0.5 the rest of the corpus was captured with, started with 
 ZGC is not experimental on 17, so no `-XX:+UnlockExperimentalVMOptions` was needed; the heap is
 1 GB because ZGC on 17 wants room to lay out its stripes.
 
+Automated form: `scripts/generate-corpus.sh incident-zgc-leak` (set `CORPUS_DIR` somewhere else
+first unless you mean to replace this folder — the default output directory is `corpus/`). A re-run
+does not reproduce the numbers: the run made to check this recipe stopped at 194 cycles and 2
+stalls, where this committed capture ran to 278 and 9. What must reproduce is the
+conclusion — `GCA003` first, `Allocation Stall` lines present, `Pause Full` absent — and it did.
+
 No `--between-cmd`: the leak itself grew between the two dumps, which is the point of the run.
 
 ## What was planted
