@@ -534,6 +534,29 @@ class RulesTest {
         }
 
         @Test
+        @DisplayName("a time-of-day-only pattern keeps the exceptions and blinds the burst rule")
+        void burstNeedsAnAbsoluteClock() {
+            // `%d{HH:mm:ss.SSS}` is the console pattern half the world runs: every exception is in the
+            // file, and none of them can be placed inside a minute. The same bytes with the date on do
+            // burst, so the missing EXC003 below is a clock problem and not a quiet service -- which is
+            // exactly the difference a reader cannot make from the findings table alone.
+            List<String> dated = Fixtures.source("app-exceptions.log").lines();
+            List<String> timeOnly = dated.stream().map(l -> l.replaceFirst("^2026-09-20 ", "")).toList();
+            assertFalse(timeOnly.equals(dated), "the strip has to hit the fixture's actual stamp");
+            assertFalse(run(rule("EXC003"), withStacks(Fixtures.source("app-exceptions.log"))).isEmpty(),
+                    "with a date, the same twelve occurrences are a burst");
+
+            Snapshot blind = withStacks(TextSource.of("app.log", timeOnly));
+            assertIds(run(rule("EXC003"), blind), "no absolute instant, no window to bucket into");
+            assertEquals(20, blind.exceptionsWithoutTimestamp(), "every stack lost its clock");
+            List<Finding> clusters = run(rule("EXC001"), blind);
+            assertFalse(clusters.isEmpty(), "the exceptions themselves are still findings");
+            assertTrue(clusters.stream().anyMatch(f -> f.summary().startsWith("12 ")),
+                    () -> "and the twelve-occurrence cluster is still counted: "
+                            + clusters.stream().map(Finding::summary).toList());
+        }
+
+        @Test
         @DisplayName("EXC003 needs timestamps and will not invent a burst without them")
         void burstNegative() {
             var undated = withStacks(TextSource.of("app.log", TextFiles.splitLines(

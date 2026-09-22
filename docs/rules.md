@@ -2,7 +2,7 @@
 
 # Rule catalogue
 
-19 rules ship in jvm-incident-agent 0.3.3.
+19 rules ship in jvm-incident-agent 0.3.4.
 
 Every finding they raise quotes `file:line` evidence from the artifact that was read,
 and the text of each section is the same `doc()` the CLI serves from Java:
@@ -98,7 +98,11 @@ changed then is the candidate cause.
 
 Rate needs time, and time exists only if the lines carry stamps. With fewer than ten parseable
 timestamps this rule returns nothing rather than guessing, and the window it reports is a real
-bucket boundary, not a mean.
+bucket boundary, not a mean. Because silence here looks exactly like an all-clear, the count is
+published instead: the report's coverage section and `report.json`'s `exceptionClock` say how many
+stacks had no absolute timestamp, so a reader can tell "spread out" from "invisible to the clock".
+A `%d{HH:mm:ss.SSS}` console pattern, a `log4j` `%d{ABSOLUTE}`, and any log whose timestamp was
+stripped by a collector or a `grep -v` all produce the second case.
 
 Evidence: the occurrences inside the burst, annotated with their own timestamps. Wrong when: a
 restart loop repeating one stack — that shows a burst per restart, which the per-line timestamps
@@ -504,4 +508,4 @@ Quiet on JDK 8 dumps, which have no `cpu=` column at all; this rule does not gue
 
 ---
 
-_19 rules, rendered from `jvm-incident-agent 0.3.3 rules --format json` by scripts/render-rules.sh._
+_19 rules, rendered from `jvm-incident-agent 0.3.4 rules --format json` by scripts/render-rules.sh._

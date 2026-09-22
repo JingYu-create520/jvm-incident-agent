@@ -56,6 +56,10 @@ analyzed without writing it to disk first.
   a window was covered.** A snapshot reads one GC log and one histogram; if the folder had a rotated
   set or two `jmap` outputs, the extras were dropped and named. "No leak in this incident" means
   something different when the findings describe 40 minutes of a 3-hour log.
+- **"No exception burst" can mean the log had no clock.** EXC003 counts only stacks whose timestamp
+  resolves to an absolute instant, and a `HH:mm:ss.SSS` console pattern does not. `exceptionClock`
+  (JSON) and the coverage bullet both report how many of the parsed stacks were datable — quote those
+  numbers instead of concluding the errors were spread out.
 - Rule IDs are stable. `jia explain <ID>` gives the mechanism and the known false positives;
   quote it rather than re-deriving why a rule fired.
 

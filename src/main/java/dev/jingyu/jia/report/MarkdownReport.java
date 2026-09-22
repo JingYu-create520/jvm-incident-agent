@@ -255,8 +255,22 @@ public final class MarkdownReport {
         } else {
             sb.append("- no heap histogram in this snapshot — the HIS rules had nothing to read\n");
         }
-        sb.append("- ").append(s.exceptions().size()).append(" exception stacks parsed")
-                .append(s.exceptions().isEmpty() ? " — the EXC rules had nothing to read" : "").append('\n');
+        long blind = s.exceptionsWithoutTimestamp();
+        sb.append("- ").append(s.exceptions().size()).append(" exception stacks parsed");
+        if (s.exceptions().isEmpty()) {
+            sb.append(" — the EXC rules had nothing to read");
+        }
+        if (blind > 0) {
+            // A burst rule that cannot see the clock is not an all-clear. Say which of the two the
+            // absence of EXC003 means, because the report cannot show a finding that never fired.
+            sb.append(" · ").append(blind).append(" of them carry no absolute timestamp (a time-of-day ")
+                    .append("pattern like `%d{HH:mm:ss.SSS}`, or no stamp at all), so EXC003's burst window ")
+                    .append("could only count ").append(s.exceptions().size() - blind).append(" of ")
+                    .append(s.exceptions().size())
+                    .append(" — a missing `exception burst` finding here says nothing about how the ")
+                    .append("errors were spread");
+        }
+        sb.append('\n');
         for (var u : s.unparsed()) {
             sb.append("- `").append(u.file()).append("` was not understood: ").append(u.reason()).append('\n');
         }

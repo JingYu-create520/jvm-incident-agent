@@ -4,6 +4,43 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); the version follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.4 — 2026-09-22
+
+A rule that documents its own blind spot in `jia explain` still leaves the *report* silent, and the
+report is the thing read at 4 a.m. Found by feeding the exception fixture through a console pattern:
+same bytes, date removed.
+
+### Fixed
+
+- **"No exception burst" no longer reads as an all-clear when the log had no clock.** EXC003 buckets
+  occurrences by their parsed timestamp, so a pattern that prints time-of-day only — `%d{HH:mm:ss.SSS}`,
+  extremely common on the console appenders half of the world runs — gives it nothing to bucket.
+  Measured on the fixture, stripping `2026-09-20 ` from the stamps: EXC001 still reports *"12 occurrences
+  of java.net.SocketTimeoutException … share one root-cause stack"* at 79 %, and EXC003 disappears from
+  the table without a trace. Worse in the mixed case (date stripped from the first six seconds only): the
+  visible bucket falls under `--burst-min` 10 and the finding dies just the same, with no hint that the
+  denominator shrank rather than the error rate.
+- The count is now published where it is read, not only in the rule's documentation: the Markdown's
+  coverage section names it (`20 exception stacks parsed · 20 of them carry no absolute timestamp …
+  so EXC003's burst window could only count 0 of 20 — a missing exception burst finding here says nothing
+  about how the errors were spread`), and `report.json` gained `exceptionClock` with `parsed`,
+  `withoutAbsoluteTimestamp` and `burstRuleNeeds`, so an agent can tell "spread out" from "undatable"
+  without re-reading 20 `epochMillis` fields. A dated log emits no warning line at all: `0.3.2`'s
+  disclosure machinery is for cases, not for noise.
+
+### Added
+
+- `RulesTest.burstNeedsAnAbsoluteClock` and `OutputTest.blindedRulesAreDisclosed`, both derived from the
+  existing fixture by stripping the date in the test (so the two cannot drift apart), asserting the
+  contrast rather than the absence: same bytes with a date do burst, without one they do not, the
+  twelve-stack cluster survives both ways, and the report says which of the two happened.
+  Mutation-checked: making the count return zero fails both, with `expected: <20> but was: <0>`.
+- EXC003's rule document now points at the two places the count is published, and names the patterns
+  that produce the blind case; `SKILL.md` carries the matching reading rule, and both READMEs state it.
+
+106 tests, 19 rules, the seven corpus scenarios and every threshold default unchanged.
+
+
 ## 0.3.3 — 2026-09-22
 
 Every GC number this tool has ever been checked against came from JDK 9+ unified logging, except one

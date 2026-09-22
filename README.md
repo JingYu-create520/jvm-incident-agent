@@ -139,8 +139,12 @@ time, so evidence quotes show text a human can read and line numbers still point
 A run reads **one GC log and one histogram**, because that is what one incident has: a window and an
 instant. When you hand it a rotated set (`gc.log` plus `gc.log.0`) or two `jmap` files, it keeps the
 first one it sees — walking a directory means the suffix-less, live rotation wins — and names what it
-dropped, in the Markdown's "Coverage and limits" section and in `report.json` under `ignoredInputs`. A report over half the
-window has to say so, because it otherwise looks exactly like a report over all of it.
+dropped, in the Markdown's "Coverage and limits" section and in `report.json` under `ignoredInputs`.
+A report over half the window has to say so, because it otherwise looks exactly like a report over all
+of it. The same rule applies to fields, not just files: if your application log timestamps with
+`HH:mm:ss.SSS` only, the burst rule cannot place any stack in a minute, and the report says how many of
+the parsed stacks had no absolute timestamp (`exceptionClock` in JSON) rather than leaving "no burst" to
+read as an all-clear.
 
 ## The 19 rules
 

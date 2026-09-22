@@ -279,6 +279,49 @@ class OutputTest {
     }
 
     @Test
+    @DisplayName("a rule that could not see the clock says so in both reports")
+    void blindedRulesAreDisclosed(@TempDir Path tmp) throws Exception {
+        // "No exception burst" arrives in the same envelope whether the errors were spread out or the
+        // log pattern had no date in it. The findings table cannot show a rule that never fired, so the
+        // count has to be published next to the artifact it describes -- and only when it applies.
+        String dated = String.join("\n", Fixtures.source("app-exceptions.log").lines());
+        String timeOnly = Fixtures.source("app-exceptions.log").lines().stream()
+                .map(l -> l.replaceFirst("^2026-09-20 ", ""))
+                .collect(java.util.stream.Collectors.joining("\n"));
+        assertFalse(timeOnly.equals(dated), "the strip has to hit the fixture's actual stamp");
+
+        Path blind = Files.createDirectories(tmp.resolve("blind"));
+        Files.writeString(blind.resolve("app.log"), timeOnly + "\n", StandardCharsets.UTF_8);
+        Path blindOut = Files.createDirectories(tmp.resolve("blind-out"));
+        Cli.run(new String[]{"analyze", blind.toString(), "--no-narrative", "-f", "both",
+                "-o", blindOut.toString()});
+        String md = Files.readString(blindOut.resolve("report.md"), StandardCharsets.UTF_8);
+        assertTrue(md.contains("no absolute timestamp"),
+                "the coverage section has to say the burst rule was blind:\n" + md.lines()
+                        .filter(l -> l.contains("exception stacks parsed")).findAny().orElse("<none>"));
+        var clock = MAPPER.readTree(blindOut.resolve("report.json").toFile()).path("exceptionClock");
+        assertEquals(20, clock.path("parsed").asInt());
+        assertEquals(20, clock.path("withoutAbsoluteTimestamp").asInt(),
+                "a %d{HH:mm:ss.SSS} console pattern leaves no stack datable");
+        assertTrue(clock.path("burstRuleNeeds").asInt() > 0,
+                "and the reader is told what the rule would have needed");
+
+        Path stamped = Files.createDirectories(tmp.resolve("stamped"));
+        Files.writeString(stamped.resolve("app.log"), dated + "\n", StandardCharsets.UTF_8);
+        Path stampedOut = Files.createDirectories(tmp.resolve("stamped-out"));
+        Cli.run(new String[]{"analyze", stamped.toString(), "--no-narrative", "-f", "both",
+                "-o", stampedOut.toString()});
+        assertFalse(Files.readString(stampedOut.resolve("report.md"), StandardCharsets.UTF_8)
+                        .contains("no absolute timestamp"),
+                "a dated log must not carry the warning -- noise here would train readers to skip it");
+        assertEquals(0, MAPPER.readTree(stampedOut.resolve("report.json").toFile())
+                        .path("exceptionClock").path("withoutAbsoluteTimestamp").asInt());
+        assertTrue(Files.readString(stampedOut.resolve("report.md"), StandardCharsets.UTF_8)
+                        .contains("EXC003"),
+                "with a clock the burst rule does fire, which is what the blind case is contrasted with");
+    }
+
+    @Test
     @DisplayName("no rule documents a flag that does not exist, and no knob is published that moves nothing")
     void knobsAreReachable() {
         java.util.Set<String> flags = new java.util.LinkedHashSet<>();

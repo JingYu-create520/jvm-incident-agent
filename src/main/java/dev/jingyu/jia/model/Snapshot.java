@@ -108,6 +108,18 @@ public final class Snapshot {
         return skipped.stream().map(Skipped::sentence).toList();
     }
 
+    /**
+     * Stacks whose log line carries no timestamp this tool can turn into an absolute instant — a
+     * console pattern like {@code %d{HH:mm:ss.SSS}} (time of day, no date), or no pattern at all.
+     * They are real exceptions and every non-temporal rule still reads them; what they cannot do is
+     * land in a time window. Reporting a count is the difference between "no burst detected" and
+     * "the burst rule could see N of M stacks", which is the sentence a reader is actually entitled
+     * to.
+     */
+    public long exceptionsWithoutTimestamp() {
+        return exceptions.stream().filter(e -> e.epochMillis() == null).count();
+    }
+
     public List<String> filesSeen() {
         return filesSeen;
     }

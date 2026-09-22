@@ -42,6 +42,14 @@ public final class JsonReport {
         n.put("version", r.toolVersion());
         n.put("generatedAt", r.generatedAt().toString());
         n.put("elapsedMillis", r.elapsedMillis());
+        // What the temporal rules could see. Without this, "no exception burst" in the findings array
+        // is indistinguishable from "the rule had no clock to measure" -- and only one of those two is
+        // an all-clear. `burstRuleNeeds` is the count of timestamped stacks EXC003 would need.
+        ObjectNode clock = n.putObject("exceptionClock");
+        clock.put("parsed", r.snapshot().exceptions().size());
+        clock.put("withoutAbsoluteTimestamp", r.snapshot().exceptionsWithoutTimestamp());
+        clock.put("burstRuleNeeds", r.config().burstMinPerBucket());
+
         // Not findings and not warnings: inputs that were read off disk and deliberately left out of
         // these findings. An agent that cannot see this list cannot tell a covered window from a half one.
         ArrayNode ignored = n.putArray("ignoredInputs");
